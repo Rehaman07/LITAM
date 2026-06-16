@@ -10,6 +10,7 @@ const slugify = (label) =>
     .replace(/&/g, "and")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+
 const navItems = [
   "Home",
   "About",
@@ -28,31 +29,63 @@ const navItems = [
 }));
 
 const stats = [
-  ["2001", "Established institution"],
-  ["NAAC A", "Accredited institution"],
-  ["27 acres", "Green campus"],
-  ["ISO", "9001:2015 certified"],
+  ["2001", "Established Institution"],
+  ["NAAC A", "Accredited Institution"],
+  ["27 Acres", "Sprawling Green Campus"],
+  ["ISO", "9001:2015 Certified"],
 ];
 
-const academics = [
-  ["B.Tech", "CSE, CSE - AI & ML, CSE - Data Science, Civil, Mechanical, EEE, and ECE."],
-  ["M.Tech", "Structural Engineering for advanced civil and infrastructure-focused study."],
-  ["Diploma", "CSE, CSE - AI & ML, ECE, and EEE polytechnic programs."],
-  ["MBA", "Management education for business, operations, and leadership roles."],
-  ["MCA", "Computer applications program for software and IT careers."],
-  ["Codes", "AP EAPCET / ECET / PGECET: LOYL; AP ICET / AP POLYCET: LITM."],
-];
+const courseCategories = {
+  btech: {
+    title: "B.Tech Programs",
+    code: "AP EAPCET / ECET Code: LOYL",
+    courses: [
+      { name: "Computer Science and Engineering", desc: "Deep dive into software engineering, advanced algorithms, full-stack systems, and distributed databases." },
+      { name: "CSE - Artificial Intelligence & Machine Learning", desc: "Specialized study in neural networks, deep learning, computer vision, natural language processing, and smart systems." },
+      { name: "CSE - Data Science", desc: "Focuses on big data analytics, statistical modeling, data visualization, and predictive machine learning models." },
+      { name: "Electronics and Communication Engineering", desc: "Core curriculum in VLSI design, signal processing, embedded systems, Internet of Things, and telecommunications." },
+      { name: "Electrical and Electronics Engineering", desc: "Study of power systems, power electronics, industrial control machines, automation, and green energy systems." },
+      { name: "Civil Engineering", desc: "Covers structural design, geotech analysis, eco-friendly infrastructure, and construction management." },
+      { name: "Mechanical Engineering", desc: "Hands-on study of robotics, manufacturing science, thermodynamics, CAD/CAM design, and structural automation." }
+    ]
+  },
+  mtech: {
+    title: "M.Tech Programs",
+    code: "AP PGECET Code: LOYL",
+    courses: [
+      { name: "Structural Engineering", desc: "Post-graduate advanced study of complex structural analytics, concrete technologies, and earthquake-resistant designs." }
+    ]
+  },
+  diploma: {
+    title: "Diploma Programs (Polytechnic)",
+    code: "AP POLYCET Code: LITM",
+    courses: [
+      { name: "Computer Science and Engineering", desc: "Core technical training in programming languages, databases, web development basics, and hardware labs." },
+      { name: "CSE - Artificial Intelligence & Machine Learning", desc: "Introductory curriculum in Python, basic AI tools, machine learning pipelines, and technical problem solving." },
+      { name: "Electronics and Communication Engineering", desc: "Practical curriculum focused on circuit building, microcontrollers, IoT testing, and radio communications." },
+      { name: "Electrical and Electronics Engineering", desc: "Hands-on polytechnic labs in wiring systems, electrical machines, power transmission systems, and safety procedures." }
+    ]
+  },
+  postgrad: {
+    title: "Post-Graduate Programs",
+    code: "AP ICET Code: LITM",
+    courses: [
+      { name: "MBA (Master of Business Administration)", desc: "Comprehensive management training specializing in Marketing, Finance, HR Management, and Operations." },
+      { name: "MCA (Master of Computer Applications)", desc: "Advanced study of web engineering, database architecture, cloud structures, enterprise systems, and cyber security." }
+    ]
+  }
+};
 
 const facultyHighlights = [
-  ["Experienced Faculty", "Well experienced faculty guide classroom learning, projects, and reviews."],
-  ["Mentorship Program", "Faculty advisors support academic planning, career readiness, and student wellbeing."],
-  ["Industry Practice", "Departments connect coursework to labs, workshops, and industrial exposure."],
+  ["Experienced Faculty", "Our highly qualified educators bring years of academic research and corporate expertise into the classroom."],
+  ["Mentorship Program", "Individual faculty advisors provide personalized support for academic pathing, project work, and personal wellbeing."],
+  ["Industry Practice", "Strong corporate tie-ups translate standard curricula into modern lab work, workshops, and industry placements."]
 ];
 
 const studentLife = [
-  ["Technical & Cultural Fests", "Students participate in technical events, cultural programs, and celebrations."],
-  ["Ragging-Free Environment", "Campus life is shaped around safety, dignity, peer learning, and support."],
-  ["Hostels & Canteen", "Separate on-campus hostels for boys and girls with hygienic food facilities."],
+  ["Technical & Cultural Fests", "Students manage, code, perform, and present at national hackathons, cultural festivals, and annual sports days."],
+  ["Ragging-Free Environment", "A strictly monitored, friendly campus culture designed around student safety, dignity, and peer support."],
+  ["Hostels & Canteen", "Separate boys' and girls' on-campus hostels with hygienic, modern food halls, gyms, and library access."]
 ];
 
 const institutionDetails = [
@@ -60,17 +93,17 @@ const institutionDetails = [
   ["Affiliated to", "JNTUK, Kakinada"],
   ["Accreditation", "NAAC A Grade"],
   ["Certification", "ISO 9001:2015"],
-  ["Campus", "27-acre green campus"],
+  ["Campus size", "27-acre green campus"],
   ["Built-up area", "232,102+ square feet"],
 ];
 
 const uniqueFeatures = [
   "State-of-the-art laboratories",
-  "Internet facility",
-  "Good placement assistance",
-  "Training and placement assistance",
-  "Inter-state industrial tours",
-  "Bus facility from different routes",
+  "High-speed campus-wide Wi-Fi",
+  "Dedicated training & placement cell",
+  "Comprehensive aptitude & coding training",
+  "Inter-state industrial visits & study tours",
+  "Extensive bus transit routes across regions",
 ];
 
 function getInitialTheme() {
@@ -80,32 +113,36 @@ function getInitialTheme() {
   } catch {
     return "dark";
   }
-
   return "dark";
 }
 
 const news = [
   {
     date: "16 Jun",
-    title: "Admissions counselling open for AP EAPCET, ECET, PGECET, ICET, and POLYCET aspirants",
+    title: "Admissions counselling support now open for AP EAPCET, ECET, PGECET, ICET, and POLYCET candidates.",
     tag: "Admissions",
   },
   {
     date: "12 Jun",
-    title: "LITAM highlights NAAC A Grade, AICTE approval, and JNTUK affiliation",
+    title: "LITAM celebrates NAAC 'A' grade accreditation renewal and expands state-of-the-art laboratory facilities.",
     tag: "Institution",
   },
   {
     date: "08 Jun",
-    title: "Technical and cultural fest planning begins with student clubs and departments",
+    title: "Technical Hackathon & cultural fest dates announced; student clubs commence project development.",
     tag: "Campus",
   },
+  {
+    date: "02 Jun",
+    title: "Placement cell signs new training and placement partnerships with leading MNCs for 2026 graduates.",
+    tag: "Academic",
+  }
 ];
 
 const events = [
-  ["21 Jun", "Freshers orientation and parent interaction", "Auditorium"],
-  ["28 Jun", "Hack LITAM: 24-hour product sprint", "Innovation Hub"],
-  ["05 Jul", "Career readiness bootcamp", "Placement Cell"],
+  ["21 Jun", "Freshers orientation and parent interaction", "Main Auditorium"],
+  ["28 Jun", "Hack LITAM: 24-hour product development sprint", "Innovation Hub"],
+  ["05 Jul", "Career readiness & resume building bootcamp", "Placement Cell"],
 ];
 
 const recruiters = [
@@ -121,45 +158,38 @@ const recruiters = [
 
 const testimonials = [
   {
-    quote:
-      "LITAM gave me the space to build, present, fail fast, and try again. The placement preparation felt personal.",
+    quote: "LITAM gave me the space to build, present, fail fast, and grow. The personal training from the placement cell was instrumental in helping me clear technical interviews with confidence.",
     name: "Akhila R.",
-    meta: "CSE, 2025",
+    meta: "CSE Graduate (Placed at TCS)",
   },
   {
-    quote:
-      "The faculty made complex subjects feel practical. Every semester had a project that pushed us closer to industry work.",
+    quote: "The academic rigor combined with hands-on lab experiments helped me understand core electronics topics. Faculty mentors guided me to build working prototypes for national competitions.",
     name: "Naveen K.",
-    meta: "ECE, 2024",
+    meta: "ECE Graduate (Placed at Capgemini)",
   },
   {
-    quote:
-      "Clubs, labs, and mentors helped me become confident enough to lead a team before graduating.",
+    quote: "Student life at LITAM is extremely vibrant. Being part of the Innovation Club helped me develop leadership and collaboration skills that are invaluable in my current software development role.",
     name: "Meghana S.",
-    meta: "AI & DS, 2025",
+    meta: "AI & DS Graduate (Placed at Accenture)",
   },
 ];
 
 const gallery = [
   {
     title: "Innovation Hub",
-    image:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
   },
   {
     title: "Central Library",
-    image:
-      "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=900&q=80",
   },
   {
     title: "Graduation Day",
-    image:
-      "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80",
   },
   {
     title: "Campus Life",
-    image:
-      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80",
   },
 ];
 
@@ -168,20 +198,21 @@ function CinematicField({ introDone }) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: false,
       alpha: true,
       powerPreference: "high-performance",
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 90);
     camera.position.set(0, 0, 16);
 
     const particles = new THREE.BufferGeometry();
-    const count = window.innerWidth < 700 ? 420 : 760;
+    const count = window.innerWidth < 700 ? 350 : 650;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
 
@@ -192,18 +223,18 @@ function CinematicField({ introDone }) {
       positions[i3 + 2] = (Math.random() - 0.5) * 22;
 
       const gold = Math.random() > 0.78;
-      colors[i3] = gold ? 1 : 0.25;
-      colors[i3 + 1] = gold ? 0.72 : 0.68;
-      colors[i3 + 2] = gold ? 0.32 : 1;
+      colors[i3] = gold ? 0.96 : 0.23;
+      colors[i3 + 1] = gold ? 0.62 : 0.51;
+      colors[i3 + 2] = gold ? 0.04 : 0.96;
     }
 
     particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     particles.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
     const particleMaterial = new THREE.PointsMaterial({
-      size: window.innerWidth < 700 ? 0.028 : 0.035,
+      size: window.innerWidth < 700 ? 0.03 : 0.04,
       transparent: true,
-      opacity: 0.72,
+      opacity: 0.65,
       vertexColors: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
@@ -212,35 +243,9 @@ function CinematicField({ introDone }) {
     const pointCloud = new THREE.Points(particles, particleMaterial);
     scene.add(pointCloud);
 
-    const circuitGroup = new THREE.Group();
-    const lineMaterial = new THREE.LineBasicMaterial({
-      color: 0x2eb8ff,
-      transparent: true,
-      opacity: 0.18,
-      blending: THREE.AdditiveBlending,
-    });
-
-    for (let i = 0; i < 34; i += 1) {
-      const x = (Math.random() - 0.5) * 22;
-      const y = (Math.random() - 0.5) * 10;
-      const z = -7 - Math.random() * 7;
-      const width = 0.5 + Math.random() * 1.7;
-      const lift = Math.random() > 0.5 ? 0.45 : -0.45;
-      const points = [
-        new THREE.Vector3(x, y, z),
-        new THREE.Vector3(x + width, y, z),
-        new THREE.Vector3(x + width, y + lift, z),
-        new THREE.Vector3(x + width * 1.6, y + lift, z),
-      ];
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      circuitGroup.add(new THREE.Line(geometry, lineMaterial));
-    }
-
-    scene.add(circuitGroup);
-
-    const ringGeometry = new THREE.RingGeometry(2.35, 2.4, 128);
+    const ringGeometry = new THREE.RingGeometry(2.35, 2.4, 64);
     const ringMaterial = new THREE.MeshBasicMaterial({
-      color: 0x58c7ff,
+      color: 0x3b82f6,
       transparent: true,
       opacity: 0,
       side: THREE.DoubleSide,
@@ -264,18 +269,14 @@ function CinematicField({ introDone }) {
 
     const animate = () => {
       const elapsed = (performance.now() - start) / 1000;
-      pointCloud.rotation.y = elapsed * 0.025;
-      pointCloud.rotation.x = Math.sin(elapsed * 0.38) * 0.015;
-      circuitGroup.rotation.z = Math.sin(elapsed * 0.24) * 0.015;
-      circuitGroup.position.x = Math.sin(elapsed * 0.3) * 0.16;
-      camera.position.z = THREE.MathUtils.lerp(camera.position.z, introDone ? 13.2 : 14.7, 0.018);
+      pointCloud.rotation.y = elapsed * 0.02;
+      pointCloud.rotation.x = Math.sin(elapsed * 0.3) * 0.015;
+      camera.position.z = THREE.MathUtils.lerp(camera.position.z, introDone ? 13 : 15, 0.02);
 
-      if (elapsed > 2.85 && elapsed < 4.25) {
-        const progress = (elapsed - 2.85) / 1.4;
+      if (elapsed > 2.5 && elapsed < 4) {
+        const progress = (elapsed - 2.5) / 1.5;
         ring.scale.setScalar(1 + progress * 5.6);
         ringMaterial.opacity = Math.sin(progress * Math.PI) * 0.45;
-      } else {
-        ringMaterial.opacity *= 0.92;
       }
 
       if (frame % 2 === 0 || window.innerWidth > 700) {
@@ -294,30 +295,27 @@ function CinematicField({ introDone }) {
       window.removeEventListener("resize", resize);
       particles.dispose();
       particleMaterial.dispose();
-      lineMaterial.dispose();
       ringGeometry.dispose();
       ringMaterial.dispose();
       renderer.dispose();
     };
   }, [introDone]);
 
-  return <canvas ref={canvasRef} className="atmosphere-canvas" aria-hidden="true" />;
+  return <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 1, pointerEvents: "none" }} aria-hidden="true" />;
 }
 
 function Intro({ onComplete }) {
   const [exit, setExit] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { stiffness: 70, damping: 22, mass: 0.6 });
-  const springY = useSpring(mouseY, { stiffness: 70, damping: 22, mass: 0.6 });
-  const bgX = useTransform(springX, [-1, 1], [-18, 18]);
-  const bgY = useTransform(springY, [-1, 1], [-10, 10]);
-  const bgTwoX = useTransform(bgX, (value) => value * -0.55);
-  const bgTwoY = useTransform(bgY, (value) => value * -0.45);
+  const springX = useSpring(mouseX, { stiffness: 60, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 60, damping: 20 });
+  const bgX = useTransform(springX, [-1, 1], [-15, 15]);
+  const bgY = useTransform(springY, [-1, 1], [-8, 8]);
 
   useEffect(() => {
-    const exitTimer = window.setTimeout(() => setExit(true), 3600);
-    const doneTimer = window.setTimeout(onComplete, 4450);
+    const exitTimer = window.setTimeout(() => setExit(true), 3200);
+    const doneTimer = window.setTimeout(onComplete, 4000);
     return () => {
       window.clearTimeout(exitTimer);
       window.clearTimeout(doneTimer);
@@ -335,72 +333,43 @@ function Intro({ onComplete }) {
       onPointerMove={handlePointerMove}
       initial={{ opacity: 1 }}
       animate={{ opacity: exit ? 0 : 1 }}
-      transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
       aria-label="LITAM cinematic intro"
     >
       <CinematicField introDone={exit} />
-      <motion.div className="mesh mesh-one" style={{ x: bgX, y: bgY }} />
-      <motion.div className="mesh mesh-two" style={{ x: bgTwoX, y: bgTwoY }} />
-      <motion.div
-        className="light-rays"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0.65, 0.45, 0.75] }}
-        transition={{ duration: 3.2, delay: 0.45, ease: "easeOut" }}
-      />
-      <motion.div
-        className="scan-beam"
-        initial={{ x: "-65vw", opacity: 0 }}
-        animate={{ x: "68vw", opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 2.15, delay: 0.86, ease: [0.22, 1, 0.36, 1] }}
-      />
       <motion.div
         className="camera-stage"
-        initial={{ scale: 0.88, z: 0 }}
-        animate={{ scale: [0.88, 0.94, 1], y: [10, 0, -2] }}
-        transition={{ duration: 4.2, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ scale: 0.9, y: 10 }}
+        animate={{ scale: 1, y: 0 }}
+        transition={{ duration: 3.5, ease: "easeOut" }}
       >
         <div className="logo-wrap" aria-label="LITAM">
           {letters.map((letter, index) => (
             <motion.span
               className="metal-letter"
               key={letter}
-              initial={{ opacity: 0, y: 42, rotateX: 72, filter: "blur(18px)", scale: 0.82 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)", scale: 1 }}
+              initial={{ opacity: 0, y: 35, rotateX: 60 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
               transition={{
                 type: "spring",
-                stiffness: 92,
-                damping: 18,
-                mass: 0.9,
-                delay: 1.1 + index * 0.18,
+                stiffness: 80,
+                damping: 15,
+                delay: 0.5 + index * 0.15,
               }}
-              data-letter={letter}
-              style={{ "--letter-delay": `${1.25 + index * 0.14}s` }}
             >
               {letter}
             </motion.span>
           ))}
         </div>
-        <motion.div
-          className="energy-ring"
-          initial={{ opacity: 0, scale: 0.42 }}
-          animate={{ opacity: [0, 0.8, 0], scale: [0.42, 1.1, 2.45] }}
-          transition={{ duration: 1.45, delay: 2.6, ease: [0.16, 1, 0.3, 1] }}
-        />
         <motion.p
           className="tagline"
-          initial={{ opacity: 0, y: 14, letterSpacing: "0.34em" }}
-          animate={{ opacity: 1, y: 0, letterSpacing: "0.16em" }}
-          transition={{ duration: 1.15, delay: 3.0, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, letterSpacing: "0.4em" }}
+          animate={{ opacity: 1, letterSpacing: "0.25em" }}
+          transition={{ duration: 1, delay: 1.8 }}
         >
           Empowering Minds. Building Futures.
         </motion.p>
       </motion.div>
-      <motion.div
-        className="lens-flare"
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: [0, 0.75, 0.25], scale: [0.7, 1.1, 1] }}
-        transition={{ duration: 1.4, delay: 2.45, ease: "easeOut" }}
-      />
     </motion.section>
   );
 }
@@ -434,11 +403,11 @@ function SiteHeader({ theme, onToggleTheme }) {
       <div className="header-inner">
         <a className="brand-lockup" href="#home" aria-label="LITAM home">
           <span className="brand-mark">
-            <img src={litamLogo} alt="" width="44" height="44" />
+            <img src={litamLogo} alt="LITAM Logo" width="46" height="46" />
           </span>
           <span className="brand-copy">
             <strong>LITAM</strong>
-            <small>Loyola Institute of Technology and Management</small>
+            <small>Loyola Institute of Technology & Management</small>
           </span>
         </a>
         <nav className="desktop-nav" aria-label="Primary navigation">
@@ -446,48 +415,41 @@ function SiteHeader({ theme, onToggleTheme }) {
         </nav>
         <div className="header-actions">
           <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
-            <span className={theme === "dark" ? "theme-icon moon-icon" : "theme-icon sun-icon"} aria-hidden="true" />
+            <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
           </button>
           <button
-            className="menu-toggle"
+            className={`menu-toggle ${menuOpen ? "open" : ""}`}
             type="button"
             aria-controls="mobile-navigation"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((isOpen) => !isOpen)}
+            aria-label="Toggle Menu"
           >
-            <span className="sr-only">{menuOpen ? "Close navigation" : "Open navigation"}</span>
-            <span aria-hidden="true" />
-            <span aria-hidden="true" />
-            <span aria-hidden="true" />
+            <span style={{ transform: menuOpen ? "rotate(45deg) translate(5px, 5px)" : "none" }} />
+            <span style={{ opacity: menuOpen ? 0 : 1 }} />
+            <span style={{ transform: menuOpen ? "rotate(-45deg) translate(4px, -4px)" : "none" }} />
           </button>
         </div>
       </div>
-      <motion.nav
+      <nav
         id="mobile-navigation"
-        className="mobile-nav"
+        className={`mobile-nav ${menuOpen ? "open" : ""}`}
         aria-label="Mobile primary navigation"
-        initial={false}
-        animate={menuOpen ? "open" : "closed"}
-        variants={{
-          open: { opacity: 1, height: "auto", y: 0, pointerEvents: "auto" },
-          closed: { opacity: 0, height: 0, y: -8, pointerEvents: "none" },
-        }}
-        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
       >
         {links("mobile-nav-list")}
-      </motion.nav>
+      </nav>
     </header>
   );
 }
 
-function Reveal({ children, className = "" }) {
+function Reveal({ children, className = "", delay = 0 }) {
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
     </motion.div>
@@ -498,7 +460,7 @@ function SectionHeading({ eyebrow, title, text }) {
   return (
     <div className="section-heading">
       <span className="eyebrow">{eyebrow}</span>
-      <h2>{title}</h2>
+      <h2 className="gradient-text">{title}</h2>
       {text && <p>{text}</p>}
     </div>
   );
@@ -507,55 +469,44 @@ function SectionHeading({ eyebrow, title, text }) {
 function HeroSection() {
   return (
     <section className="hero" id="home">
+      <div className="glowing-orb orb-primary" style={{ top: "10%", left: "15%" }} />
+      <div className="glowing-orb orb-accent" style={{ bottom: "5%", right: "10%" }} />
       <div className="hero-media" aria-hidden="true">
         <img
           src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=82"
-          alt=""
+          alt="LITAM Campus Building"
         />
       </div>
       <div className="hero-shade" aria-hidden="true" />
-      <div className="hero-content">
-        <motion.span
-          className="eyebrow"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          Innovation-led education
-        </motion.span>
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.28, duration: 0.66, ease: [0.16, 1, 0.3, 1] }}
-        >
-          Loyola Institute of Technology and Management
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.42, duration: 0.62 }}
-        >
-          A disciplined, future-facing campus where engineering ambition meets mentorship, modern labs,
-          and career-ready learning.
-        </motion.p>
-        <motion.div
-          className="hero-actions"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.58 }}
-        >
-          <a className="primary-action" href="#about">
-            Explore LITAM
-          </a>
-          <a className="secondary-action" href="#placements">
-            View placements
-          </a>
-        </motion.div>
-      </div>
-      <div className="hero-panel">
-        <span>Admissions 2026</span>
-        <strong>Counselling support open</strong>
-        <p>Programs in CSE, AI & DS, ECE, EEE, Mechanical, and Civil Engineering.</p>
+      <div className="section">
+        <div className="hero-content">
+          <Reveal>
+            <span className="eyebrow">Innovation-Led Education</span>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h1 className="gradient-text">Loyola Institute of Technology & Management</h1>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p>
+              A disciplined, future-facing campus where engineering ambition meets elite mentorship, advanced laboratorial research, and guaranteed career-ready practice.
+            </p>
+          </Reveal>
+          <Reveal delay={0.3} className="hero-actions">
+            <a className="btn btn-primary" href="#academics">
+              Explore Programs
+            </a>
+            <a className="btn btn-secondary" href="#placements">
+              View Placements
+            </a>
+          </Reveal>
+          <Reveal delay={0.4} className="hero-panel">
+            <div className="hero-panel-inner glass">
+              <span>Admissions 2026</span>
+              <strong>Counselling Support Active</strong>
+              <p>Apply for CSE, Artificial Intelligence, Data Science, ECE, EEE, Mechanical, or Civil Engineering.</p>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -563,24 +514,28 @@ function HeroSection() {
 
 function PrincipalMessage() {
   return (
-    <section className="section principal" id="principal">
-      <Reveal className="principal-card">
-        <div className="principal-portrait">
-          <img
-            src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=700&q=80"
-            alt="Principal portrait"
-          />
-        </div>
-        <div>
-          <span className="eyebrow">Principal's Message</span>
-          <h2>Education that builds skill, character, and confidence.</h2>
-          <p>
-            At LITAM, we prepare students to think clearly, solve responsibly, and lead with integrity.
-            Our focus is not only academic achievement, but the habits that turn knowledge into useful
-            work for society and industry.
-          </p>
-          <strong>Dr. A. Ramanathan</strong>
-          <small>Principal, LITAM</small>
+    <section className="section" id="principal-message">
+      <div className="glowing-orb orb-primary" style={{ top: "30%", right: "10%" }} />
+      <Reveal>
+        <div className="principal-card glass">
+          <div className="principal-portrait">
+            <img
+              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=700&q=80"
+              alt="Dr. A. Ramanathan - Principal"
+            />
+          </div>
+          <div>
+            <span className="eyebrow">Principal's Message</span>
+            <h2 className="gradient-text">Education that builds skill, character, and confidence.</h2>
+            <p>
+              &quot;At LITAM, we prepare students to think clearly, solve responsibly, and lead with integrity.
+              Our curriculum blends conceptual rigor with real-world application, instilling in candidates the technical competence and ethical fortitude required to innovate solutions for contemporary global challenges.&quot;
+            </p>
+            <div className="principal-meta">
+              <strong>Dr. A. Ramanathan</strong>
+              <small>Principal, LITAM</small>
+            </div>
+          </div>
         </div>
       </Reveal>
     </section>
@@ -590,88 +545,232 @@ function PrincipalMessage() {
 function AboutAndStats() {
   return (
     <section className="section split-section" id="about">
-      <Reveal>
-        <SectionHeading
-          eyebrow="About LITAM"
-          title="Established in 2001 with AICTE approval, JNTUK affiliation, and NAAC A accreditation."
-          text="Loyola Institute of Technology and Management serves students from rural, semi-urban, and urban communities through technical, management, and computer applications education."
-        />
-      </Reveal>
-      <div className="stats-grid">
-        {stats.map(([value, label], index) => (
-          <Reveal className="stat-card" key={label}>
-            <motion.strong
-              initial={{ opacity: 0, scale: 0.92 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08, duration: 0.4 }}
-            >
-              {value}
-            </motion.strong>
-            <span>{label}</span>
-          </Reveal>
-        ))}
-      </div>
-      <Reveal className="institution-card">
-        {institutionDetails.map(([label, value]) => (
-          <div className="institution-row" key={label}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </div>
-        ))}
-      </Reveal>
-      <Reveal className="features-card">
-        <span className="eyebrow">Unique Features</span>
-        <ul>
-          {uniqueFeatures.map((feature) => (
-            <li key={feature}>{feature}</li>
+      <div className="glowing-orb orb-accent" style={{ top: "10%", left: "5%" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <Reveal>
+          <SectionHeading
+            eyebrow="About LITAM"
+            title="Established in 2001, providing state-of-the-art technical & management education."
+            text="Loyola Institute of Technology and Management operates under the Santhi Nikethan Minority Education Society, serving students from urban, rural, and semi-urban communities across Andhra Pradesh."
+          />
+        </Reveal>
+        <div className="stats-grid">
+          {stats.map(([value, label], index) => (
+            <Reveal className="stat-card glass" key={label} delay={index * 0.05}>
+              <strong>{value}</strong>
+              <span>{label}</span>
+            </Reveal>
           ))}
-        </ul>
-      </Reveal>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <Reveal className="institution-card glass">
+          {institutionDetails.map(([label, value]) => (
+            <div className="institution-row" key={label}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
+        </Reveal>
+        <Reveal className="features-card">
+          <h3 style={{ marginBottom: "16px", fontSize: "1.25rem" }} className="gradient-text">Key Features</h3>
+          <ul>
+            {uniqueFeatures.map((feature, idx) => (
+              <li key={feature} className="glass" style={{ transitionDelay: `${idx * 0.05}s` }}>
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      </div>
     </section>
   );
 }
 
 function AcademicsSection() {
+  const [activeTab, setActiveTab] = useState("btech");
+
+  const categoryKeys = Object.keys(courseCategories);
+
   return (
-    <section className="section info-section" id="academics">
+    <section className="section" id="academics">
+      <div className="glowing-orb orb-primary" style={{ bottom: "5%", left: "10%" }} />
       <Reveal>
         <SectionHeading
           eyebrow="Academics"
-          title="Courses offered across B.Tech, M.Tech, Diploma, MBA, and MCA."
-          text="Programs combine classroom clarity with practical exposure, state-of-the-art laboratories, project reviews, and continuous mentoring."
+          title="Courses designed for tomorrow's technology landscapes."
+          text="Explore undergraduate, post-graduate, and diploma courses combining modern laboratory modules with comprehensive aptitude mentoring."
         />
       </Reveal>
-      <div className="info-grid">
-        {academics.map(([title, text]) => (
-          <Reveal className="info-card" key={title}>
-            <strong>{title}</strong>
-            <p>{text}</p>
-          </Reveal>
-        ))}
+
+      <div className="course-explorer">
+        <Reveal className="tabs-list">
+          {categoryKeys.map((key) => (
+            <button
+              key={key}
+              className={`tab-btn ${activeTab === key ? "active" : ""}`}
+              onClick={() => setActiveTab(key)}
+            >
+              {key === "btech" ? "B.Tech" : key === "mtech" ? "M.Tech" : key === "diploma" ? "Diploma" : "Post-Grad"}
+            </button>
+          ))}
+        </Reveal>
+
+        <div className="courses-grid">
+          {courseCategories[activeTab].courses.map((course, index) => (
+            <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
+              <span className="course-tag">{courseCategories[activeTab].title}</span>
+              <strong>{course.name}</strong>
+              <p>{course.desc}</p>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal style={{ textAlign: "center", marginTop: "16px" }}>
+          <span className="badge badge-info">{courseCategories[activeTab].code}</span>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-function AdmissionsSection() {
+function EligibilityEstimator() {
+  const [courseLevel, setCourseLevel] = useState("btech");
+  const [hasEntrance, setHasEntrance] = useState("yes");
+
+  const estData = useMemo(() => {
+    switch (courseLevel) {
+      case "btech":
+        return {
+          code: "LOYL",
+          exam: "AP EAPCET / AP ECET",
+          duration: "4 Years (3 Years for lateral entry)",
+          criteria: "Intermediate (10+2) with MPC subjects or equivalent diploma.",
+          path: "Convenor quota admissions through online EAPCET counselling, or Management quota."
+        };
+      case "mtech":
+        return {
+          code: "LOYL",
+          exam: "AP PGECET / GATE",
+          duration: "2 Years (4 Semesters)",
+          criteria: "B.E./B.Tech degree in matching engineering branches with qualifying percentage.",
+          path: "Admissions based on PGECET counselling rank or GATE scores."
+        };
+      case "diploma":
+        return {
+          code: "LITM",
+          exam: "AP POLYCET",
+          duration: "3 Years (6 Semesters)",
+          criteria: "Secondary School Certificate (SSC / 10th standard) pass with Mathematics.",
+          path: "Convenor admissions based on POLYCET state rank, or Direct Management entry."
+        };
+      case "mba":
+        return {
+          code: "LITM",
+          exam: "AP ICET",
+          duration: "2 Years (4 Semesters)",
+          criteria: "Recognized Bachelor's degree (3-year duration) with minimum 50% marks.",
+          path: "Online ICET counselling under LOYL convenor code, or college admissions cell."
+        };
+      case "mca":
+        return {
+          code: "LITM",
+          exam: "AP ICET",
+          duration: "2 Years (4 Semesters)",
+          criteria: "Bachelor's degree with Mathematics at 10+2 level or Graduation level.",
+          path: "Rank-based admissions via state ICET counselling convenor allotment."
+        };
+      default:
+        return {};
+    }
+  }, [courseLevel]);
+
   return (
-    <section className="section admissions-section" id="admissions">
-      <Reveal className="contact-card">
-        <div>
-          <span className="eyebrow">Admissions</span>
-          <h2>Clear counselling support for students and families.</h2>
-          <p>
-            Get guidance on programs, eligibility, AP EAPCET, ECET, PGECET, ICET, POLYCET
-            counselling codes, campus visits, and document readiness.
-          </p>
-        </div>
-        <div className="contact-list">
-          <a href="tel:+919505798369">9505 798 369</a>
-          <a href="tel:+917416516222">7416 516 222</a>
-          <span>LOYL for AP EAPCET / ECET / PGECET; LITM for AP ICET / AP POLYCET.</span>
-        </div>
+    <section className="section" id="admissions">
+      <div className="glowing-orb orb-accent" style={{ top: "30%", right: "15%" }} />
+      <Reveal>
+        <SectionHeading
+          eyebrow="Admissions Support"
+          title="Calculate eligibility & verify admission codes instantly."
+          text="Select your desired program level and discover specific entry examinations, course durations, and state counselling guidelines."
+        />
       </Reveal>
+
+      <div className="estimator-layout">
+        <Reveal className="glass glass-card">
+          <h3 style={{ marginBottom: "24px" }} className="gradient-text">Eligibility Calculator</h3>
+          <div className="form-group">
+            <label htmlFor="course-select">Select Target Course</label>
+            <select
+              id="course-select"
+              className="form-select"
+              value={courseLevel}
+              onChange={(e) => setCourseLevel(e.target.value)}
+            >
+              <option value="btech">B.Tech (Bachelor of Technology)</option>
+              <option value="mtech">M.Tech (Master of Technology)</option>
+              <option value="diploma">Diploma (Polytechnic Courses)</option>
+              <option value="mba">MBA (Business Administration)</option>
+              <option value="mca">MCA (Computer Applications)</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="exam-select">Have you cleared the state entrance exam?</label>
+            <select
+              id="exam-select"
+              className="form-select"
+              value={hasEntrance}
+              onChange={(e) => setHasEntrance(e.target.value)}
+            >
+              <option value="yes">Yes, I have a rank card</option>
+              <option value="no">No, exploring Management/Direct Quota</option>
+            </select>
+          </div>
+
+          <div style={{ marginTop: "32px", display: "flex", flexDirection: "column", gap: "12px" }}>
+            <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "600" }}>Have questions? Speak to an advisor:</span>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+              <a href="tel:+919505798369" className="btn btn-primary" style={{ padding: "10px 20px", fontSize: "0.8rem" }}>
+                Call 9505 798 369
+              </a>
+              <a href="tel:+917416516222" className="btn btn-secondary" style={{ padding: "10px 20px", fontSize: "0.8rem" }}>
+                Call 7416 516 222
+              </a>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="estimator-results glass glass-card">
+          <div className="results-header">
+            <h3 className="gradient-text">Admission Specifications</h3>
+            <span className="badge badge-info">Counselling Code: {estData.code}</span>
+          </div>
+
+          <div className="results-grid">
+            <div className="result-item">
+              <span>Required Exam</span>
+              <strong>{estData.exam}</strong>
+            </div>
+            <div className="result-item">
+              <span>Duration</span>
+              <strong>{estData.duration}</strong>
+            </div>
+            <div className="result-item" style={{ gridColumn: "1 / -1" }}>
+              <span>Academic Criteria</span>
+              <p style={{ fontSize: "0.92rem", marginTop: "4px" }}>{estData.criteria}</p>
+            </div>
+            <div className="result-item" style={{ gridColumn: "1 / -1" }}>
+              <span>Admission Pathway</span>
+              <p style={{ fontSize: "0.92rem", marginTop: "4px" }}>
+                {hasEntrance === "yes"
+                  ? estData.path
+                  : `Direct Management Admission available. Visit LITAM campus with intermediate/SSC documents to lock in your seats.`}
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -679,106 +778,129 @@ function AdmissionsSection() {
 function FacultyAndResearch() {
   return (
     <section className="section split-section" id="faculty">
-      <Reveal>
-        <SectionHeading
-          eyebrow="Faculty"
-          title="A mentoring-first academic culture."
-          text="Faculty teams support students through classroom learning, labs, reviews, and career preparation."
-        />
-      </Reveal>
-      <div className="faculty-grid">
-        {facultyHighlights.map(([title, text]) => (
-          <Reveal className="faculty-card" key={title}>
-            <strong>{title}</strong>
-            <span>{text}</span>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function ResearchSection() {
-  return (
-    <section className="section info-section" id="research">
-      <Reveal>
-        <SectionHeading
-          eyebrow="Research"
-          title="Innovation activity shaped by practical problems."
-          text="Research and project work is supported by labs, internet access, faculty mentoring, and industry-oriented exposure."
-        />
-      </Reveal>
-      <div className="placement-grid">
-        <Reveal className="placement-highlight">
-          <span>Focus areas</span>
-          <strong>AI, IoT, energy, design</strong>
-          <p>Interdisciplinary teams work on prototypes, papers, and competition-ready projects.</p>
+      <div className="glowing-orb orb-primary" style={{ bottom: "10%", right: "5%" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <Reveal>
+          <SectionHeading
+            eyebrow="Faculty"
+            title="A mentoring-first academic environment."
+            text="LITAM focuses heavily on student-faculty interactivity, ensuring concepts are fully digested in the classroom and actively applied in laboratories."
+          />
         </Reveal>
-        <Reveal className="placement-highlight">
-          <span>Student pathway</span>
-          <strong>Build, test, publish</strong>
-          <p>Students move from guided lab work to demos, presentations, and external showcases.</p>
-        </Reveal>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {facultyHighlights.map(([title, text], index) => (
+            <Reveal className="glass glass-card" key={title} delay={index * 0.05} style={{ padding: "24px" }}>
+              <strong style={{ fontSize: "1.15rem", color: "var(--primary)", display: "block", marginBottom: "6px", fontFamily: "var(--font-heading)" }}>{title}</strong>
+              <p style={{ fontSize: "0.92rem" }}>{text}</p>
+            </Reveal>
+          ))}
+        </div>
       </div>
-    </section>
-  );
-}
 
-function StudentLifeSection() {
-  return (
-    <section className="section info-section" id="student-life">
-      <Reveal>
-        <SectionHeading
-          eyebrow="Student Life"
-          title="A campus rhythm that balances ambition and belonging."
-          text="Student life at LITAM is shaped by clubs, peer learning, cultural expression, sports, and support."
-        />
-      </Reveal>
-      <div className="info-grid">
-        {studentLife.map(([title, text]) => (
-          <Reveal className="info-card" key={title}>
-            <strong>{title}</strong>
-            <p>{text}</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }} id="research">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Research & Innovation"
+            title="Translating practical ideas into technical prototypes."
+            text="LITAM provides computer labs, core technical design rooms, research journals, and expert mentoring to support student paper publication and patent design."
+          />
+        </Reveal>
+        <div className="stats-grid">
+          <Reveal className="stat-card glass">
+            <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--text-faint)", fontWeight: "800" }}>Focus Fields</span>
+            <strong style={{ fontSize: "1.75rem", marginBlock: "8px" }} className="gradient-text">AI, IoT & Energy</strong>
+            <p style={{ fontSize: "0.88rem" }}>Student research teams build smart microgrid modules, automation systems, and computer vision tools.</p>
           </Reveal>
-        ))}
+          <Reveal className="stat-card glass">
+            <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--text-faint)", fontWeight: "800" }}>Innovation Path</span>
+            <strong style={{ fontSize: "1.75rem", marginBlock: "8px" }} className="gradient-text">Build, Test, Present</strong>
+            <p style={{ fontSize: "0.88rem" }}>Progress from simple laboratory projects to research paper publications and national engineering awards.</p>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
 }
 
 function NewsAndEvents() {
+  const [activeFilter, setActiveFilter] = useState("All");
+  const filters = ["All", "Admissions", "Institution", "Campus", "Academic"];
+
+  const filteredNews = useMemo(() => {
+    if (activeFilter === "All") return news;
+    return news.filter((n) => n.tag === activeFilter);
+  }, [activeFilter]);
+
   return (
-    <section className="section news-events" id="news-and-events">
+    <section className="section" id="news-and-events">
+      <div className="glowing-orb orb-accent" style={{ top: "15%", left: "10%" }} />
       <Reveal>
         <SectionHeading
-          eyebrow="Latest updates"
-          title="News, announcements, and campus moments."
-          text="Stay close to academic alerts, student achievements, and opportunities around campus."
+          eyebrow="Updates Feed"
+          title="Announcements, admissions & highlights."
+          text="Stay aligned with upcoming exam schedules, counselling events, placement drives, and campus club updates."
         />
       </Reveal>
-      <div className="content-grid">
-        <div className="news-list">
-          {news.map((item) => (
-            <Reveal className="news-card" key={item.title}>
-              <time>{item.date}</time>
-              <div>
-                <span>{item.tag}</span>
-                <h3>{item.title}</h3>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-        <Reveal className="events-card" id="events">
-          <span className="eyebrow">Upcoming Events</span>
-          {events.map(([date, title, place]) => (
-            <div className="event-row" key={title}>
-              <time>{date}</time>
-              <div>
-                <strong>{title}</strong>
-                <span>{place}</span>
-              </div>
+
+      <div className="dashboard-layout">
+        <div className="news-feed">
+          <div className="feed-header">
+            <h3 style={{ fontSize: "1.25rem" }} className="gradient-text">Latest News</h3>
+            <div className="feed-filters">
+              {filters.map((f) => (
+                <button
+                  key={f}
+                  className={`filter-btn ${activeFilter === f ? "active" : ""}`}
+                  onClick={() => setActiveFilter(f)}
+                >
+                  {f}
+                </button>
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            {filteredNews.length > 0 ? (
+              filteredNews.map((item, index) => {
+                const [day, mon] = item.date.split(" ");
+                return (
+                  <Reveal className="news-card glass" key={item.title} delay={index * 0.05}>
+                    <div className="news-date">
+                      <strong>{day}</strong>
+                      <span>{mon}</span>
+                    </div>
+                    <div className="news-body">
+                      <span>{item.tag}</span>
+                      <h3>{item.title}</h3>
+                    </div>
+                  </Reveal>
+                );
+              })
+            ) : (
+              <p style={{ textAlign: "center", padding: "40px", color: "var(--text-faint)" }}>No updates posted in this category.</p>
+            )}
+          </div>
+        </div>
+
+        <Reveal className="events-card glass" id="events">
+          <h3 className="gradient-text">Upcoming Events</h3>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {events.map(([date, title, place]) => {
+              const [day, mon] = date.split(" ");
+              return (
+                <div className="event-row" key={title}>
+                  <div className="event-date">
+                    <strong>{day}</strong>
+                    <span>{mon}</span>
+                  </div>
+                  <div className="event-info">
+                    <strong>{title}</strong>
+                    <span>{place}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </Reveal>
       </div>
     </section>
@@ -789,26 +911,33 @@ function Placements() {
   const duplicatedRecruiters = useMemo(() => [...recruiters, ...recruiters], []);
 
   return (
-    <section className="section placements" id="placements">
+    <section className="section" id="placements">
+      <div className="glowing-orb orb-primary" style={{ top: "10%", right: "10%" }} />
       <Reveal>
         <SectionHeading
           eyebrow="Placements"
-          title="Career preparation with measurable momentum."
-          text="The placement cell blends aptitude training, technical mentoring, interview readiness, and recruiter engagement."
+          title="Launch your career with guaranteed industrial momentum."
+          text="LITAM's active training and placement cell runs exhaustive aptitude preparation, mock coding challenges, and direct recruiter onboarding."
         />
       </Reveal>
-      <div className="placement-grid">
-        <Reveal className="placement-highlight">
-          <span>Highest package</span>
+
+      <div className="placement-highlights">
+        <Reveal className="placement-highlight glass">
+          <span>Highest CTC Package</span>
           <strong>12 LPA</strong>
-          <p>Students placed across software, core engineering, consulting, and emerging technology roles.</p>
+          <p>Students placed across software architectures, web design, core hardware systems, and corporate consulting.</p>
         </Reveal>
-        <Reveal className="placement-highlight">
-          <span>Training hours</span>
-          <strong>300+</strong>
-          <p>Structured preparation across communication, aptitude, coding, and domain interviews.</p>
+        <Reveal className="placement-highlight glass" delay={0.1}>
+          <span>Training Hours</span>
+          <strong>300+ Hrs</strong>
+          <p>Structured coaching in quantitative methods, data structures, professional styling, and resume building.</p>
         </Reveal>
       </div>
+
+      <Reveal style={{ marginBottom: "16px" }}>
+        <h3 style={{ fontSize: "1.15rem", color: "var(--text-muted)" }}>Our Recruiter Network</h3>
+      </Reveal>
+      
       <div className="recruiter-marquee" aria-label="Recruiters carousel">
         <motion.div
           className="recruiter-track"
@@ -829,42 +958,110 @@ function Placements() {
   );
 }
 
-function Testimonials() {
+function StudentLifeSection() {
   return (
-    <section className="section testimonials">
+    <section className="section" id="student-life">
+      <div className="glowing-orb orb-accent" style={{ bottom: "10%", left: "5%" }} />
       <Reveal>
         <SectionHeading
-          eyebrow="Student voices"
-          title="Confidence grows when students are seen, guided, and challenged."
+          eyebrow="Student Life"
+          title="A campus rhythm balancing focus and self-discovery."
+          text="Academics at LITAM is coupled with vibrant student associations, multi-disciplinary clubs, and secure support infrastructure."
         />
       </Reveal>
-      <div className="testimonial-grid">
-        {testimonials.map((item) => (
-          <Reveal className="testimonial-card" key={item.name}>
-            <p>&quot;{item.quote}&quot;</p>
-            <strong>{item.name}</strong>
-            <span>{item.meta}</span>
+
+      <div className="courses-grid" style={{ marginTop: "16px" }}>
+        {studentLife.map(([title, text], idx) => (
+          <Reveal className="course-card glass" key={title} delay={idx * 0.05}>
+            <strong>{title}</strong>
+            <p>{text}</p>
           </Reveal>
         ))}
       </div>
+    </section>
+  );
+}
+
+function Testimonials() {
+  const [index, setIndex] = useState(0);
+
+  const handleNext = () => {
+    setIndex((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const handlePrev = () => {
+    setIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  return (
+    <section className="section" id="testimonials">
+      <div className="glowing-orb orb-primary" style={{ top: "40%", left: "20%" }} />
+      <Reveal>
+        <SectionHeading
+          eyebrow="Success Stories"
+          title="Confidence builds when candidates are seen, challenged & mentored."
+          text="Hear directly from recent graduates who translated classroom teachings into high-paying professional roles."
+        />
+      </Reveal>
+
+      <Reveal className="slider-container glass glass-card">
+        <div className="slider-track">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              className="slider-item"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <p>&quot;{testimonials[index].quote}&quot;</p>
+              <div className="slider-item-meta">
+                <strong>{testimonials[index].name}</strong>
+                <span>{testimonials[index].meta}</span>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="slider-controls">
+          <div className="slider-pagination">
+            {testimonials.map((_, idx) => (
+              <button
+                key={idx}
+                className={`dot ${index === idx ? "active" : ""}`}
+                onClick={() => setIndex(idx)}
+                aria-label={`Slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+          <div className="slider-buttons">
+            <button className="slider-btn" onClick={handlePrev} aria-label="Previous Slide">←</button>
+            <button className="slider-btn" onClick={handleNext} aria-label="Next Slide">→</button>
+          </div>
+        </div>
+      </Reveal>
     </section>
   );
 }
 
 function GalleryPreview() {
   return (
-    <section className="section gallery-section" id="gallery">
+    <section className="section" id="gallery">
       <Reveal>
         <SectionHeading
           eyebrow="Gallery"
-          title="A quick look at spaces where learning becomes memorable."
+          title="A preview of our modern laboratory & research infrastructure."
+          text="Step inside our high-tech digital computing labs, academic halls, and resource-filled libraries."
         />
       </Reveal>
-      <div className="gallery-grid">
-        {gallery.map((item) => (
-          <Reveal className="gallery-item" key={item.title}>
+      <div className="gallery-grid" style={{ marginTop: "16px" }}>
+        {gallery.map((item, index) => (
+          <Reveal className="gallery-item" key={item.title} delay={index * 0.05}>
             <img src={item.image} alt={item.title} loading="lazy" />
-            <span>{item.title}</span>
+            <div className="gallery-overlay">
+              <span>{item.title}</span>
+            </div>
           </Reveal>
         ))}
       </div>
@@ -872,21 +1069,178 @@ function GalleryPreview() {
   );
 }
 
-function ContactInfo() {
+function ContactSection() {
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", course: "btech", message: "" });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const validate = () => {
+    const tempErrors = {};
+    if (!formData.name.trim()) tempErrors.name = "Full name is required";
+    if (!formData.phone.trim()) {
+      tempErrors.phone = "Phone number is required";
+    } else if (!/^[0-9\s+-]{10,15}$/.test(formData.phone.trim())) {
+      tempErrors.phone = "Provide a valid phone number";
+    }
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      tempErrors.email = "Provide a valid email address";
+    }
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      setIsSubmitting(true);
+      // Simulate API call
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setIsSubmitted(true);
+      }, 1200);
+    }
+  };
+
   return (
-    <section className="section contact-section" id="contact">
-      <Reveal className="contact-card">
-        <div>
-          <span className="eyebrow">Contact</span>
-          <h2>Talk to LITAM admissions and campus support.</h2>
-          <p>Reach out for admissions, campus visits, academic information, transport routes, hostels, and placement partnerships.</p>
-        </div>
-        <div className="contact-list">
-          <a href="tel:+919505798369">9505 798 369</a>
-          <a href="tel:+917416516222">7416 516 222</a>
-          <span>LITAM Campus, Palnadu/Guntur region, Andhra Pradesh, India</span>
-        </div>
+    <section className="section" id="contact">
+      <div className="glowing-orb orb-primary" style={{ bottom: "5%", right: "15%" }} />
+      <Reveal>
+        <SectionHeading
+          eyebrow="Contact Us"
+          title="Direct queries to our admissions & partnership cells."
+          text="Fill out the contact form below or reach out directly to secure engineering guidance and campus visit bookings."
+        />
       </Reveal>
+
+      <div className="contact-layout">
+        <div className="contact-info-list">
+          <Reveal className="contact-info-card glass">
+            <div className="contact-info-icon">☏</div>
+            <div className="contact-info-text">
+              <span>Phone Enquiries</span>
+              <strong>+91 9505798369</strong>
+              <p>Direct support lines for counselling registration and eligibility assistance.</p>
+            </div>
+          </Reveal>
+
+          <Reveal className="contact-info-card glass" delay={0.05}>
+            <div className="contact-info-icon">✉</div>
+            <div className="contact-info-text">
+              <span>Office Desk Support</span>
+              <strong>+91 7416516222</strong>
+              <p>Reach out for academic certification issues, fees, hostels, and bus routes.</p>
+            </div>
+          </Reveal>
+
+          <Reveal className="contact-info-card glass" delay={0.1}>
+            <div className="contact-info-icon">⚲</div>
+            <div className="contact-info-text">
+              <span>Campus Location</span>
+              <strong>Palnadu / Guntur region, AP</strong>
+              <p>LITAM Engineering Campus, Andhra Pradesh, India.</p>
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal className="glass glass-card">
+          {!isSubmitted ? (
+            <form className="contact-form" onSubmit={handleSubmit} noValidate>
+              <h3 style={{ marginBottom: "24px" }} className="gradient-text">Submit an Inquiry</h3>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="name-input">Full Name *</label>
+                  <input
+                    id="name-input"
+                    type="text"
+                    name="name"
+                    className="form-input"
+                    value={formData.name}
+                    onChange={handleInput}
+                    placeholder="Enter your name"
+                  />
+                  {errors.name && <span style={{ fontSize: "0.75rem", color: "var(--accent)", fontWeight: "600" }}>{errors.name}</span>}
+                </div>
+                <div className="form-group">
+                  <label htmlFor="phone-input">Phone Number *</label>
+                  <input
+                    id="phone-input"
+                    type="tel"
+                    name="phone"
+                    className="form-input"
+                    value={formData.phone}
+                    onChange={handleInput}
+                    placeholder="e.g. 9876543210"
+                  />
+                  {errors.phone && <span style={{ fontSize: "0.75rem", color: "var(--accent)", fontWeight: "600" }}>{errors.phone}</span>}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email-input">Email Address (Optional)</label>
+                <input
+                  id="email-input"
+                  type="email"
+                  name="email"
+                  className="form-input"
+                  value={formData.email}
+                  onChange={handleInput}
+                  placeholder="name@domain.com"
+                />
+                {errors.email && <span style={{ fontSize: "0.75rem", color: "var(--accent)", fontWeight: "600" }}>{errors.email}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="inquiry-course">Branch of Interest</label>
+                <select
+                  id="inquiry-course"
+                  name="course"
+                  className="form-select"
+                  value={formData.course}
+                  onChange={handleInput}
+                >
+                  <option value="btech">B.Tech (Engineering)</option>
+                  <option value="diploma">Diploma (Polytechnic)</option>
+                  <option value="postgrad">Post-Graduate (MBA/MCA)</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="message-input">Message / Questions</label>
+                <textarea
+                  id="message-input"
+                  name="message"
+                  className="form-input"
+                  value={formData.message}
+                  onChange={handleInput}
+                  placeholder="Tell us about your educational background or questions..."
+                />
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ width: "100%", marginTop: "16px" }} disabled={isSubmitting}>
+                {isSubmitting ? "Submitting Inquiry..." : "Submit Inquiry"}
+              </button>
+            </form>
+          ) : (
+            <div className="success-state">
+              <div className="success-icon">✓</div>
+              <h3 className="gradient-text">Thank You!</h3>
+              <p>Your educational inquiry has been logged successfully. An admissions advisor from LITAM will contact you via phone shortly.</p>
+              <button className="btn btn-secondary" onClick={() => { setFormData({ name: "", email: "", phone: "", course: "btech", message: "" }); setIsSubmitted(false); }}>
+                Submit Another Inquiry
+              </button>
+            </div>
+          )}
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -895,24 +1249,31 @@ function WebsiteContent({ theme, onToggleTheme }) {
   return (
     <motion.main
       className="site"
-      initial={{ opacity: 0, y: 22 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
     >
       <SiteHeader theme={theme} onToggleTheme={onToggleTheme} />
       <HeroSection />
       <PrincipalMessage />
       <AboutAndStats />
       <AcademicsSection />
-      <AdmissionsSection />
+      <EligibilityEstimator />
       <FacultyAndResearch />
-      <ResearchSection />
       <NewsAndEvents />
       <Placements />
       <StudentLifeSection />
       <Testimonials />
       <GalleryPreview />
-      <ContactInfo />
+      <ContactSection />
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <p>© {new Date().getFullYear()} Loyola Institute of Technology & Management. All rights reserved.</p>
+          <p style={{ fontSize: "0.75rem", color: "var(--text-faint)" }}>
+            Approved by AICTE | Affiliated to JNTUK | NAAC &apos;A&apos; Accredited Institution | ISO 9001:2015
+          </p>
+        </div>
+      </footer>
     </motion.main>
   );
 }
@@ -926,7 +1287,7 @@ export default function App() {
     try {
       localStorage.setItem("litam-theme", theme);
     } catch {
-      // Storage can be unavailable in private or embedded browsing contexts.
+      // Storage unavailable in private browsing modes
     }
   }, [theme]);
 
