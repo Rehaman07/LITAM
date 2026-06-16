@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import * as THREE from "three";
+import litamLogo from "../images/logo.png";
 
 const letters = ["L", "I", "T", "A", "M"];
 const slugify = (label) =>
@@ -414,7 +415,9 @@ function SiteHeader({ theme, onToggleTheme }) {
     <header className="site-header">
       <div className="header-inner">
         <a className="brand-lockup" href="#home" aria-label="LITAM home">
-          <span className="brand-mark">L</span>
+          <span className="brand-mark">
+            <img src={litamLogo} alt="" width="44" height="44" />
+          </span>
           <span className="brand-copy">
             <strong>LITAM</strong>
             <small>Loyola Institute of Technology and Management</small>
@@ -649,9 +652,9 @@ function FacultyAndResearch() {
           text="Faculty teams support students through classroom learning, labs, reviews, and career preparation."
         />
       </Reveal>
-      <div className="stats-grid">
+      <div className="faculty-grid">
         {facultyHighlights.map(([title, text]) => (
-          <Reveal className="stat-card" key={title}>
+          <Reveal className="faculty-card" key={title}>
             <strong>{title}</strong>
             <span>{text}</span>
           </Reveal>
