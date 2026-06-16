@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import * as THREE from "three";
 
@@ -33,6 +32,38 @@ const stats = [
   ["92%", "Placement assistance outcomes"],
   ["120+", "Recruiting partners"],
 ];
+
+const academics = [
+  ["CSE", "Computer Science and Engineering with software product labs."],
+  ["AI & DS", "Artificial Intelligence and Data Science with applied projects."],
+  ["ECE", "Electronics and Communication with embedded systems exposure."],
+  ["EEE", "Electrical and Electronics with power and automation foundations."],
+  ["ME", "Mechanical Engineering with design, manufacturing, and CAD practice."],
+  ["CE", "Civil Engineering with planning, materials, and field-oriented learning."],
+];
+
+const facultyHighlights = [
+  ["Mentorship", "Faculty advisors guide academic planning, projects, and career readiness."],
+  ["Industry Practice", "Departments connect coursework to labs, workshops, and applied case work."],
+  ["Research Culture", "Students are encouraged to publish, prototype, and present early."],
+];
+
+const studentLife = [
+  ["Technical Clubs", "Coding, robotics, design, and innovation groups for practical learning."],
+  ["Campus Events", "Hackathons, cultural programs, sports, and student-led celebrations."],
+  ["Support Systems", "Counselling, peer learning, and faculty mentoring for student wellbeing."],
+];
+
+function getInitialTheme() {
+  try {
+    const savedTheme = localStorage.getItem("litam-theme");
+    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
+  } catch {
+    return "dark";
+  }
+
+  return "dark";
+}
 
 const news = [
   {
@@ -564,9 +595,123 @@ function AboutAndStats() {
   );
 }
 
+function AcademicsSection() {
+  return (
+    <section className="section info-section" id="academics">
+      <Reveal>
+        <SectionHeading
+          eyebrow="Academics"
+          title="Programs built around fundamentals, labs, and employable skills."
+          text="Departments combine classroom clarity with practical exposure, project reviews, and continuous mentoring."
+        />
+      </Reveal>
+      <div className="info-grid">
+        {academics.map(([title, text]) => (
+          <Reveal className="info-card" key={title}>
+            <strong>{title}</strong>
+            <p>{text}</p>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AdmissionsSection() {
+  return (
+    <section className="section admissions-section" id="admissions">
+      <Reveal className="contact-card">
+        <div>
+          <span className="eyebrow">Admissions</span>
+          <h2>Clear counselling support for students and families.</h2>
+          <p>
+            Get guidance on programs, eligibility, campus visits, fee information, and document
+            readiness from the admissions team.
+          </p>
+        </div>
+        <div className="contact-list">
+          <a href="tel:+919876543210">Call admissions</a>
+          <a href="mailto:admissions@litam.edu.in">admissions@litam.edu.in</a>
+          <span>Applications and counselling support for the 2026 intake.</span>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+function FacultyAndResearch() {
+  return (
+    <section className="section split-section" id="faculty">
+      <Reveal>
+        <SectionHeading
+          eyebrow="Faculty"
+          title="A mentoring-first academic culture."
+          text="Faculty teams support students through classroom learning, labs, reviews, and career preparation."
+        />
+      </Reveal>
+      <div className="stats-grid">
+        {facultyHighlights.map(([title, text]) => (
+          <Reveal className="stat-card" key={title}>
+            <strong>{title}</strong>
+            <span>{text}</span>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ResearchSection() {
+  return (
+    <section className="section info-section" id="research">
+      <Reveal>
+        <SectionHeading
+          eyebrow="Research"
+          title="Innovation activity shaped by practical problems."
+          text="Research and project work focuses on emerging technology, sustainable engineering, and community-useful solutions."
+        />
+      </Reveal>
+      <div className="placement-grid">
+        <Reveal className="placement-highlight">
+          <span>Focus areas</span>
+          <strong>AI, IoT, energy, design</strong>
+          <p>Interdisciplinary teams work on prototypes, papers, and competition-ready projects.</p>
+        </Reveal>
+        <Reveal className="placement-highlight">
+          <span>Student pathway</span>
+          <strong>Build, test, publish</strong>
+          <p>Students move from guided lab work to demos, presentations, and external showcases.</p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function StudentLifeSection() {
+  return (
+    <section className="section info-section" id="student-life">
+      <Reveal>
+        <SectionHeading
+          eyebrow="Student Life"
+          title="A campus rhythm that balances ambition and belonging."
+          text="Student life at LITAM is shaped by clubs, peer learning, cultural expression, sports, and support."
+        />
+      </Reveal>
+      <div className="info-grid">
+        {studentLife.map(([title, text]) => (
+          <Reveal className="info-card" key={title}>
+            <strong>{title}</strong>
+            <p>{text}</p>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function NewsAndEvents() {
   return (
-    <section className="section news-events" id="news">
+    <section className="section news-events" id="news-and-events">
       <Reveal>
         <SectionHeading
           eyebrow="Latest updates"
@@ -716,8 +861,13 @@ function WebsiteContent({ theme, onToggleTheme }) {
       <HeroSection />
       <PrincipalMessage />
       <AboutAndStats />
+      <AcademicsSection />
+      <AdmissionsSection />
+      <FacultyAndResearch />
+      <ResearchSection />
       <NewsAndEvents />
       <Placements />
+      <StudentLifeSection />
       <Testimonials />
       <GalleryPreview />
       <ContactInfo />
@@ -727,11 +877,15 @@ function WebsiteContent({ theme, onToggleTheme }) {
 
 export default function App() {
   const [introComplete, setIntroComplete] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem("litam-theme") || "dark");
+  const [theme, setTheme] = useState(getInitialTheme);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem("litam-theme", theme);
+    try {
+      localStorage.setItem("litam-theme", theme);
+    } catch {
+      // Storage can be unavailable in private or embedded browsing contexts.
+    }
   }, [theme]);
 
   return (
@@ -746,9 +900,3 @@ export default function App() {
     </>
   );
 }
-
-createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);

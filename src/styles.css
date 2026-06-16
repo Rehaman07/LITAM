@@ -738,6 +738,35 @@ img {
   gap: 14px;
 }
 
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 34px;
+}
+
+.info-card {
+  min-height: 100%;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.14);
+}
+
+.info-card strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+}
+
+.info-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
 .stat-card,
 .news-card,
 .events-card,
@@ -1036,6 +1065,7 @@ img {
   }
 
   .stats-grid,
+  .info-grid,
   .placement-grid,
   .gallery-grid {
     grid-template-columns: 1fr;
