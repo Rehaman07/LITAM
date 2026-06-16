@@ -1,20 +1,30 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import * as THREE from "three";
 
 const letters = ["L", "I", "T", "A", "M"];
+const slugify = (label) =>
+  label
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 const navItems = [
   "Home",
-  "Principal",
   "About",
-  "News",
-  "Events",
+  "Academics",
+  "Admissions",
+  "Faculty",
+  "Research",
   "Placements",
+  "Student Life",
+  "News & Events",
   "Gallery",
   "Contact",
 ].map((label) => ({
   label,
-  href: `#${label.toLowerCase()}`,
+  href: `#${slugify(label)}`,
 }));
 
 const stats = [
@@ -384,7 +394,7 @@ function SiteHeader({ theme, onToggleTheme }) {
         </nav>
         <div className="header-actions">
           <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
-            <span aria-hidden="true">{theme === "dark" ? "☾" : "☀"}</span>
+            <span className={theme === "dark" ? "theme-icon moon-icon" : "theme-icon sun-icon"} aria-hidden="true" />
           </button>
           <button
             className="menu-toggle"
@@ -644,7 +654,7 @@ function Testimonials() {
       <div className="testimonial-grid">
         {testimonials.map((item) => (
           <Reveal className="testimonial-card" key={item.name}>
-            <p>“{item.quote}”</p>
+            <p>&quot;{item.quote}&quot;</p>
             <strong>{item.name}</strong>
             <span>{item.meta}</span>
           </Reveal>
@@ -736,3 +746,9 @@ export default function App() {
     </>
   );
 }
+
+createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
