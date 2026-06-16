@@ -28,31 +28,49 @@ const navItems = [
 }));
 
 const stats = [
-  ["25+", "Years of academic excellence"],
-  ["4,800+", "Students on campus"],
-  ["92%", "Placement assistance outcomes"],
-  ["120+", "Recruiting partners"],
+  ["2001", "Established institution"],
+  ["NAAC A", "Accredited institution"],
+  ["27 acres", "Green campus"],
+  ["ISO", "9001:2015 certified"],
 ];
 
 const academics = [
-  ["CSE", "Computer Science and Engineering with software product labs."],
-  ["AI & DS", "Artificial Intelligence and Data Science with applied projects."],
-  ["ECE", "Electronics and Communication with embedded systems exposure."],
-  ["EEE", "Electrical and Electronics with power and automation foundations."],
-  ["ME", "Mechanical Engineering with design, manufacturing, and CAD practice."],
-  ["CE", "Civil Engineering with planning, materials, and field-oriented learning."],
+  ["B.Tech", "CSE, CSE - AI & ML, CSE - Data Science, Civil, Mechanical, EEE, and ECE."],
+  ["M.Tech", "Structural Engineering for advanced civil and infrastructure-focused study."],
+  ["Diploma", "CSE, CSE - AI & ML, ECE, and EEE polytechnic programs."],
+  ["MBA", "Management education for business, operations, and leadership roles."],
+  ["MCA", "Computer applications program for software and IT careers."],
+  ["Codes", "AP EAPCET / ECET / PGECET: LOYL; AP ICET / AP POLYCET: LITM."],
 ];
 
 const facultyHighlights = [
-  ["Mentorship", "Faculty advisors guide academic planning, projects, and career readiness."],
-  ["Industry Practice", "Departments connect coursework to labs, workshops, and applied case work."],
-  ["Research Culture", "Students are encouraged to publish, prototype, and present early."],
+  ["Experienced Faculty", "Well experienced faculty guide classroom learning, projects, and reviews."],
+  ["Mentorship Program", "Faculty advisors support academic planning, career readiness, and student wellbeing."],
+  ["Industry Practice", "Departments connect coursework to labs, workshops, and industrial exposure."],
 ];
 
 const studentLife = [
-  ["Technical Clubs", "Coding, robotics, design, and innovation groups for practical learning."],
-  ["Campus Events", "Hackathons, cultural programs, sports, and student-led celebrations."],
-  ["Support Systems", "Counselling, peer learning, and faculty mentoring for student wellbeing."],
+  ["Technical & Cultural Fests", "Students participate in technical events, cultural programs, and celebrations."],
+  ["Ragging-Free Environment", "Campus life is shaped around safety, dignity, peer learning, and support."],
+  ["Hostels & Canteen", "Separate on-campus hostels for boys and girls with hygienic food facilities."],
+];
+
+const institutionDetails = [
+  ["Approved by", "AICTE, New Delhi"],
+  ["Affiliated to", "JNTUK, Kakinada"],
+  ["Accreditation", "NAAC A Grade"],
+  ["Certification", "ISO 9001:2015"],
+  ["Campus", "27-acre green campus"],
+  ["Built-up area", "232,102+ square feet"],
+];
+
+const uniqueFeatures = [
+  "State-of-the-art laboratories",
+  "Internet facility",
+  "Good placement assistance",
+  "Training and placement assistance",
+  "Inter-state industrial tours",
+  "Bus facility from different routes",
 ];
 
 function getInitialTheme() {
@@ -69,18 +87,18 @@ function getInitialTheme() {
 const news = [
   {
     date: "16 Jun",
-    title: "AI and Data Science Centre announces new industry lab sessions",
-    tag: "Academics",
-  },
-  {
-    date: "12 Jun",
-    title: "Admissions help desk opens extended hours for counselling week",
+    title: "Admissions counselling open for AP EAPCET, ECET, PGECET, ICET, and POLYCET aspirants",
     tag: "Admissions",
   },
   {
+    date: "12 Jun",
+    title: "LITAM highlights NAAC A Grade, AICTE approval, and JNTUK affiliation",
+    tag: "Institution",
+  },
+  {
     date: "08 Jun",
-    title: "Final year teams qualify for national innovation challenge",
-    tag: "Achievement",
+    title: "Technical and cultural fest planning begins with student clubs and departments",
+    tag: "Campus",
   },
 ];
 
@@ -91,14 +109,14 @@ const events = [
 ];
 
 const recruiters = [
-  "Infosys",
-  "TCS",
-  "Wipro",
-  "Accenture",
-  "Cognizant",
-  "Tech Mahindra",
-  "Capgemini",
-  "HCLTech",
+  { name: "Infosys", mark: "I", tone: "sky" },
+  { name: "TCS", mark: "T", tone: "violet" },
+  { name: "Wipro", mark: "W", tone: "rainbow" },
+  { name: "Accenture", mark: ">", tone: "purple" },
+  { name: "Cognizant", mark: "C", tone: "blue" },
+  { name: "Tech Mahindra", mark: "TM", tone: "red" },
+  { name: "Capgemini", mark: "CA", tone: "aqua" },
+  { name: "HCLTech", mark: "H", tone: "orange" },
 ];
 
 const testimonials = [
@@ -575,8 +593,8 @@ function AboutAndStats() {
       <Reveal>
         <SectionHeading
           eyebrow="About LITAM"
-          title="A campus designed for rigorous learning and practical outcomes."
-          text="LITAM brings together strong fundamentals, project-based learning, active mentoring, and a campus culture built around curiosity and service."
+          title="Established in 2001 with AICTE approval, JNTUK affiliation, and NAAC A accreditation."
+          text="Loyola Institute of Technology and Management serves students from rural, semi-urban, and urban communities through technical, management, and computer applications education."
         />
       </Reveal>
       <div className="stats-grid">
@@ -594,6 +612,22 @@ function AboutAndStats() {
           </Reveal>
         ))}
       </div>
+      <Reveal className="institution-card">
+        {institutionDetails.map(([label, value]) => (
+          <div className="institution-row" key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </Reveal>
+      <Reveal className="features-card">
+        <span className="eyebrow">Unique Features</span>
+        <ul>
+          {uniqueFeatures.map((feature) => (
+            <li key={feature}>{feature}</li>
+          ))}
+        </ul>
+      </Reveal>
     </section>
   );
 }
@@ -604,8 +638,8 @@ function AcademicsSection() {
       <Reveal>
         <SectionHeading
           eyebrow="Academics"
-          title="Programs built around fundamentals, labs, and employable skills."
-          text="Departments combine classroom clarity with practical exposure, project reviews, and continuous mentoring."
+          title="Courses offered across B.Tech, M.Tech, Diploma, MBA, and MCA."
+          text="Programs combine classroom clarity with practical exposure, state-of-the-art laboratories, project reviews, and continuous mentoring."
         />
       </Reveal>
       <div className="info-grid">
@@ -628,14 +662,14 @@ function AdmissionsSection() {
           <span className="eyebrow">Admissions</span>
           <h2>Clear counselling support for students and families.</h2>
           <p>
-            Get guidance on programs, eligibility, campus visits, fee information, and document
-            readiness from the admissions team.
+            Get guidance on programs, eligibility, AP EAPCET, ECET, PGECET, ICET, POLYCET
+            counselling codes, campus visits, and document readiness.
           </p>
         </div>
         <div className="contact-list">
-          <a href="tel:+919876543210">Call admissions</a>
-          <a href="mailto:admissions@litam.edu.in">admissions@litam.edu.in</a>
-          <span>Applications and counselling support for the 2026 intake.</span>
+          <a href="tel:+919505798369">9505 798 369</a>
+          <a href="tel:+917416516222">7416 516 222</a>
+          <span>LOYL for AP EAPCET / ECET / PGECET; LITM for AP ICET / AP POLYCET.</span>
         </div>
       </Reveal>
     </section>
@@ -671,7 +705,7 @@ function ResearchSection() {
         <SectionHeading
           eyebrow="Research"
           title="Innovation activity shaped by practical problems."
-          text="Research and project work focuses on emerging technology, sustainable engineering, and community-useful solutions."
+          text="Research and project work is supported by labs, internet access, faculty mentoring, and industry-oriented exposure."
         />
       </Reveal>
       <div className="placement-grid">
@@ -781,8 +815,13 @@ function Placements() {
           animate={{ x: ["0%", "-50%"] }}
           transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
         >
-          {duplicatedRecruiters.map((name, index) => (
-            <span key={`${name}-${index}`}>{name}</span>
+          {duplicatedRecruiters.map((company, index) => (
+            <span className="recruiter-pill" key={`${company.name}-${index}`}>
+              <span className={`recruiter-logo logo-${company.tone}`} aria-hidden="true">
+                {company.mark}
+              </span>
+              <span className="recruiter-name">{company.name}</span>
+            </span>
           ))}
         </motion.div>
       </div>
@@ -840,12 +879,12 @@ function ContactInfo() {
         <div>
           <span className="eyebrow">Contact</span>
           <h2>Talk to LITAM admissions and campus support.</h2>
-          <p>Reach out for admissions, campus visits, academic information, and placement partnerships.</p>
+          <p>Reach out for admissions, campus visits, academic information, transport routes, hostels, and placement partnerships.</p>
         </div>
         <div className="contact-list">
-          <a href="tel:+919876543210">+91 98765 43210</a>
-          <a href="mailto:info@litam.edu.in">info@litam.edu.in</a>
-          <span>LITAM Campus, Andhra Pradesh, India</span>
+          <a href="tel:+919505798369">9505 798 369</a>
+          <a href="tel:+917416516222">7416 516 222</a>
+          <span>LITAM Campus, Palnadu/Guntur region, Andhra Pradesh, India</span>
         </div>
       </Reveal>
     </section>

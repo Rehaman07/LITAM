@@ -815,6 +815,84 @@ img {
   line-height: 1.5;
 }
 
+.institution-card,
+.features-card {
+  grid-column: 1 / -1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.institution-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.institution-row {
+  min-width: 0;
+  padding: 20px;
+  background: var(--surface-strong);
+}
+
+.institution-row span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.institution-row strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
+  line-height: 1.25;
+}
+
+.features-card {
+  padding: clamp(22px, 3vw, 30px);
+}
+
+.features-card ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 4px 0 0;
+  list-style: none;
+}
+
+.features-card li {
+  position: relative;
+  min-height: 54px;
+  padding: 14px 14px 14px 36px;
+  color: var(--text);
+  font-weight: 750;
+  line-height: 1.35;
+  background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.features-card li::before {
+  position: absolute;
+  top: 19px;
+  left: 15px;
+  width: 8px;
+  height: 8px;
+  content: "";
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 18%, transparent);
+}
+
 .faculty-card {
   display: flex;
   flex-direction: column;
@@ -942,17 +1020,79 @@ img {
   gap: 12px;
 }
 
-.recruiter-track span {
-  display: inline-grid;
-  place-items: center;
-  min-width: 160px;
+.recruiter-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-width: 210px;
   min-height: 62px;
-  padding: 0 24px;
+  padding: 0 18px;
   color: var(--text);
   font-weight: 900;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
+}
+
+.recruiter-logo {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0;
+  border-radius: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.recruiter-name {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logo-sky {
+  background: linear-gradient(135deg, #1f7ae0, #64cffc);
+}
+
+.logo-violet {
+  background: linear-gradient(135deg, #4056d6, #9b7cff);
+}
+
+.logo-rainbow {
+  background:
+    conic-gradient(from 20deg, #6a3df0, #2acb8f, #f4d35e, #f45b69, #6a3df0);
+}
+
+.logo-purple {
+  background: linear-gradient(135deg, #6b2fe8, #b17cff);
+}
+
+.logo-blue {
+  background: linear-gradient(135deg, #083f88, #20a6e8);
+}
+
+.logo-red {
+  background: linear-gradient(135deg, #c42032, #ff7a59);
+}
+
+.logo-aqua {
+  background: linear-gradient(135deg, #0f94b8, #7df0de);
+}
+
+.logo-orange {
+  background: linear-gradient(135deg, #f16622, #f6c85f);
 }
 
 .testimonial-grid {
@@ -1081,6 +1221,16 @@ img {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .institution-card,
+  .features-card {
+    grid-column: auto;
+  }
+
+  .institution-card,
+  .features-card ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .faculty-card strong {
     font-size: clamp(1.75rem, 4.4vw, 2.8rem);
   }
@@ -1122,6 +1272,8 @@ img {
 
   .stats-grid,
   .faculty-grid,
+  .institution-card,
+  .features-card ul,
   .info-grid,
   .placement-grid,
   .gallery-grid {
