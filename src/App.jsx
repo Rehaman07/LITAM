@@ -16,13 +16,19 @@ const navItems = [
   "About",
   "Academics",
   "Admissions",
-  "Faculty",
   "Research",
   "Placements",
+  "Campus",
+  "Contact",
+].map((label) => ({
+  label,
+  href: `#${slugify(label)}`,
+}));
+const campusItems = [
+  "Faculty",
   "Student Life",
   "News & Events",
   "Gallery",
-  "Contact",
 ].map((label) => ({
   label,
   href: `#${slugify(label)}`,
@@ -410,12 +416,15 @@ function SiteHeader({ theme, onToggleTheme }) {
             <small>Loyola Institute of Technology & Management</small>
           </span>
         </a>
-        <nav className="desktop-nav" aria-label="Primary navigation">
+        <nav className="desktop-nav flex items-center gap-6 whitespace-nowrap" aria-label="Primary navigation">
           {links("nav-list")}
         </nav>
         <div className="header-actions">
           <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
             <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
+          </button>
+          <button className="admin-btn">
+            Admin
           </button>
           <button
             className={`menu-toggle ${menuOpen ? "open" : ""}`}
@@ -471,12 +480,12 @@ function HeroSection() {
     <section className="hero" id="home">
       <div className="glowing-orb orb-primary" style={{ top: "10%", left: "15%" }} />
       <div className="glowing-orb orb-accent" style={{ bottom: "5%", right: "10%" }} />
-      <div className="hero-media" aria-hidden="true">
-        <img
-          src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=82"
-          alt="LITAM Campus Building"
-        />
-      </div>
+      <img
+        className="hero-bg-image"
+        src="images/Main.jpg"
+        alt=""
+        aria-hidden="true"
+      />
       <div className="hero-shade" aria-hidden="true" />
       <div className="section">
         <div className="hero-content">
@@ -484,12 +493,21 @@ function HeroSection() {
             <span className="eyebrow">Innovation-Led Education</span>
           </Reveal>
           <Reveal delay={0.1}>
-            <h1 className="gradient-text">Loyola Institute of Technology & Management</h1>
+            <h1 className="hero-title gradient-text">
+              <span>Loyola Institute of</span>
+              <span>Technology &</span>
+              <span>Management</span>
+            </h1>
           </Reveal>
           <Reveal delay={0.2}>
             <p>
-              A disciplined, future-facing campus where engineering ambition meets elite mentorship, advanced laboratorial research, and guaranteed career-ready practice.
+              A disciplined, future-facing campus where engineering ambition meets elite mentorship, advanced laboratory research, and career-ready practice.
             </p>
+          </Reveal>
+          <Reveal delay={0.25} className="hero-signals" aria-label="Institution highlights">
+            <span>AI & Data Science</span>
+            <span>Advanced Labs</span>
+            <span>Industry-Ready Training</span>
           </Reveal>
           <Reveal delay={0.3} className="hero-actions">
             <a className="btn btn-primary" href="#academics">
