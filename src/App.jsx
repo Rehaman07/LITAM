@@ -3,6 +3,60 @@ import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from
 import * as THREE from "three";
 import litamLogo from "../images/logo.png";
 
+// Premium counter animation component
+function AnimatedCounter({ value, duration = 1.5 }) {
+  const [displayVal, setDisplayVal] = useState("0");
+  const ref = useRef(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          const match = value.match(/^([0-9.]+)(.*)$/);
+          if (!match) {
+            setDisplayVal(value);
+            return;
+          }
+          
+          const targetNum = parseFloat(match[1]);
+          const suffix = match[2] || "";
+          
+          let startTimestamp = null;
+          const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
+            // Ease out cubic
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(ease * targetNum);
+            
+            setDisplayVal(`${current}${suffix}`);
+            if (progress < 1) {
+              window.requestAnimationFrame(step);
+            } else {
+              setDisplayVal(value);
+            }
+          };
+          window.requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current) observer.disconnect();
+    };
+  }, [value, duration, hasAnimated]);
+
+  return <span ref={ref}>{displayVal}</span>;
+}
+
+
+
 const letters = ["L", "I", "T", "A", "M"];
 const slugify = (label) =>
   label
@@ -379,9 +433,17 @@ function Intro({ onComplete }) {
     </motion.section>
   );
 }
-
 function SiteHeader({ theme, onToggleTheme }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -405,7 +467,7 @@ function SiteHeader({ theme, onToggleTheme }) {
   );
 
   return (
-    <header className="site-header">
+    <header className={`site-header ${scrolled ? "scrolled" : ""}`}>
       <div className="header-inner">
         <a className="brand-lockup" href="#home" aria-label="LITAM home">
           <span className="brand-mark">
@@ -423,9 +485,12 @@ function SiteHeader({ theme, onToggleTheme }) {
           <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
             <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
           </button>
-          <button className="admin-btn">
-            Admin
-          </button>
+          <a className="portal-link" href="#contact">
+            Portal
+          </a>
+          <a className="btn-apply-header" href="#contact">
+            Apply Now
+          </a>
           <button
             className={`menu-toggle ${menuOpen ? "open" : ""}`}
             type="button"
@@ -487,6 +552,11 @@ function HeroSection() {
         aria-hidden="true"
       />
       <div className="hero-shade" aria-hidden="true" />
+      <div className="hero-mesh" aria-hidden="true" />
+      <div className="hero-grid-pattern" aria-hidden="true" />
+      <div className="light-streak" aria-hidden="true" />
+      <div className="light-streak" style={{ top: "60%", animationDelay: "-6s", animationDuration: "16s" }} aria-hidden="true" />
+      
       <div className="section">
         <div className="hero-content">
           <Reveal>
@@ -517,11 +587,37 @@ function HeroSection() {
               View Placements
             </a>
           </Reveal>
-          <Reveal delay={0.4} className="hero-panel">
-            <div className="hero-panel-inner glass">
-              <span>Admissions 2026</span>
-              <strong>Counselling Support Active</strong>
-              <p>Apply for CSE, Artificial Intelligence, Data Science, ECE, EEE, Mechanical, or Civil Engineering.</p>
+          <Reveal delay={0.4}>
+            <div className="hero-footer-grid">
+              <div className="hero-announcement glass">
+                <span className="badge-admissions">Admissions 2026</span>
+                <strong>Counselling Support Active</strong>
+                <p>Apply for CSE, AI & ML, Data Science, ECE, EEE, Mechanical, or Civil Engineering.</p>
+              </div>
+              
+              <div className="hero-stat-card glass">
+                <div className="stat-glow-effect" aria-hidden="true" />
+                <strong className="stat-number">
+                  <AnimatedCounter value="2001" />
+                </strong>
+                <span className="stat-label">Academic Legacy</span>
+              </div>
+              
+              <div className="hero-stat-card glass">
+                <div className="stat-glow-effect" aria-hidden="true" />
+                <strong className="stat-number">
+                  <AnimatedCounter value="NAAC A" />
+                </strong>
+                <span className="stat-label">National Grade</span>
+              </div>
+
+              <div className="hero-stat-card glass">
+                <div className="stat-glow-effect" aria-hidden="true" />
+                <strong className="stat-number">
+                  <AnimatedCounter value="250+" />
+                </strong>
+                <span className="stat-label">Recruiter Network</span>
+              </div>
             </div>
           </Reveal>
         </div>
@@ -978,7 +1074,7 @@ function Placements() {
 
 function StudentLifeSection() {
   return (
-    <section className="section" id="student-life">
+    <section className="section" id="campus">
       <div className="glowing-orb orb-accent" style={{ bottom: "10%", left: "5%" }} />
       <Reveal>
         <SectionHeading
