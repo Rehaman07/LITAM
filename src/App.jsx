@@ -106,7 +106,8 @@ const courseCategories = {
       { name: "Electronics and Communication Engineering", desc: "Core curriculum in VLSI design, signal processing, embedded systems, Internet of Things, and telecommunications." },
       { name: "Electrical and Electronics Engineering", desc: "Study of power systems, power electronics, industrial control machines, automation, and green energy systems." },
       { name: "Civil Engineering", desc: "Covers structural design, geotech analysis, eco-friendly infrastructure, and construction management." },
-      { name: "Mechanical Engineering", desc: "Hands-on study of robotics, manufacturing science, thermodynamics, CAD/CAM design, and structural automation." }
+      { name: "Mechanical Engineering", desc: "Hands-on study of robotics, manufacturing science, thermodynamics, CAD/CAM design, and structural automation." },
+      { name: "Artificial Intelligence & Data Science", desc: "Future-focused program covering artificial intelligence, machine learning, deep learning, big data analytics, computer vision, natural language processing, and intelligent software systems."}    
     ]
   },
   mtech: {
@@ -123,7 +124,9 @@ const courseCategories = {
       { name: "Computer Science and Engineering", desc: "Core technical training in programming languages, databases, web development basics, and hardware labs." },
       { name: "CSE - Artificial Intelligence & Machine Learning", desc: "Introductory curriculum in Python, basic AI tools, machine learning pipelines, and technical problem solving." },
       { name: "Electronics and Communication Engineering", desc: "Practical curriculum focused on circuit building, microcontrollers, IoT testing, and radio communications." },
-      { name: "Electrical and Electronics Engineering", desc: "Hands-on polytechnic labs in wiring systems, electrical machines, power transmission systems, and safety procedures." }
+      { name: "Electrical and Electronics Engineering", desc: "Hands-on polytechnic labs in wiring systems, electrical machines, power transmission systems, and safety procedures." },
+      { name: "CSE - Data Science", desc: "Focuses on big data analytics, statistical modeling, data visualization, and predictive machine learning models."},
+      { name: "Artificial Intelligence & Data Science", desc: "Industry-oriented diploma program introducing students to Python programming, artificial intelligence, machine learning, data analytics, databases, and modern intelligent technologies with hands-on learning."}
     ]
   },
   postgrad: {
@@ -634,20 +637,20 @@ function PrincipalMessage() {
         <div className="principal-card glass">
           <div className="principal-portrait">
             <img
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=700&q=80"
-              alt="Dr. A. Ramanathan - Principal"
+              src="images/Director_sir.jpg"
+              alt="E. Vamsi Krishna Sir, MBA, M-Tech. - Director, LITAM"
             />
           </div>
           <div>
-            <span className="eyebrow">Principal's Message</span>
+            <span className="eyebrow">Director's Message</span>
             <h2 className="gradient-text">Education that builds skill, character, and confidence.</h2>
             <p>
               &quot;At LITAM, we prepare students to think clearly, solve responsibly, and lead with integrity.
               Our curriculum blends conceptual rigor with real-world application, instilling in candidates the technical competence and ethical fortitude required to innovate solutions for contemporary global challenges.&quot;
             </p>
             <div className="principal-meta">
-              <strong>Dr. A. Ramanathan</strong>
-              <small>Principal, LITAM</small>
+              <strong>E. Vamsi Krishna Sir, MBA, M-Tech.</strong>
+              <small>Director, LITAM</small>
             </div>
           </div>
         </div>
