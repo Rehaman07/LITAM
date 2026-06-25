@@ -1121,12 +1121,22 @@ p {
 }
 
 .stat-card--featured strong {
-  font-size: clamp(2.8rem, 5vw, 4rem);
+  display: block;
+  font-size: clamp(3.4rem, 6vw, 5.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
 }
 
 .stat-card--featured span {
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
   font-weight: 600;
+}
+
+.stat-card--featured strong > span {
+  display: inline-block;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
 }
 
 .institution-card {
