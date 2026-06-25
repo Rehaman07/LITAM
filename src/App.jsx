@@ -2,6 +2,14 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import * as THREE from "three";
 import litamLogo from "../images/logo.png";
+import tcsLogo from "./assets/logos/tcs.png";
+import infosysLogo from "./assets/logos/infosys.png";
+import capgeminiLogo from "./assets/logos/capgemini.png";
+import hclLogo from "./assets/logos/hcl.png";
+import wiproLogo from "./assets/logos/wipro.png";
+import accentureLogo from "./assets/logos/accenture.png";
+import cognizantLogo from "./assets/logos/cognizant.png"; 
+import techMahindraLogo from "./assets/logos/techmahindra.png";
 
 // Premium counter animation component
 function AnimatedCounter({ value, duration = 1.5 }) {
