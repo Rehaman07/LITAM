@@ -1022,7 +1022,7 @@ function NewsAndEvents() {
               {filters.map((f) => (
                 <button
                   key={f}
-                  className={ilter-btn }
+                  className="filter-btn"
                   onClick={() => setActiveFilter(f)}
                 >
                   {f}
