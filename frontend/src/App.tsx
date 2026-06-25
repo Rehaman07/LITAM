@@ -19,7 +19,7 @@ import directorImage from "./assets/images/Director_sir.jpg";
 function AnimatedCounter({ value, duration = 2000, threshold = 0.4 }) {
   const [displayVal, setDisplayVal] = useState("0");
   const ref = useRef(null);
-  const hasAnimated = useRef(false);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     const match = `${value}`.match(/^([0-9.]+)(.*)$/);
@@ -44,28 +44,42 @@ function AnimatedCounter({ value, duration = 2000, threshold = 0.4 }) {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
+        if (timerRef.current) {
+          window.clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+
+        if (entry.isIntersecting) {
           let start = 0;
+          setDisplayVal("0");
           const increment = target / (duration / 16);
 
-          const timer = window.setInterval(() => {
+          timerRef.current = window.setInterval(() => {
             start += increment;
 
             if (start >= target) {
               setDisplayVal(`${target}${suffix}`);
-              window.clearInterval(timer);
+              window.clearInterval(timerRef.current);
+              timerRef.current = null;
             } else {
               setDisplayVal(`${Math.floor(start)}${suffix}`);
             }
           }, 16);
+        } else {
+          setDisplayVal("0");
         }
       },
       { threshold }
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [value, duration, threshold]);
 
   return <span ref={ref}>{displayVal}</span>;
