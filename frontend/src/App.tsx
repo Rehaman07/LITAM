@@ -556,29 +556,9 @@ function SectionHeading({ eyebrow, title, text }) {
   );
 }
 
-function ResponsiveContainer({ children, className = "" }) {
-  return <div className={`responsive-container ${className}`.trim()}>{children}</div>;
-}
-
-function ResponsiveSection({ id, className = "", children }) {
-  return (
-    <section id={id} className={`responsive-section ${className}`.trim()}>
-      <ResponsiveContainer>{children}</ResponsiveContainer>
-    </section>
-  );
-}
-
-function ResponsiveGrid({ className = "", children }) {
-  return <div className={`responsive-grid ${className}`.trim()}>{children}</div>;
-}
-
-function ResponsiveText({ as: Tag = "p", className = "", children }) {
-  return <Tag className={`responsive-text ${className}`.trim()}>{children}</Tag>;
-}
-
 function HeroSection() {
   return (
-    <ResponsiveSection id="home" className="hero">
+    <section className="hero" id="home">
       <div className="glowing-orb orb-primary" style={{ top: "10%", left: "15%" }} />
       <div className="glowing-orb orb-accent" style={{ bottom: "5%", right: "10%" }} />
       <img
@@ -593,7 +573,7 @@ function HeroSection() {
       <div className="light-streak" aria-hidden="true" />
       <div className="light-streak" style={{ top: "60%", animationDelay: "-6s", animationDuration: "16s" }} aria-hidden="true" />
       
-      <ResponsiveContainer>
+      <div className="section">
         <div className="hero-content">
           <Reveal>
             <span className="eyebrow">Innovation-Led Education</span>
@@ -657,14 +637,14 @@ function HeroSection() {
             </div>
           </Reveal>
         </div>
-      </ResponsiveContainer>
-    </ResponsiveSection>
+      </div>
+    </section>
   );
 }
 
 function PrincipalMessage() {
   return (
-    <ResponsiveSection id="principal-message">
+    <section className="section" id="principal-message">
       <div className="glowing-orb orb-primary" style={{ top: "30%", right: "10%" }} />
       <Reveal>
         <div className="principal-card glass">
@@ -672,7 +652,6 @@ function PrincipalMessage() {
             <img
               src={directorImage}
               alt="E. Vamsi Krishna Sir, MBA, M-Tech. - Director, LITAM"
-              loading="lazy"
             />
           </div>
           <div>
@@ -689,15 +668,15 @@ function PrincipalMessage() {
           </div>
         </div>
       </Reveal>
-    </ResponsiveSection>
+    </section>
   );
 }
 
 function AboutAndStats() {
   return (
-    <ResponsiveSection id="about" className="split-section">
+    <section className="section split-section" id="about">
       <div className="glowing-orb orb-accent" style={{ top: "10%", left: "5%" }} />
-      <div className="responsive-stack">
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
         <Reveal>
           <SectionHeading
             eyebrow="About LITAM"
@@ -705,16 +684,16 @@ function AboutAndStats() {
             text="Loyola Institute of Technology and Management operates under the Santhi Nikethan Minority Education Society, serving students from urban, rural, and semi-urban communities across Andhra Pradesh."
           />
         </Reveal>
-        <ResponsiveGrid className="stats-grid">
+        <div className="stats-grid">
           {stats.map(([value, label], index) => (
             <Reveal className="stat-card glass" key={label} delay={index * 0.05}>
               <strong>{value}</strong>
               <span>{label}</span>
             </Reveal>
           ))}
-        </ResponsiveGrid>
+        </div>
       </div>
-      <div className="responsive-stack">
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
         <Reveal className="institution-card glass">
           {institutionDetails.map(([label, value]) => (
             <div className="institution-row" key={label}>
@@ -734,7 +713,7 @@ function AboutAndStats() {
           </ul>
         </Reveal>
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
@@ -764,7 +743,7 @@ function AcademicsSection() {
   const categoryKeys = Object.keys(categoryMap);
 
   return (
-    <ResponsiveSection id="academics">
+    <section className="section" id="academics">
       <div className="glowing-orb orb-primary" style={{ bottom: "5%", left: "10%" }} />
       <Reveal>
         <SectionHeading
@@ -787,7 +766,7 @@ function AcademicsSection() {
           ))}
         </Reveal>
 
-        <ResponsiveGrid className="courses-grid">
+        <div className="courses-grid">
           {loading ? <p>Loading courses...</p> : (courses.filter(c => c.category === activeTab).length > 0 ? courses.filter(c => c.category === activeTab).map((course, index) => (
             <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
               <span className="course-tag">{categoryMap[activeTab].title}</span>
@@ -801,13 +780,13 @@ function AcademicsSection() {
               <p>{course.desc}</p>
             </Reveal>
           )))}
-        </ResponsiveGrid>
+        </div>
 
         <Reveal style={{ textAlign: "center", marginTop: "16px" }}>
           <span className="badge badge-info">{categoryMap[activeTab].code}</span>
         </Reveal>
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
@@ -863,7 +842,7 @@ function EligibilityEstimator() {
   }, [courseLevel]);
 
   return (
-    <ResponsiveSection id="admissions">
+    <section className="section" id="admissions">
       <div className="glowing-orb orb-accent" style={{ top: "30%", right: "15%" }} />
       <Reveal>
         <SectionHeading
@@ -948,13 +927,13 @@ function EligibilityEstimator() {
           </div>
         </Reveal>
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
 function FacultyAndResearch() {
   return (
-    <ResponsiveSection id="faculty" className="split-section">
+    <section className="section split-section" id="faculty">
       <div className="glowing-orb orb-primary" style={{ bottom: "10%", right: "5%" }} />
       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
         <Reveal>
@@ -995,7 +974,7 @@ function FacultyAndResearch() {
           </Reveal>
         </div>
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
@@ -1025,7 +1004,7 @@ function NewsAndEvents() {
   }, [activeFilter, newsData]);
 
   return (
-    <ResponsiveSection id="news-and-events">
+    <section className="section" id="news-and-events">
       <div className="glowing-orb orb-accent" style={{ top: "15%", left: "10%" }} />
       <Reveal>
         <SectionHeading
@@ -1111,7 +1090,7 @@ function NewsAndEvents() {
           </ul>
         </div>
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
@@ -1119,7 +1098,7 @@ function Placements() {
   const duplicatedRecruiters = useMemo(() => [...recruiters, ...recruiters], []);
 
   return (
-    <ResponsiveSection id="placements">
+    <section className="section" id="placements">
       <div className="glowing-orb orb-primary" style={{ top: "10%", right: "10%" }} />
       <Reveal>
         <SectionHeading
@@ -1162,19 +1141,18 @@ function Placements() {
                 src={company.logo}
                 alt={company.alt}
                 className="company-logo"
-                loading="lazy"
               />
             </div>
           ))}
         </motion.div>
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
 function StudentLifeSection() {
   return (
-    <ResponsiveSection id="campus">
+    <section className="section" id="campus">
       <div className="glowing-orb orb-accent" style={{ bottom: "10%", left: "5%" }} />
       <Reveal>
         <SectionHeading
@@ -1192,7 +1170,7 @@ function StudentLifeSection() {
           </Reveal>
         ))}
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
@@ -1208,7 +1186,7 @@ function Testimonials() {
   };
 
   return (
-    <ResponsiveSection id="testimonials">
+    <section className="section" id="testimonials">
       <div className="glowing-orb orb-primary" style={{ top: "40%", left: "20%" }} />
       <Reveal>
         <SectionHeading
@@ -1255,13 +1233,13 @@ function Testimonials() {
           </div>
         </div>
       </Reveal>
-    </ResponsiveSection>
+    </section>
   );
 }
 
 function GalleryPreview() {
   return (
-    <ResponsiveSection id="gallery">
+    <section className="section" id="gallery">
       <Reveal>
         <SectionHeading
           eyebrow="Gallery"
@@ -1279,7 +1257,7 @@ function GalleryPreview() {
           </Reveal>
         ))}
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
@@ -1325,7 +1303,7 @@ function ContactSection() {
   };
 
   return (
-    <ResponsiveSection id="contact">
+    <section className="section" id="contact">
       <div className="glowing-orb orb-primary" style={{ bottom: "5%", right: "15%" }} />
       <Reveal>
         <SectionHeading
@@ -1455,7 +1433,7 @@ function ContactSection() {
           )}
         </Reveal>
       </div>
-    </ResponsiveSection>
+    </section>
   );
 }
 
