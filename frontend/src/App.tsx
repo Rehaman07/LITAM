@@ -13,6 +13,8 @@ import wiproLogo from "./assets/logos/wipro.png";
 import accentureLogo from "./assets/logos/accenture.png";
 import cognizantLogo from "./assets/logos/cognizant.png"; 
 import techMahindraLogo from "./assets/logos/techmahindra.png";
+import heroImage from "./assets/images/Main.jpg";
+import directorImage from "./assets/images/Director_sir.jpg";
 
 // Premium counter animation component
 function AnimatedCounter({ value, duration = 1.5 }) {
@@ -561,7 +563,7 @@ function HeroSection() {
       <div className="glowing-orb orb-accent" style={{ bottom: "5%", right: "10%" }} />
       <img
         className="hero-bg-image"
-        src="images/Main.jpg"
+        src={heroImage}
         alt=""
         aria-hidden="true"
       />
@@ -648,7 +650,7 @@ function PrincipalMessage() {
         <div className="principal-card glass">
           <div className="principal-portrait">
             <img
-              src="images/Director_sir.jpg"
+              src={directorImage}
               alt="E. Vamsi Krishna Sir, MBA, M-Tech. - Director, LITAM"
             />
           </div>
@@ -756,7 +758,7 @@ function AcademicsSection() {
           {categoryKeys.map((key) => (
             <button
               key={key}
-              className={	ab-btn }
+              className="ab-btn"
               onClick={() => setActiveTab(key)}
             >
               {key === "btech" ? "B.Tech" : key === "mtech" ? "M.Tech" : key === "diploma" ? "Diploma" : "Post-Grad"}
