@@ -222,14 +222,14 @@ const events = [
 ];
 
 const recruiters = [
-  { name: "Infosys", mark: "I", tone: "sky" },
-  { name: "TCS", mark: "T", tone: "violet" },
-  { name: "Wipro", mark: "W", tone: "rainbow" },
-  { name: "Accenture", mark: ">", tone: "purple" },
-  { name: "Cognizant", mark: "C", tone: "blue" },
-  { name: "Tech Mahindra", mark: "TM", tone: "red" },
-  { name: "Capgemini", mark: "CA", tone: "aqua" },
-  { name: "HCLTech", mark: "H", tone: "orange" },
+  { name: "Infosys", logo: infosysLogo },
+  { name: "TCS", logo: tcsLogo },
+  { name: "Wipro", logo: wiproLogo },
+  { name: "Accenture", logo: accentureLogo },
+  { name: "Cognizant", logo: cognizantLogo },
+  { name: "Tech Mahindra", logo: techMahindraLogo },
+  { name: "Capgemini", logo: capgeminiLogo },
+  { name: "HCLTech", logo: hclLogo },
 ];
 
 const testimonials = [
@@ -1133,8 +1133,8 @@ function Placements() {
         >
           {duplicatedRecruiters.map((company, index) => (
             <span className="recruiter-pill" key={`${company.name}-${index}`}>
-              <span className={`recruiter-logo logo-${company.tone}`} aria-hidden="true">
-                {company.mark}
+              <span className="recruiter-logo" aria-hidden="true">
+                <img src={company.logo} alt="" />
               </span>
               <span className="recruiter-name">{company.name}</span>
             </span>

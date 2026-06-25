@@ -1474,23 +1474,33 @@ p {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 24px;
+  padding: 12px 20px 12px 16px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 999px;
   white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 
 .recruiter-logo {
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 0.85rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 247, 250, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
+}
+
+.recruiter-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+  display: block;
 }
 
 .recruiter-name {
@@ -1498,6 +1508,22 @@ p {
   font-weight: 700;
   font-size: 0.92rem;
   color: var(--text);
+}
+
+@media (max-width: 768px) {
+  .recruiter-pill {
+    padding: 10px 16px 10px 12px;
+    gap: 10px;
+  }
+
+  .recruiter-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .recruiter-name {
+    font-size: 0.84rem;
+  }
 }
 
 /* News & Events dashboard */
