@@ -222,14 +222,14 @@ const events = [
 ];
 
 const recruiters = [
-  { name: "Infosys", logo: infosysLogo },
-  { name: "TCS", logo: tcsLogo },
-  { name: "Wipro", logo: wiproLogo },
-  { name: "Accenture", logo: accentureLogo },
-  { name: "Cognizant", logo: cognizantLogo },
-  { name: "Tech Mahindra", logo: techMahindraLogo },
-  { name: "Capgemini", logo: capgeminiLogo },
-  { name: "HCLTech", logo: hclLogo },
+  { logo: techMahindraLogo, alt: "Tech Mahindra" },
+  { logo: capgeminiLogo, alt: "Capgemini" },
+  { logo: cognizantLogo, alt: "Cognizant" },
+  { logo: hclLogo, alt: "HCL" },
+  { logo: infosysLogo, alt: "Infosys" },
+  { logo: tcsLogo, alt: "TCS" },
+  { logo: wiproLogo, alt: "Wipro" },
+  { logo: accentureLogo, alt: "Accenture" },
 ];
 
 const testimonials = [
@@ -1125,19 +1125,24 @@ function Placements() {
         <h3 style={{ fontSize: "1.15rem", color: "var(--text-muted)" }}>Our Recruiter Network</h3>
       </Reveal>
       
-      <div className="recruiter-marquee" aria-label="Recruiters carousel">
+      <div className="recruiters-marquee" aria-label="Recruiters carousel">
         <motion.div
-          className="recruiter-track"
+          className="recruiters-track"
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear",
+          }}
         >
           {duplicatedRecruiters.map((company, index) => (
-            <span className="recruiter-pill" key={`${company.name}-${index}`}>
-              <span className="recruiter-logo" aria-hidden="true">
-                <img src={company.logo} alt="" />
-              </span>
-              <span className="recruiter-name">{company.name}</span>
-            </span>
+            <div className="logo-item" key={index}>
+              <img
+                src={company.logo}
+                alt={company.alt}
+                className="company-logo"
+              />
+            </div>
           ))}
         </motion.div>
       </div>
