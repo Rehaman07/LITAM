@@ -16,54 +16,57 @@ import techMahindraLogo from "./assets/logos/techmahindra.png";
 import heroImage from "./assets/images/Main.jpg";
 import directorImage from "./assets/images/Director_sir.jpg";
 
-// Premium counter animation component
-function AnimatedCounter({ value, duration = 1.5 }) {
+function AnimatedCounter({ value, duration = 2000, threshold = 0.4 }) {
   const [displayVal, setDisplayVal] = useState("0");
   const ref = useRef(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
+    const match = `${value}`.match(/^([0-9.]+)(.*)$/);
+    if (!match) {
+      setDisplayVal(`${value}`);
+      return undefined;
+    }
+
+    const target = Number(match[1]);
+    const suffix = match[2] || "";
+    const node = ref.current;
+
+    if (!node || Number.isNaN(target)) {
+      setDisplayVal(`${value}`);
+      return undefined;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      setDisplayVal(`${value}`);
+      return undefined;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
-          const match = value.match(/^([0-9.]+)(.*)$/);
-          if (!match) {
-            setDisplayVal(value);
-            return;
-          }
-          
-          const targetNum = parseFloat(match[1]);
-          const suffix = match[2] || "";
-          
-          let startTimestamp = null;
-          const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
-            // Ease out cubic
-            const ease = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(ease * targetNum);
-            
-            setDisplayVal(`${current}${suffix}`);
-            if (progress < 1) {
-              window.requestAnimationFrame(step);
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          let start = 0;
+          const increment = target / (duration / 16);
+
+          const timer = window.setInterval(() => {
+            start += increment;
+
+            if (start >= target) {
+              setDisplayVal(`${target}${suffix}`);
+              window.clearInterval(timer);
             } else {
-              setDisplayVal(value);
+              setDisplayVal(`${Math.floor(start)}${suffix}`);
             }
-          };
-          window.requestAnimationFrame(step);
+          }, 16);
         }
       },
-      { threshold: 0.1 }
+      { threshold }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-    return () => {
-      if (ref.current) observer.disconnect();
-    };
-  }, [value, duration, hasAnimated]);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [value, duration, threshold]);
 
   return <span ref={ref}>{displayVal}</span>;
 }
@@ -622,7 +625,7 @@ function HeroSection() {
               <div className="hero-stat-card glass">
                 <div className="stat-glow-effect" aria-hidden="true" />
                 <strong className="stat-number">
-                  <AnimatedCounter value="NAAC A" />
+                  NAAC A
                 </strong>
                 <span className="stat-label">National Grade</span>
               </div>
@@ -685,12 +688,19 @@ function AboutAndStats() {
           />
         </Reveal>
         <div className="stats-grid">
-          {stats.map(([value, label], index) => (
-            <Reveal className="stat-card glass" key={label} delay={index * 0.05}>
-              <strong>{value}</strong>
-              <span>{label}</span>
-            </Reveal>
-          ))}
+          {stats.map(([value, label], index) => {
+            const statValue = `${value}`;
+            const isAnimated = /^[0-9.]+(?:\s*[A-Za-z%]+|\+)?$/.test(statValue);
+
+            return (
+              <Reveal className="stat-card glass" key={label} delay={index * 0.05}>
+                <strong>
+                  {isAnimated ? <AnimatedCounter value={statValue} /> : statValue}
+                </strong>
+                <span>{label}</span>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
