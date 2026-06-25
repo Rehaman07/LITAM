@@ -1,4 +1,7 @@
+// @ts-nocheck
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import api from './api';
+
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import * as THREE from "three";
 import litamLogo from "../images/logo.png";
@@ -714,8 +717,28 @@ function AboutAndStats() {
 
 function AcademicsSection() {
   const [activeTab, setActiveTab] = useState("btech");
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const categoryKeys = Object.keys(courseCategories);
+  useEffect(() => {
+    api.get('/courses/')
+      .then(res => {
+        setCourses(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+  const categoryMap = {
+    "btech": { title: "B.Tech Programs", code: "AP EAPCET / ECET Code: LOYL" },
+    "mtech": { title: "M.Tech Programs", code: "AP PGECET Code: LOYL" },
+    "diploma": { title: "Diploma Programs (Polytechnic)", code: "AP POLYCET Code: LITM" },
+    "postgrad": { title: "Post-Graduate Programs", code: "AP ICET Code: LITM" }
+  };
+  const categoryKeys = Object.keys(categoryMap);
 
   return (
     <section className="section" id="academics">
@@ -733,7 +756,7 @@ function AcademicsSection() {
           {categoryKeys.map((key) => (
             <button
               key={key}
-              className={`tab-btn ${activeTab === key ? "active" : ""}`}
+              className={	ab-btn }
               onClick={() => setActiveTab(key)}
             >
               {key === "btech" ? "B.Tech" : key === "mtech" ? "M.Tech" : key === "diploma" ? "Diploma" : "Post-Grad"}
@@ -742,17 +765,23 @@ function AcademicsSection() {
         </Reveal>
 
         <div className="courses-grid">
-          {courseCategories[activeTab].courses.map((course, index) => (
+          {loading ? <p>Loading courses...</p> : (courses.filter(c => c.category === activeTab).length > 0 ? courses.filter(c => c.category === activeTab).map((course, index) => (
             <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
-              <span className="course-tag">{courseCategories[activeTab].title}</span>
+              <span className="course-tag">{categoryMap[activeTab].title}</span>
+              <strong>{course.name}</strong>
+              <p>{course.description}</p>
+            </Reveal>
+          )) : courseCategories[activeTab].courses.map((course, index) => (
+            <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
+              <span className="course-tag">{categoryMap[activeTab].title}</span>
               <strong>{course.name}</strong>
               <p>{course.desc}</p>
             </Reveal>
-          ))}
+          )))}
         </div>
 
         <Reveal style={{ textAlign: "center", marginTop: "16px" }}>
-          <span className="badge badge-info">{courseCategories[activeTab].code}</span>
+          <span className="badge badge-info">{categoryMap[activeTab].code}</span>
         </Reveal>
       </div>
     </section>
@@ -950,11 +979,27 @@ function FacultyAndResearch() {
 function NewsAndEvents() {
   const [activeFilter, setActiveFilter] = useState("All");
   const filters = ["All", "Admissions", "Institution", "Campus", "Academic"];
+  
+  const [newsData, setNewsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/news/')
+      .then(res => {
+        setNewsData(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
   const filteredNews = useMemo(() => {
-    if (activeFilter === "All") return news;
-    return news.filter((n) => n.tag === activeFilter);
-  }, [activeFilter]);
+    const dataToFilter = newsData.length > 0 ? newsData : news;
+    if (activeFilter === "All") return dataToFilter;
+    return dataToFilter.filter((n) => n.tag === activeFilter);
+  }, [activeFilter, newsData]);
 
   return (
     <section className="section" id="news-and-events">
@@ -975,7 +1020,7 @@ function NewsAndEvents() {
               {filters.map((f) => (
                 <button
                   key={f}
-                  className={`filter-btn ${activeFilter === f ? "active" : ""}`}
+                  className={ilter-btn }
                   onClick={() => setActiveFilter(f)}
                 >
                   {f}
@@ -985,48 +1030,63 @@ function NewsAndEvents() {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {filteredNews.length > 0 ? (
-              filteredNews.map((item, index) => {
-                const [day, mon] = item.date.split(" ");
-                return (
-                  <Reveal className="news-card glass" key={item.title} delay={index * 0.05}>
-                    <div className="news-date">
-                      <strong>{day}</strong>
-                      <span>{mon}</span>
-                    </div>
-                    <div className="news-body">
-                      <span>{item.tag}</span>
-                      <h3>{item.title}</h3>
-                    </div>
-                  </Reveal>
-                );
-              })
+            {loading ? <p>Loading news...</p> : (filteredNews.length > 0 ? (
+              filteredNews.map((item, index) => (
+                <Reveal className="news-card glass" key={index} delay={index * 0.1}>
+                  <div className="news-date">{item.date}</div>
+                  <div>
+                    <span className="badge badge-primary" style={{ marginBottom: "8px" }}>{item.tag}</span>
+                    <p style={{ color: "var(--text-light)" }}>{item.title}</p>
+                  </div>
+                </Reveal>
+              ))
             ) : (
-              <p style={{ textAlign: "center", padding: "40px", color: "var(--text-faint)" }}>No updates posted in this category.</p>
-            )}
+              <p style={{ color: "var(--text-faint)" }}>No recent updates available for this category.</p>
+            ))}
           </div>
         </div>
 
-        <Reveal className="events-card glass" id="events">
-          <h3 className="gradient-text">Upcoming Events</h3>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {events.map(([date, title, place]) => {
-              const [day, mon] = date.split(" ");
-              return (
-                <div className="event-row" key={title}>
-                  <div className="event-date">
-                    <strong>{day}</strong>
-                    <span>{mon}</span>
-                  </div>
-                  <div className="event-info">
-                    <strong>{title}</strong>
-                    <span>{place}</span>
-                  </div>
+        <div className="events-panel glass">
+          <h3 style={{ fontSize: "1.25rem", marginBottom: "24px" }} className="gradient-text">Upcoming Events</h3>
+          <ul className="events-list">
+            <Reveal delay={0.1}>
+              <li className="event-item">
+                <div className="event-calendar">
+                  <span>AUG</span>
+                  <strong>24</strong>
                 </div>
-              );
-            })}
-          </div>
-        </Reveal>
+                <div className="event-info">
+                  <h4>Tech Symposium 2024</h4>
+                  <p>National level technical paper presentation & coding challenge.</p>
+                </div>
+              </li>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <li className="event-item">
+                <div className="event-calendar">
+                  <span>SEP</span>
+                  <strong>15</strong>
+                </div>
+                <div className="event-info">
+                  <h4>Mega Placement Drive</h4>
+                  <p>Over 40+ MNCs visiting campus for recruitment.</p>
+                </div>
+              </li>
+            </Reveal>
+            <Reveal delay={0.3}>
+              <li className="event-item">
+                <div className="event-calendar">
+                  <span>OCT</span>
+                  <strong>10</strong>
+                </div>
+                <div className="event-info">
+                  <h4>Alumni Meet & Greet</h4>
+                  <p>Annual gathering of LITAM alumni for networking and mentorship.</p>
+                </div>
+              </li>
+            </Reveal>
+          </ul>
+        </div>
       </div>
     </section>
   );
@@ -1428,3 +1488,6 @@ export default function App() {
     </>
   );
 }
+
+
+
