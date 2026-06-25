@@ -1115,6 +1115,20 @@ p {
   font-weight: 500;
 }
 
+.stat-card--featured {
+  align-items: center;
+  text-align: center;
+}
+
+.stat-card--featured strong {
+  font-size: clamp(2.8rem, 5vw, 4rem);
+}
+
+.stat-card--featured span {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .institution-card {
   grid-column: 1 / -1;
   display: grid;

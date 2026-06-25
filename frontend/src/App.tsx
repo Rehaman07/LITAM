@@ -707,7 +707,7 @@ function AboutAndStats() {
             const isAnimated = /^[0-9.]+(?:\s*[A-Za-z%]+|\+)?$/.test(statValue);
 
             return (
-              <Reveal className="stat-card glass" key={label} delay={index * 0.05}>
+              <Reveal className="stat-card stat-card--featured glass" key={label} delay={index * 0.05}>
                 <strong>
                   {isAnimated ? <AnimatedCounter value={statValue} /> : statValue}
                 </strong>
