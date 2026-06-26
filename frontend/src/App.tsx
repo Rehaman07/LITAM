@@ -169,6 +169,15 @@ const courseCategories = {
   }
 };
 
+function normalizeListResponse(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data?.courses)) return data.courses;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.items)) return data.items;
+  return [];
+}
+
 const facultyHighlights = [
   ["Experienced Faculty", "Our highly qualified educators bring years of academic research and corporate expertise into the classroom."],
   ["Mentorship Program", "Individual faculty advisors provide personalized support for academic pathing, project work, and personal wellbeing."],
@@ -399,6 +408,7 @@ function CinematicField({ introDone }) {
 
 function Intro({ onComplete }) {
   const [exit, setExit] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 60, damping: 20 });
@@ -415,6 +425,14 @@ function Intro({ onComplete }) {
     };
   }, [onComplete]);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const updateViewport = () => setIsMobileViewport(mediaQuery.matches);
+    updateViewport();
+    mediaQuery.addEventListener("change", updateViewport);
+    return () => mediaQuery.removeEventListener("change", updateViewport);
+  }, []);
+
   const handlePointerMove = (event) => {
     mouseX.set((event.clientX / window.innerWidth - 0.5) * 2);
     mouseY.set((event.clientY / window.innerHeight - 0.5) * 2);
@@ -429,7 +447,7 @@ function Intro({ onComplete }) {
       transition={{ duration: 0.8, ease: "easeInOut" }}
       aria-label="LITAM cinematic intro"
     >
-      <CinematicField introDone={exit} />
+      {!isMobileViewport && <CinematicField introDone={exit} />}
       <motion.div
         className="camera-stage"
         initial={{ scale: 0.9, y: 10 }}
@@ -749,7 +767,7 @@ function AcademicsSection() {
   useEffect(() => {
     api.get('/courses/')
       .then(res => {
-        setCourses(res.data);
+        setCourses(normalizeListResponse(res.data));
         setLoading(false);
       })
       .catch(err => {
@@ -765,6 +783,8 @@ function AcademicsSection() {
     "postgrad": { title: "Post-Graduate Programs", code: "AP ICET Code: LITM" }
   };
   const categoryKeys = Object.keys(categoryMap);
+  const activeCourses = courses.filter((course) => course.category === activeTab);
+  const fallbackCourses = courseCategories[activeTab]?.courses ?? [];
 
   return (
     <section className="section" id="academics">
@@ -780,30 +800,32 @@ function AcademicsSection() {
       <div className="course-explorer">
         <Reveal className="tabs-list">
           {categoryKeys.map((key) => (
-            <button
+            <motion.button
               key={key}
-              className="ab-btn"
+              type="button"
+              className={`tab-btn ${activeTab === key ? "active" : ""}`}
               onClick={() => setActiveTab(key)}
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
               {key === "btech" ? "B.Tech" : key === "mtech" ? "M.Tech" : key === "diploma" ? "Diploma" : "Post-Grad"}
-            </button>
+            </motion.button>
           ))}
         </Reveal>
 
         <div className="courses-grid">
-          {loading ? <p>Loading courses...</p> : (courses.filter(c => c.category === activeTab).length > 0 ? courses.filter(c => c.category === activeTab).map((course, index) => (
-            <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
-              <span className="course-tag">{categoryMap[activeTab].title}</span>
-              <strong>{course.name}</strong>
-              <p>{course.description}</p>
-            </Reveal>
-          )) : courseCategories[activeTab].courses.map((course, index) => (
-            <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
-              <span className="course-tag">{categoryMap[activeTab].title}</span>
-              <strong>{course.name}</strong>
-              <p>{course.desc}</p>
-            </Reveal>
-          )))}
+          {loading ? (
+            <p>Loading courses...</p>
+          ) : (
+            (activeCourses.length > 0 ? activeCourses : fallbackCourses).map((course, index) => (
+              <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
+                <span className="course-tag">{categoryMap[activeTab].title}</span>
+                <strong>{course.name}</strong>
+                <p>{course.description ?? course.desc}</p>
+              </Reveal>
+            ))
+          )}
         </div>
 
         <Reveal style={{ textAlign: "center", marginTop: "16px" }}>
@@ -1012,7 +1034,7 @@ function NewsAndEvents() {
   useEffect(() => {
     api.get('/news/')
       .then(res => {
-        setNewsData(res.data);
+        setNewsData(normalizeListResponse(res.data));
         setLoading(false);
       })
       .catch(err => {
@@ -1022,7 +1044,7 @@ function NewsAndEvents() {
   }, []);
 
   const filteredNews = useMemo(() => {
-    const dataToFilter = newsData.length > 0 ? newsData : news;
+    const dataToFilter = Array.isArray(newsData) && newsData.length > 0 ? newsData : news;
     if (activeFilter === "All") return dataToFilter;
     return dataToFilter.filter((n) => n.tag === activeFilter);
   }, [activeFilter, newsData]);
@@ -1077,7 +1099,7 @@ function NewsAndEvents() {
           <ul className="events-list">
             <Reveal delay={0.1}>
               <li className="event-item">
-                <div className="event-calendar">
+                <div className="event-date">
                   <span>AUG</span>
                   <strong>24</strong>
                 </div>
@@ -1089,7 +1111,7 @@ function NewsAndEvents() {
             </Reveal>
             <Reveal delay={0.2}>
               <li className="event-item">
-                <div className="event-calendar">
+                <div className="event-date">
                   <span>SEP</span>
                   <strong>15</strong>
                 </div>
@@ -1101,7 +1123,7 @@ function NewsAndEvents() {
             </Reveal>
             <Reveal delay={0.3}>
               <li className="event-item">
-                <div className="event-calendar">
+                <div className="event-date">
                   <span>OCT</span>
                   <strong>10</strong>
                 </div>
