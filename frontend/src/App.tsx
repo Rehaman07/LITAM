@@ -1,6 +1,8 @@
 // @ts-nocheck
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link, Route, Routes } from "react-router-dom";
 import api from './api';
+import UpdatesPage from "./UpdatesPage";
 
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import * as THREE from "three";
@@ -100,13 +102,13 @@ const navItems = [
   "About",
   "Academics",
   "Admissions",
-  "Research",
+  "Updates",
   "Placements",
   "Campus",
   "Contact",
 ].map((label) => ({
   label,
-  href: `#${slugify(label)}`,
+  href: label === "Updates" ? "/updates" : `#${slugify(label)}`,
 }));
 const campusItems = [
   "Faculty",
@@ -509,9 +511,15 @@ function SiteHeader({ theme, onToggleTheme }) {
     <ul className={className}>
       {navItems.map((item) => (
         <li key={item.href}>
-          <a href={item.href} onClick={() => setMenuOpen(false)}>
-            {item.label}
-          </a>
+          {item.href.startsWith("/") ? (
+            <Link to={item.href} onClick={() => setMenuOpen(false)}>
+              {item.label}
+            </Link>
+          ) : (
+            <a href={item.href} onClick={() => setMenuOpen(false)}>
+              {item.label}
+            </a>
+          )}
         </li>
       ))}
     </ul>
@@ -562,6 +570,12 @@ function SiteHeader({ theme, onToggleTheme }) {
         aria-label="Mobile primary navigation"
       >
         {links("mobile-nav-list")}
+        <div className="mobile-actions">
+          <button className="mobile-theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
+            <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
+            <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+          </button>
+        </div>
       </nav>
     </header>
   );
@@ -1024,121 +1038,7 @@ function FacultyAndResearch() {
   );
 }
 
-function NewsAndEvents() {
-  const [activeFilter, setActiveFilter] = useState("All");
-  const filters = ["All", "Admissions", "Institution", "Campus", "Academic"];
-  
-  const [newsData, setNewsData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api.get('/news/')
-      .then(res => {
-        setNewsData(normalizeListResponse(res.data));
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
-
-  const filteredNews = useMemo(() => {
-    const dataToFilter = Array.isArray(newsData) && newsData.length > 0 ? newsData : news;
-    if (activeFilter === "All") return dataToFilter;
-    return dataToFilter.filter((n) => n.tag === activeFilter);
-  }, [activeFilter, newsData]);
-
-  return (
-    <section className="section" id="news-and-events">
-      <div className="glowing-orb orb-accent" style={{ top: "15%", left: "10%" }} />
-      <Reveal>
-        <SectionHeading
-          eyebrow="Updates Feed"
-          title="Announcements, admissions & highlights."
-          text="Stay aligned with upcoming exam schedules, counselling events, placement drives, and campus club updates."
-        />
-      </Reveal>
-
-      <div className="dashboard-layout">
-        <div className="news-feed">
-          <div className="feed-header">
-            <h3 style={{ fontSize: "1.25rem" }} className="gradient-text">Latest News</h3>
-            <div className="feed-filters">
-              {filters.map((f) => (
-                <button
-                  key={f}
-                  className="filter-btn"
-                  onClick={() => setActiveFilter(f)}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {loading ? <p>Loading news...</p> : (filteredNews.length > 0 ? (
-              filteredNews.map((item, index) => (
-                <Reveal className="news-card glass" key={index} delay={index * 0.1}>
-                  <div className="news-date">{item.date}</div>
-                  <div>
-                    <span className="badge badge-primary" style={{ marginBottom: "8px" }}>{item.tag}</span>
-                    <p style={{ color: "var(--text-light)" }}>{item.title}</p>
-                  </div>
-                </Reveal>
-              ))
-            ) : (
-              <p style={{ color: "var(--text-faint)" }}>No recent updates available for this category.</p>
-            ))}
-          </div>
-        </div>
-
-        <div className="events-panel glass">
-          <h3 style={{ fontSize: "1.25rem", marginBottom: "24px" }} className="gradient-text">Upcoming Events</h3>
-          <ul className="events-list">
-            <Reveal delay={0.1}>
-              <li className="event-item">
-                <div className="event-date">
-                  <span>AUG</span>
-                  <strong>24</strong>
-                </div>
-                <div className="event-info">
-                  <h4>Tech Symposium 2024</h4>
-                  <p>National level technical paper presentation & coding challenge.</p>
-                </div>
-              </li>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <li className="event-item">
-                <div className="event-date">
-                  <span>SEP</span>
-                  <strong>15</strong>
-                </div>
-                <div className="event-info">
-                  <h4>Mega Placement Drive</h4>
-                  <p>Over 40+ MNCs visiting campus for recruitment.</p>
-                </div>
-              </li>
-            </Reveal>
-            <Reveal delay={0.3}>
-              <li className="event-item">
-                <div className="event-date">
-                  <span>OCT</span>
-                  <strong>10</strong>
-                </div>
-                <div className="event-info">
-                  <h4>Alumni Meet & Greet</h4>
-                  <p>Annual gathering of LITAM alumni for networking and mentorship.</p>
-                </div>
-              </li>
-            </Reveal>
-          </ul>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Placements() {
   const duplicatedRecruiters = useMemo(() => [...recruiters, ...recruiters], []);
@@ -1498,7 +1398,7 @@ function WebsiteContent({ theme, onToggleTheme }) {
       <AcademicsSection />
       <EligibilityEstimator />
       <FacultyAndResearch />
-      <NewsAndEvents />
+
       <Placements />
       <StudentLifeSection />
       <Testimonials />
@@ -1534,10 +1434,26 @@ export default function App() {
       <AnimatePresence>
         {!introComplete && <Intro onComplete={() => setIntroComplete(true)} />}
       </AnimatePresence>
-      <WebsiteContent
-        theme={theme}
-        onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
-      />
+      <Routes>
+        <Route
+          path="/updates"
+          element={
+            <UpdatesPage
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <WebsiteContent
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
+      </Routes>
     </>
   );
 }
