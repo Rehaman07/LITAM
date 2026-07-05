@@ -1212,6 +1212,7 @@ function ContactSection() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const validate = () => {
     const tempErrors = {};
@@ -1238,14 +1239,24 @@ function ContactSection() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validate()) {
-      setIsSubmitting(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-      }, 1200);
+    if (!validate()) {
+      return;
     }
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    api.post("/updates/contact-inquiries/", formData)
+      .then(() => {
+        setIsSubmitted(true);
+      })
+      .catch((error) => {
+        const message = error?.response?.data?.detail || "We could not submit your inquiry right now.";
+        setSubmitError(message);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
@@ -1366,6 +1377,11 @@ function ContactSection() {
               <button type="submit" className="btn btn-primary" style={{ width: "100%", marginTop: "16px" }} disabled={isSubmitting}>
                 {isSubmitting ? "Submitting Inquiry..." : "Submit Inquiry"}
               </button>
+              {submitError && (
+                <p style={{ marginTop: "12px", color: "var(--accent)", fontSize: "0.9rem" }}>
+                  {submitError}
+                </p>
+              )}
             </form>
           ) : (
             <div className="success-state">

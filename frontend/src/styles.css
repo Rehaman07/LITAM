@@ -54,10 +54,62 @@
   
   --line: rgba(29, 78, 216, 0.08);
   --line-strong: rgba(29, 78, 216, 0.18);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 8px 16px -2px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-  --shadow-lg: 0 20px 30px -5px rgba(29, 78, 216, 0.05), 0 8px 12px -2px rgba(29, 78, 216, 0.02);
-  --shadow-glow: 0 10px 40px rgba(29, 78, 216, 0.04);
+  --shadow-sm: 0 2px 8px rgba(59, 130, 246, 0.08), 0 1px 3px rgba(251, 191, 36, 0.05);
+  --shadow-md: 0 12px 24px -6px rgba(59, 130, 246, 0.16), 0 10px 22px -8px rgba(251, 191, 36, 0.12), 0 4px 10px -6px rgba(236, 72, 153, 0.08);
+  --shadow-lg: 0 28px 50px -14px rgba(59, 130, 246, 0.22), 0 22px 38px -16px rgba(251, 191, 36, 0.18), 0 14px 24px -16px rgba(16, 185, 129, 0.12);
+  --shadow-glow: 0 0 28px rgba(59, 130, 246, 0.10), 0 0 42px rgba(251, 191, 36, 0.08), 0 0 60px rgba(236, 72, 153, 0.05);
+}
+
+:root[data-theme="light"] .glass,
+:root[data-theme="light"] .hero-announcement,
+:root[data-theme="light"] .hero-stat-card,
+:root[data-theme="light"] .principal-card,
+:root[data-theme="light"] .principal-portrait,
+:root[data-theme="light"] .stat-card,
+:root[data-theme="light"] .course-card,
+:root[data-theme="light"] .contact-info-card,
+:root[data-theme="light"] .contact-form-card,
+:root[data-theme="light"] .gallery-item,
+:root[data-theme="light"] .slider-container,
+:root[data-theme="light"] .events-panel,
+:root[data-theme="light"] .news-card,
+:root[data-theme="light"] .institution-card,
+:root[data-theme="light"] .features-card,
+:root[data-theme="light"] .faculty-card,
+:root[data-theme="light"] .placement-highlight,
+:root[data-theme="light"] .update-card {
+  box-shadow:
+    0 18px 38px -14px rgba(59, 130, 246, 0.32),
+    0 24px 46px -18px rgba(251, 191, 36, 0.26),
+    0 16px 30px -18px rgba(236, 72, 153, 0.22),
+    0 10px 24px -18px rgba(16, 185, 129, 0.18),
+    0 0 42px rgba(59, 130, 246, 0.12);
+}
+
+:root[data-theme="light"] .glass:hover,
+:root[data-theme="light"] .hero-announcement:hover,
+:root[data-theme="light"] .hero-stat-card:hover,
+:root[data-theme="light"] .principal-card:hover,
+:root[data-theme="light"] .principal-portrait:hover,
+:root[data-theme="light"] .stat-card:hover,
+:root[data-theme="light"] .course-card:hover,
+:root[data-theme="light"] .contact-info-card:hover,
+:root[data-theme="light"] .contact-form-card:hover,
+:root[data-theme="light"] .gallery-item:hover,
+:root[data-theme="light"] .slider-container:hover,
+:root[data-theme="light"] .events-panel:hover,
+:root[data-theme="light"] .news-card:hover,
+:root[data-theme="light"] .institution-card:hover,
+:root[data-theme="light"] .features-card:hover,
+:root[data-theme="light"] .faculty-card:hover,
+:root[data-theme="light"] .placement-highlight:hover,
+:root[data-theme="light"] .update-card:hover {
+  box-shadow:
+    0 24px 52px -16px rgba(59, 130, 246, 0.40),
+    0 30px 60px -20px rgba(251, 191, 36, 0.34),
+    0 20px 40px -22px rgba(236, 72, 153, 0.28),
+    0 14px 28px -22px rgba(16, 185, 129, 0.22),
+    0 0 54px rgba(251, 191, 36, 0.16);
 }
 
 /* Base Styles */
@@ -70,6 +122,8 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 body {
@@ -81,10 +135,13 @@ body {
   overflow-x: hidden;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 0;
+  height: 0;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg);
@@ -290,13 +347,13 @@ p {
 :root[data-theme="light"] .site-header {
   background: rgba(255, 255, 255, 0.55);
   border-color: rgba(0, 0, 0, 0.06);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.08), 0 18px 36px rgba(251, 191, 36, 0.06), 0 4px 14px rgba(236, 72, 153, 0.04);
 }
 
 :root[data-theme="light"] .site-header.scrolled {
   background: rgba(255, 255, 255, 0.9);
   border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.1), 0 24px 42px rgba(251, 191, 36, 0.08), 0 10px 18px rgba(236, 72, 153, 0.05);
 }
 
 .header-inner {

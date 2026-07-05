@@ -125,7 +125,7 @@ export default function UpdatesPage({ theme, onToggleTheme }) {
                 <div className="update-content" style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text)' }}>
-                      Update
+                      {post.title || "Update"}
                     </h3>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                       {new Date(post.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
