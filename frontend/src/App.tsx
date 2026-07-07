@@ -90,6 +90,7 @@ function AnimatedCounter({ value, duration = 2000, threshold = 0.4 }) {
 
 
 const letters = ["L", "I", "T", "A", "M"];
+const ADMIN_URL = "https://litam-ol1m.onrender.com/admin/";
 const slugify = (label) =>
   label
     .toLowerCase()
@@ -178,6 +179,11 @@ function normalizeListResponse(data) {
   if (Array.isArray(data?.data)) return data.data;
   if (Array.isArray(data?.items)) return data.items;
   return [];
+}
+
+function pickSection(content, key) {
+  if (!content || !key) return [];
+  return Array.isArray(content[key]) ? content[key] : [];
 }
 
 const facultyHighlights = [
@@ -544,8 +550,9 @@ function SiteHeader({ theme, onToggleTheme }) {
           <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
             <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
           </button>
-          <a className="portal-link" href="#contact">
-            Portal
+          <a className="admin-portal-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">👨‍💼</span>
+            <span>Admin Portal</span>
           </a>
           <a className="btn-apply-header" href="#contact">
             Apply Now
@@ -575,6 +582,11 @@ function SiteHeader({ theme, onToggleTheme }) {
             <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
             <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
           </button>
+          <div className="mobile-nav-divider" />
+          <a className="mobile-admin-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">👨‍💼</span>
+            <span>Admin Portal</span>
+          </a>
         </div>
       </nav>
     </header>
@@ -605,7 +617,10 @@ function SectionHeading({ eyebrow, title, text }) {
   );
 }
 
-function HeroSection() {
+function HeroSection({ content }) {
+  const heroItems = pickSection(content, "hero");
+  const heroAnnouncement = heroItems[0];
+  const heroStats = pickSection(content, "stats");
   return (
     <section className="hero" id="home">
       <div className="glowing-orb orb-primary" style={{ top: "10%", left: "15%" }} />
@@ -656,32 +671,32 @@ function HeroSection() {
             <div className="hero-footer-grid">
               <div className="hero-announcement glass">
                 <span className="badge-admissions">Admissions 2026</span>
-                <strong>Counselling Support Active</strong>
-                <p>Apply for CSE, AI & ML, Data Science, ECE, EEE, Mechanical, or Civil Engineering.</p>
+                <strong>{heroAnnouncement?.title || "Counselling Support Active"}</strong>
+                <p>{heroAnnouncement?.message || "Apply for CSE, AI & ML, Data Science, ECE, EEE, Mechanical, or Civil Engineering."}</p>
               </div>
               
               <div className="hero-stat-card glass">
                 <div className="stat-glow-effect" aria-hidden="true" />
                 <strong className="stat-number">
-                  <AnimatedCounter value="2001" />
+                  <AnimatedCounter value={heroStats[0]?.title || "2001"} />
                 </strong>
-                <span className="stat-label">Academic Legacy</span>
+                <span className="stat-label">{heroStats[0]?.message || "Academic Legacy"}</span>
               </div>
               
               <div className="hero-stat-card glass">
                 <div className="stat-glow-effect" aria-hidden="true" />
                 <strong className="stat-number">
-                  NAAC A
+                  {heroStats[1]?.title || "NAAC A"}
                 </strong>
-                <span className="stat-label">National Grade</span>
+                <span className="stat-label">{heroStats[1]?.message || "National Grade"}</span>
               </div>
 
               <div className="hero-stat-card glass">
                 <div className="stat-glow-effect" aria-hidden="true" />
                 <strong className="stat-number">
-                  <AnimatedCounter value="250+" />
+                  <AnimatedCounter value={heroStats[2]?.title || "250+"} />
                 </strong>
-                <span className="stat-label">Recruiter Network</span>
+                <span className="stat-label">{heroStats[2]?.message || "Recruiter Network"}</span>
               </div>
             </div>
           </Reveal>
@@ -773,7 +788,7 @@ function AboutAndStats() {
   );
 }
 
-function AcademicsSection() {
+function AcademicsSection({ content }) {
   const [activeTab, setActiveTab] = useState("btech");
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -799,6 +814,12 @@ function AcademicsSection() {
   const categoryKeys = Object.keys(categoryMap);
   const activeCourses = courses.filter((course) => course.category === activeTab);
   const fallbackCourses = courseCategories[activeTab]?.courses ?? [];
+  const apiCourses = pickSection(content, "course")
+    .filter((course) => (course.section || "course") === "course")
+    .map((course) => ({
+      name: course.title,
+      desc: course.message,
+    }));
 
   return (
     <section className="section" id="academics">
@@ -832,7 +853,7 @@ function AcademicsSection() {
           {loading ? (
             <p>Loading courses...</p>
           ) : (
-            (activeCourses.length > 0 ? activeCourses : fallbackCourses).map((course, index) => (
+            (apiCourses.length > 0 ? apiCourses : activeCourses.length > 0 ? activeCourses : fallbackCourses).map((course, index) => (
               <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
                 <span className="course-tag">{categoryMap[activeTab].title}</span>
                 <strong>{course.name}</strong>
@@ -991,7 +1012,11 @@ function EligibilityEstimator() {
   );
 }
 
-function FacultyAndResearch() {
+function FacultyAndResearch({ content }) {
+  const apiFaculty = pickSection(content, "faculty");
+  const facultyCards = apiFaculty.length > 0
+    ? apiFaculty.map((item) => [item.title, item.message])
+    : facultyHighlights;
   return (
     <section className="section split-section" id="faculty">
       <div className="glowing-orb orb-primary" style={{ bottom: "10%", right: "5%" }} />
@@ -1004,7 +1029,7 @@ function FacultyAndResearch() {
           />
         </Reveal>
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {facultyHighlights.map(([title, text], index) => (
+          {facultyCards.map(([title, text], index) => (
             <Reveal className="glass glass-card" key={title} delay={index * 0.05} style={{ padding: "24px" }}>
               <strong style={{ fontSize: "1.15rem", color: "var(--primary)", display: "block", marginBottom: "6px", fontFamily: "var(--font-heading)" }}>{title}</strong>
               <p style={{ fontSize: "0.92rem" }}>{text}</p>
@@ -1040,8 +1065,19 @@ function FacultyAndResearch() {
 
 
 
-function Placements() {
-  const duplicatedRecruiters = useMemo(() => [...recruiters, ...recruiters], []);
+function Placements({ content }) {
+  const placementItems = pickSection(content, "placement");
+  const recruiterItems = pickSection(content, "recruiter");
+  const duplicatedRecruiters = useMemo(() => {
+    const source = recruiterItems.length > 0
+      ? recruiterItems.map((item) => ({ logo: item.image, alt: item.title }))
+      : recruiters;
+    return [...source, ...source];
+  }, [recruiterItems]);
+  const highestCtc = placementItems[0]?.title || "12 LPA";
+  const trainingHours = placementItems[1]?.title || "300+ Hrs";
+  const placementCopy = placementItems[0]?.message || "Students placed across software architectures, web design, core hardware systems, and corporate consulting.";
+  const trainingCopy = placementItems[1]?.message || "Structured coaching in quantitative methods, data structures, professional styling, and resume building.";
 
   return (
     <section className="section" id="placements">
@@ -1057,13 +1093,13 @@ function Placements() {
       <div className="placement-highlights">
         <Reveal className="placement-highlight glass">
           <span>Highest CTC Package</span>
-          <strong>12 LPA</strong>
-          <p>Students placed across software architectures, web design, core hardware systems, and corporate consulting.</p>
+          <strong>{highestCtc}</strong>
+          <p>{placementCopy}</p>
         </Reveal>
         <Reveal className="placement-highlight glass" delay={0.1}>
           <span>Training Hours</span>
-          <strong>300+ Hrs</strong>
-          <p>Structured coaching in quantitative methods, data structures, professional styling, and resume building.</p>
+          <strong>{trainingHours}</strong>
+          <p>{trainingCopy}</p>
         </Reveal>
       </div>
 
@@ -1096,7 +1132,11 @@ function Placements() {
   );
 }
 
-function StudentLifeSection() {
+function StudentLifeSection({ content }) {
+  const items = pickSection(content, "student_life");
+  const cards = items.length > 0
+    ? items.map((item) => [item.title, item.message])
+    : studentLife;
   return (
     <section className="section" id="campus">
       <div className="glowing-orb orb-accent" style={{ bottom: "10%", left: "5%" }} />
@@ -1109,7 +1149,7 @@ function StudentLifeSection() {
       </Reveal>
 
       <div className="courses-grid" style={{ marginTop: "16px" }}>
-        {studentLife.map(([title, text], idx) => (
+        {cards.map(([title, text], idx) => (
           <Reveal className="course-card glass" key={title} delay={idx * 0.05}>
             <strong>{title}</strong>
             <p>{text}</p>
@@ -1120,15 +1160,19 @@ function StudentLifeSection() {
   );
 }
 
-function Testimonials() {
+function Testimonials({ content }) {
   const [index, setIndex] = useState(0);
+  const apiTestimonials = pickSection(content, "testimonial");
+  const currentTestimonials = apiTestimonials.length > 0
+    ? apiTestimonials.map((item) => ({ quote: item.message, name: item.title, meta: item.message }))
+    : testimonials;
 
   const handleNext = () => {
-    setIndex((prev) => (prev + 1) % testimonials.length);
+    setIndex((prev) => (prev + 1) % currentTestimonials.length);
   };
 
   const handlePrev = () => {
-    setIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    setIndex((prev) => (prev - 1 + currentTestimonials.length) % currentTestimonials.length);
   };
 
   return (
@@ -1153,10 +1197,10 @@ function Testimonials() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <p>&quot;{testimonials[index].quote}&quot;</p>
+              <p>&quot;{currentTestimonials[index].quote}&quot;</p>
               <div className="slider-item-meta">
-                <strong>{testimonials[index].name}</strong>
-                <span>{testimonials[index].meta}</span>
+                <strong>{currentTestimonials[index].name}</strong>
+                <span>{currentTestimonials[index].meta}</span>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -1164,7 +1208,7 @@ function Testimonials() {
 
         <div className="slider-controls">
           <div className="slider-pagination">
-            {testimonials.map((_, idx) => (
+            {currentTestimonials.map((_, idx) => (
               <button
                 key={idx}
                 className={`dot ${index === idx ? "active" : ""}`}
@@ -1183,7 +1227,11 @@ function Testimonials() {
   );
 }
 
-function GalleryPreview() {
+function GalleryPreview({ content }) {
+  const items = pickSection(content, "gallery");
+  const cards = items.length > 0
+    ? items.map((item) => ({ title: item.title, image: item.image }))
+    : gallery;
   return (
     <section className="section" id="gallery">
       <Reveal>
@@ -1194,7 +1242,7 @@ function GalleryPreview() {
         />
       </Reveal>
       <div className="gallery-grid" style={{ marginTop: "16px" }}>
-        {gallery.map((item, index) => (
+        {cards.map((item, index) => (
           <Reveal className="gallery-item" key={item.title} delay={index * 0.05}>
             <img src={item.image} alt={item.title} loading="lazy" />
             <div className="gallery-overlay">
@@ -1399,7 +1447,7 @@ function ContactSection() {
   );
 }
 
-function WebsiteContent({ theme, onToggleTheme }) {
+function WebsiteContent({ theme, onToggleTheme, content }) {
   return (
     <motion.main
       className="site"
@@ -1408,17 +1456,17 @@ function WebsiteContent({ theme, onToggleTheme }) {
       transition={{ duration: 0.8 }}
     >
       <SiteHeader theme={theme} onToggleTheme={onToggleTheme} />
-      <HeroSection />
+      <HeroSection content={content} />
       <PrincipalMessage />
       <AboutAndStats />
-      <AcademicsSection />
+      <AcademicsSection content={content} />
       <EligibilityEstimator />
-      <FacultyAndResearch />
+      <FacultyAndResearch content={content} />
 
-      <Placements />
-      <StudentLifeSection />
-      <Testimonials />
-      <GalleryPreview />
+      <Placements content={content} />
+      <StudentLifeSection content={content} />
+      <Testimonials content={content} />
+      <GalleryPreview content={content} />
       <ContactSection />
       <footer className="site-footer">
         <div className="footer-inner">
@@ -1435,6 +1483,7 @@ function WebsiteContent({ theme, onToggleTheme }) {
 export default function App() {
   const [introComplete, setIntroComplete] = useState(false);
   const [theme, setTheme] = useState(getInitialTheme);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -1444,6 +1493,12 @@ export default function App() {
       // Storage unavailable in private browsing modes
     }
   }, [theme]);
+
+  useEffect(() => {
+    api.get("/content/")
+      .then((res) => setContent(res.data || {}))
+      .catch(() => setContent({}));
+  }, []);
 
   return (
     <>
@@ -1466,6 +1521,7 @@ export default function App() {
             <WebsiteContent
               theme={theme}
               onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+              content={content}
             />
           }
         />

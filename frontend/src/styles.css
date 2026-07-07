@@ -533,6 +533,32 @@ p {
   transition: transform 0.65s ease-in-out;
 }
 
+.admin-portal-btn,
+.mobile-admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #08101f !important;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 55%, #fde68a 100%);
+  box-shadow: 0 12px 28px rgba(245, 158, 11, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.admin-portal-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.admin-portal-btn:hover,
+.mobile-admin-btn:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.03) brightness(1.02);
+}
+
 
 .theme-icon {
   width: 18px;
@@ -612,6 +638,15 @@ p {
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-nav-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--line);
 }
 
 .mobile-theme-toggle {
@@ -640,6 +675,12 @@ p {
 
 .mobile-theme-toggle .theme-icon {
   margin: 0;
+}
+
+.mobile-admin-btn {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
 }
 
 /* Sections */
@@ -2169,6 +2210,10 @@ p {
   .brand-copy small,
   .theme-toggle,
   .portal-link {
+    display: none;
+  }
+
+  .admin-portal-btn {
     display: none;
   }
 

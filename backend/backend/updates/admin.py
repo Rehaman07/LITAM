@@ -3,9 +3,9 @@ from .models import ContactInquiry, Update
 
 @admin.register(Update)
 class UpdateAdmin(admin.ModelAdmin):
-    list_display = ('title', 'message_snippet', 'has_image', 'created_at')
-    search_fields = ('title', 'message')
-    list_filter = ('created_at',)
+    list_display = ('section', 'title', 'message_snippet', 'has_image', 'created_at')
+    search_fields = ('section', 'title', 'message')
+    list_filter = ('section', 'created_at')
     
     def message_snippet(self, obj):
         return obj.message[:75] + ("..." if len(obj.message) > 75 else "")
