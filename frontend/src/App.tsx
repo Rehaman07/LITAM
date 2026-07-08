@@ -1457,6 +1457,7 @@ function WebsiteContent({ theme, onToggleTheme, content }) {
     >
       <SiteHeader theme={theme} onToggleTheme={onToggleTheme} />
       <HeroSection content={content} />
+      <HomeUpdates content={content} />
       <PrincipalMessage />
       <AboutAndStats />
       <AcademicsSection content={content} />
@@ -1527,6 +1528,77 @@ export default function App() {
         />
       </Routes>
     </>
+  );
+}
+
+function HomeUpdates({ content }) {
+  const notices = pickSection(content, "notice");
+  const eventsList = pickSection(content, "event");
+  const noticeCards = notices.length > 0
+    ? notices
+    : news.map((item) => ({
+        title: item.title,
+        message: item.tag,
+        created_at: item.date,
+      }));
+  const eventCards = eventsList.length > 0
+    ? eventsList
+    : events.map(([date, title, location]) => ({
+        title,
+        message: location,
+        created_at: date,
+      }));
+
+  return (
+    <section className="section" id="updates">
+      <div className="glowing-orb orb-accent" style={{ top: "15%", right: "8%" }} />
+      <Reveal>
+        <SectionHeading
+          eyebrow="Updates"
+          title="Notices and events synced from Django Admin."
+          text="Post a notice or event once in Django and it appears here instantly without a frontend redeploy."
+        />
+      </Reveal>
+
+      <div className="dashboard-layout">
+        <Reveal className="news-feed">
+          {noticeCards.map((item, index) => (
+            <article className="news-card glass" key={`${item.title}-${index}`}>
+              <div className="news-date">
+                <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "Now"}</strong>
+                <span>Notice</span>
+              </div>
+              <div className="news-body">
+                <span className="news-tag">{item.message || "Notice"}</span>
+                <h4>{item.title}</h4>
+                <p>{item.message}</p>
+              </div>
+            </article>
+          ))}
+        </Reveal>
+
+        <Reveal className="events-panel">
+          <h3 style={{ marginBottom: "18px" }} className="gradient-text">Upcoming Events</h3>
+          <div className="events-list">
+            {eventCards.map((item, index) => (
+              <div className="event-item" key={`${item.title}-${index}`}>
+                <div className="event-date">
+                  <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "TBA"}</strong>
+                  <span>Event</span>
+                </div>
+                <div className="event-info">
+                  <div className="event-topline">
+                    <h4>{item.title}</h4>
+                    <span className="event-location">{item.message}</span>
+                  </div>
+                  <p>{item.message}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
   );
 }
 
