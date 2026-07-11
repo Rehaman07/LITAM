@@ -551,7 +551,6 @@ function SiteHeader({ theme, onToggleTheme }) {
             <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
           </button>
           <a className="admin-portal-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
-            <span aria-hidden="true">👨‍💼</span>
             <span>Admin Portal</span>
           </a>
           <a className="btn-apply-header" href="#contact">
@@ -584,7 +583,6 @@ function SiteHeader({ theme, onToggleTheme }) {
           </button>
           <div className="mobile-nav-divider" />
           <a className="mobile-admin-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
-            <span aria-hidden="true">👨‍💼</span>
             <span>Admin Portal</span>
           </a>
         </div>
@@ -1438,6 +1436,11 @@ function ContactSection() {
               <p>Your educational inquiry has been logged successfully. An admissions advisor from LITAM will contact you via phone shortly.</p>
               <button className="btn btn-secondary" onClick={() => { setFormData({ name: "", email: "", phone: "", course: "btech", message: "" }); setIsSubmitted(false); }}>
                 Submit Another Inquiry
+              <div className="success-icon">✓</div>
+              <h3 className="gradient-text">Thank You!</h3>
+              <p>Your educational inquiry has been logged successfully. An admissions advisor from LITAM will contact you via phone shortly.</p>
+              <button className="btn btn-secondary" onClick={() => { setFormData({ name: "", email: "", phone: "", course: "btech", message: "" }); setIsSubmitted(false); }}>
+                Submit Another Inquiry
               </button>
             </div>
           )}
@@ -1447,7 +1450,7 @@ function ContactSection() {
   );
 }
 
-function WebsiteContent({ theme, onToggleTheme, content }) {
+function WebsiteContent({ theme, onToggleTheme, content, loadingContent }) {
   return (
     <motion.main
       className="site"
@@ -1457,7 +1460,7 @@ function WebsiteContent({ theme, onToggleTheme, content }) {
     >
       <SiteHeader theme={theme} onToggleTheme={onToggleTheme} />
       <HeroSection content={content} />
-      <HomeUpdates content={content} />
+      <HomeUpdates content={content} loadingContent={loadingContent} />
       <PrincipalMessage />
       <AboutAndStats />
       <AcademicsSection content={content} />
@@ -1485,6 +1488,7 @@ export default function App() {
   const [introComplete, setIntroComplete] = useState(false);
   const [theme, setTheme] = useState(getInitialTheme);
   const [content, setContent] = useState({});
+  const [loadingContent, setLoadingContent] = useState(true);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -1498,7 +1502,8 @@ export default function App() {
   useEffect(() => {
     api.get("/content/")
       .then((res) => setContent(res.data || {}))
-      .catch(() => setContent({}));
+      .catch(() => setContent({}))
+      .finally(() => setLoadingContent(false));
   }, []);
 
   return (
@@ -1523,6 +1528,7 @@ export default function App() {
               theme={theme}
               onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
               content={content}
+              loadingContent={loadingContent}
             />
           }
         />
@@ -1531,23 +1537,11 @@ export default function App() {
   );
 }
 
-function HomeUpdates({ content }) {
+function HomeUpdates({ content, loadingContent }) {
   const notices = pickSection(content, "notice");
   const eventsList = pickSection(content, "event");
-  const noticeCards = notices.length > 0
-    ? notices
-    : news.map((item) => ({
-        title: item.title,
-        message: item.tag,
-        created_at: item.date,
-      }));
-  const eventCards = eventsList.length > 0
-    ? eventsList
-    : events.map(([date, title, location]) => ({
-        title,
-        message: location,
-        created_at: date,
-      }));
+  const noticeCards = notices;
+  const eventCards = eventsList;
 
   return (
     <section className="section" id="updates">
@@ -1555,46 +1549,58 @@ function HomeUpdates({ content }) {
       <Reveal>
         <SectionHeading
           eyebrow="Updates"
-          title="Notices and events synced from Django Admin."
-          text="Post a notice or event once in Django and it appears here instantly without a frontend redeploy."
+          title="Latest Notices & Upcoming Events"
+          text="Stay informed with the latest announcements, admissions updates, academic schedules, campus activities, and upcoming events at Loyola Institute of Technology & Management."
         />
       </Reveal>
 
       <div className="dashboard-layout">
         <Reveal className="news-feed">
-          {noticeCards.map((item, index) => (
-            <article className="news-card glass" key={`${item.title}-${index}`}>
-              <div className="news-date">
-                <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "Now"}</strong>
-                <span>Notice</span>
-              </div>
-              <div className="news-body">
-                <span className="news-tag">{item.message || "Notice"}</span>
-                <h4>{item.title}</h4>
-                <p>{item.message}</p>
-              </div>
-            </article>
-          ))}
+          {loadingContent ? (
+            <p style={{ padding: "1rem" }}>Loading latest notices...</p>
+          ) : noticeCards.length > 0 ? (
+            noticeCards.map((item, index) => (
+              <article className="news-card glass" key={`${item.title}-${index}`}>
+                <div className="news-date">
+                  <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "Now"}</strong>
+                  <span>Notice</span>
+                </div>
+                <div className="news-body">
+                  <span className="news-tag">{item.message || "Notice"}</span>
+                  <h4>{item.title}</h4>
+                  <p>{item.message}</p>
+                </div>
+              </article>
+            ))
+          ) : (
+            <p style={{ padding: "1rem" }}>No notices available at the moment.</p>
+          )}
         </Reveal>
 
         <Reveal className="events-panel">
           <h3 style={{ marginBottom: "18px" }} className="gradient-text">Upcoming Events</h3>
           <div className="events-list">
-            {eventCards.map((item, index) => (
-              <div className="event-item" key={`${item.title}-${index}`}>
-                <div className="event-date">
-                  <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "TBA"}</strong>
-                  <span>Event</span>
-                </div>
-                <div className="event-info">
-                  <div className="event-topline">
-                    <h4>{item.title}</h4>
-                    <span className="event-location">{item.message}</span>
+            {loadingContent ? (
+              <p style={{ padding: "1rem" }}>Loading upcoming events...</p>
+            ) : eventCards.length > 0 ? (
+              eventCards.map((item, index) => (
+                <div className="event-item" key={`${item.title}-${index}`}>
+                  <div className="event-date">
+                    <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "TBA"}</strong>
+                    <span>Event</span>
                   </div>
-                  <p>{item.message}</p>
+                  <div className="event-info">
+                    <div className="event-topline">
+                      <h4>{item.title}</h4>
+                      <span className="event-location">{item.message}</span>
+                    </div>
+                    <p>{item.message}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p style={{ padding: "1rem" }}>No events available at the moment.</p>
+            )}
           </div>
         </Reveal>
       </div>
