@@ -1436,11 +1436,6 @@ function ContactSection() {
               <p>Your educational inquiry has been logged successfully. An admissions advisor from LITAM will contact you via phone shortly.</p>
               <button className="btn btn-secondary" onClick={() => { setFormData({ name: "", email: "", phone: "", course: "btech", message: "" }); setIsSubmitted(false); }}>
                 Submit Another Inquiry
-              <div className="success-icon">✓</div>
-              <h3 className="gradient-text">Thank You!</h3>
-              <p>Your educational inquiry has been logged successfully. An admissions advisor from LITAM will contact you via phone shortly.</p>
-              <button className="btn btn-secondary" onClick={() => { setFormData({ name: "", email: "", phone: "", course: "btech", message: "" }); setIsSubmitted(false); }}>
-                Submit Another Inquiry
               </button>
             </div>
           )}
