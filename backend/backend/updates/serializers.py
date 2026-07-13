@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ContactInquiry, Update
+from .models import ContactInquiry, Update, StudentPlacement
 
 class UpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,3 +12,10 @@ class ContactInquirySerializer(serializers.ModelSerializer):
         model = ContactInquiry
         fields = ["id", "name", "email", "phone", "course", "message", "created_at"]
         read_only_fields = ["id", "created_at"]
+
+
+class StudentPlacementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentPlacement
+        fields = ['id', 'student_name', 'company_name', 'package_lpa', 'photo', 'created_at']
+

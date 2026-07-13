@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ContactInquiry, Update
+from .models import ContactInquiry, Update, StudentPlacement
 
 @admin.register(Update)
 class UpdateAdmin(admin.ModelAdmin):
@@ -22,3 +22,10 @@ class ContactInquiryAdmin(admin.ModelAdmin):
     list_display = ("name", "phone", "email", "course", "created_at")
     search_fields = ("name", "phone", "email", "course", "message")
     list_filter = ("course", "created_at")
+
+
+@admin.register(StudentPlacement)
+class StudentPlacementAdmin(admin.ModelAdmin):
+    list_display = ("student_name", "company_name", "package_lpa", "created_at")
+    search_fields = ("student_name", "company_name")
+    list_filter = ("company_name", "created_at")

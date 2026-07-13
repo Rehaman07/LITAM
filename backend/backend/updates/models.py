@@ -15,6 +15,7 @@ class ContentSection(models.TextChoices):
     ABOUT = "about", "About"
     STATS = "stats", "Stats"
     UNIQUE_FEATURE = "unique_feature", "Unique Feature"
+    CAMPUS = "campus", "Campus"
 
 class Update(models.Model):
     section = models.CharField(max_length=32, choices=ContentSection.choices, default=ContentSection.NOTICE)
@@ -44,3 +45,18 @@ class ContactInquiry(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.phone}"
+
+
+class StudentPlacement(models.Model):
+    student_name = models.CharField(max_length=200)
+    company_name = models.CharField(max_length=200)
+    package_lpa = models.DecimalField(max_digits=5, decimal_places=2, help_text="Package in LPA (e.g., 12.50)")
+    photo = models.ImageField(upload_to="placements/", blank=True, null=True, help_text="Optional student photo")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-package_lpa", "-created_at"]
+        indexes = [models.Index(fields=["-package_lpa"])]
+
+    def __str__(self):
+        return f"{self.student_name} - {self.company_name} ({self.package_lpa} LPA)"

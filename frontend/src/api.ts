@@ -10,5 +10,10 @@ const api = axios.create({
   },
 });
 
-export default api;
+export const fetchPlacements = async (top?: number) => {
+  const url = top ? `/student-placements/?top=${top}` : `/student-placements/`;
+  const response = await api.get(url);
+  return response.data;
+};
 
+export default api;

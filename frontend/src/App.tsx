@@ -3,7 +3,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import api from './api';
 import UpdatesPage from "./UpdatesPage";
-
+import PlacementsPage from "./PlacementsPage";
+import CampusPage from "./CampusPage";
+import { fetchPlacements } from "./api";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import * as THREE from "three";
 import litamLogo from "../images/logo.png";
@@ -109,7 +111,13 @@ const navItems = [
   "Contact",
 ].map((label) => ({
   label,
-  href: label === "Updates" ? "/updates" : `#${slugify(label)}`,
+  href: label === "Updates"
+    ? "/updates"
+    : label === "Placements"
+      ? "/placements"
+      : label === "Campus"
+        ? "/campus"
+        : `/#${slugify(label)}`,
 }));
 const campusItems = [
   "Faculty",
@@ -517,7 +525,7 @@ function SiteHeader({ theme, onToggleTheme }) {
     <ul className={className}>
       {navItems.map((item) => (
         <li key={item.href}>
-          {item.href.startsWith("/") ? (
+          {item.href === "/updates" || item.href === "/placements" || item.href === "/campus" ? (
             <Link to={item.href} onClick={() => setMenuOpen(false)}>
               {item.label}
             </Link>
@@ -534,7 +542,7 @@ function SiteHeader({ theme, onToggleTheme }) {
   return (
     <header className={`site-header ${scrolled ? "scrolled" : ""}`}>
       <div className="header-inner">
-        <a className="brand-lockup" href="#home" aria-label="LITAM home">
+        <a className="brand-lockup" href="/#home" aria-label="LITAM home">
           <span className="brand-mark">
             <img src={litamLogo} alt="LITAM Logo" width="46" height="46" />
           </span>
@@ -553,7 +561,7 @@ function SiteHeader({ theme, onToggleTheme }) {
           <a className="admin-portal-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
             <span>Admin Portal</span>
           </a>
-          <a className="btn-apply-header" href="#contact">
+          <a className="btn-apply-header" href="/#contact">
             Apply Now
           </a>
           <button
@@ -1066,13 +1074,25 @@ function FacultyAndResearch({ content }) {
 function Placements({ content }) {
   const placementItems = pickSection(content, "placement");
   const recruiterItems = pickSection(content, "recruiter");
+  const [topPlacements, setTopPlacements] = useState([]);
+
+  useEffect(() => {
+    fetchPlacements(3)
+      .then((data) => setTopPlacements(data))
+      .catch((err) => console.error(err));
+  }, []);
+
   const duplicatedRecruiters = useMemo(() => {
     const source = recruiterItems.length > 0
       ? recruiterItems.map((item) => ({ logo: item.image, alt: item.title }))
       : recruiters;
     return [...source, ...source];
   }, [recruiterItems]);
-  const highestCtc = placementItems[0]?.title || "12 LPA";
+
+  const highestCtc = topPlacements.length > 0
+    ? `${Math.max(...topPlacements.map((p) => parseFloat(p.package_lpa)))} LPA`
+    : placementItems[0]?.title || "12 LPA";
+  
   const trainingHours = placementItems[1]?.title || "300+ Hrs";
   const placementCopy = placementItems[0]?.message || "Students placed across software architectures, web design, core hardware systems, and corporate consulting.";
   const trainingCopy = placementItems[1]?.message || "Structured coaching in quantitative methods, data structures, professional styling, and resume building.";
@@ -1100,6 +1120,32 @@ function Placements({ content }) {
           <p>{trainingCopy}</p>
         </Reveal>
       </div>
+
+      {topPlacements.length > 0 && (
+        <>
+          <Reveal style={{ marginTop: "32px", marginBottom: "16px" }}>
+            <h3 style={{ fontSize: "1.25rem", color: "var(--text)" }}>Top Placements</h3>
+          </Reveal>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+            {topPlacements.map((p, idx) => (
+              <Reveal key={p.id} className="placement-highlight glass" delay={0.1 * idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '20px' }}>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--primary)', marginBottom: '12px' }}>
+                  <img src={p.photo || litamLogo} alt={p.student_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <strong style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{p.student_name}</strong>
+                <span style={{ color: 'var(--text-muted)' }}>{p.company_name}</span>
+                <span style={{ 
+                  display: 'inline-block', padding: '4px 12px', borderRadius: '100px', 
+                  background: 'var(--primary-glow)', color: 'var(--primary)', 
+                  fontWeight: 'bold', fontSize: '0.85rem', marginTop: '8px' 
+                }}>
+                  {p.package_lpa} LPA
+                </span>
+              </Reveal>
+            ))}
+          </div>
+        </>
+      )}
 
       <Reveal style={{ marginBottom: "16px" }}>
         <h3 style={{ fontSize: "1.15rem", color: "var(--text-muted)" }}>Our Recruiter Network</h3>
@@ -1226,7 +1272,7 @@ function Testimonials({ content }) {
 }
 
 function GalleryPreview({ content }) {
-  const items = pickSection(content, "gallery");
+  const items = pickSection(content, "campus");
   const cards = items.length > 0
     ? items.map((item) => ({ title: item.title, image: item.image }))
     : gallery;
@@ -1234,7 +1280,7 @@ function GalleryPreview({ content }) {
     <section className="section" id="gallery">
       <Reveal>
         <SectionHeading
-          eyebrow="Gallery"
+          eyebrow="Campus Preview"
           title="A preview of our modern laboratory & research infrastructure."
           text="Step inside our high-tech digital computing labs, academic halls, and resource-filled libraries."
         />
@@ -1463,7 +1509,6 @@ function WebsiteContent({ theme, onToggleTheme, content, loadingContent }) {
       <FacultyAndResearch content={content} />
 
       <Placements content={content} />
-      <StudentLifeSection content={content} />
       <Testimonials content={content} />
       <GalleryPreview content={content} />
       <ContactSection />
@@ -1514,6 +1559,40 @@ export default function App() {
               theme={theme}
               onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
             />
+          }
+        />
+        <Route
+          path="/placements"
+          element={
+            <PlacementsPage
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
+        <Route
+          path="/campus"
+          element={
+            <motion.main
+              className="site"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+            >
+              <CampusPage
+                content={content}
+                theme={theme}
+                onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+              />
+              <footer className="site-footer">
+                <div className="footer-inner">
+                  <p>© {new Date().getFullYear()} Loyola Institute of Technology & Management. All rights reserved.</p>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-faint)" }}>
+                    Approved by AICTE | Affiliated to JNTUK | NAAC &apos;A&apos; Accredited Institution | ISO 9001:2015
+                  </p>
+                </div>
+              </footer>
+            </motion.main>
           }
         />
         <Route

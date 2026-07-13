@@ -1,7 +1,7 @@
 from collections import defaultdict
 from rest_framework import generics, views, response
-from .models import ContactInquiry, Update, ContentSection
-from .serializers import ContactInquirySerializer, UpdateSerializer
+from .models import ContactInquiry, Update, ContentSection, StudentPlacement
+from .serializers import ContactInquirySerializer, UpdateSerializer, StudentPlacementSerializer
 
 class UpdateListAPIView(generics.ListAPIView):
     queryset = Update.objects.all()
@@ -28,3 +28,17 @@ class SiteContentAPIView(views.APIView):
         for item in queryset:
             payload.setdefault(item.section, []).append(UpdateSerializer(item).data)
         return response.Response(payload)
+
+class StudentPlacementListAPIView(generics.ListAPIView):
+    serializer_class = StudentPlacementSerializer
+
+    def get_queryset(self):
+        queryset = StudentPlacement.objects.all()
+        top = self.request.query_params.get('top')
+        if top is not None:
+            try:
+                top = int(top)
+                queryset = queryset[:top]
+            except ValueError:
+                pass
+        return queryset
