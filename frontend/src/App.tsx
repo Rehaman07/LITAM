@@ -1,12 +1,14 @@
-// @ts-nocheck
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import api from './api';
 import UpdatesPage from "./UpdatesPage";
 import PlacementsPage from "./PlacementsPage";
 import CampusPage from "./CampusPage";
+import AboutPage from "./AboutPage";
+import SiteFooter from "./SiteFooter";
 import { fetchPlacements } from "./api";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import * as THREE from "three";
 import litamLogo from "../images/logo.png";
 import tcsLogo from "./assets/logos/tcs.png";
@@ -115,6 +117,8 @@ const navItems = [
     ? "/updates"
     : label === "Placements"
       ? "/placements"
+      : label === "About"
+        ? "/about"
       : label === "Campus"
         ? "/campus"
         : `/#${slugify(label)}`,
@@ -193,12 +197,6 @@ function pickSection(content, key) {
   if (!content || !key) return [];
   return Array.isArray(content[key]) ? content[key] : [];
 }
-
-const facultyHighlights = [
-  ["Experienced Faculty", "Our highly qualified educators bring years of academic research and corporate expertise into the classroom."],
-  ["Mentorship Program", "Individual faculty advisors provide personalized support for academic pathing, project work, and personal wellbeing."],
-  ["Industry Practice", "Strong corporate tie-ups translate standard curricula into modern lab work, workshops, and industry placements."]
-];
 
 const studentLife = [
   ["Technical & Cultural Fests", "Students manage, code, perform, and present at national hackathons, cultural festivals, and annual sports days."],
@@ -525,7 +523,7 @@ function SiteHeader({ theme, onToggleTheme }) {
     <ul className={className}>
       {navItems.map((item) => (
         <li key={item.href}>
-          {item.href === "/updates" || item.href === "/placements" || item.href === "/campus" ? (
+          {item.href === "/updates" || item.href === "/placements" || item.href === "/campus" || item.href === "/about" ? (
             <Link to={item.href} onClick={() => setMenuOpen(false)}>
               {item.label}
             </Link>
@@ -599,7 +597,7 @@ function SiteHeader({ theme, onToggleTheme }) {
   );
 }
 
-function Reveal({ children, className = "", delay = 0 }) {
+function Reveal({ children, className = "", delay = 0, style = {} }: any) {
   return (
     <motion.div
       className={className}
@@ -738,58 +736,6 @@ function PrincipalMessage() {
           </div>
         </div>
       </Reveal>
-    </section>
-  );
-}
-
-function AboutAndStats() {
-  return (
-    <section className="section split-section" id="about">
-      <div className="glowing-orb orb-accent" style={{ top: "10%", left: "5%" }} />
-      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-        <Reveal>
-          <SectionHeading
-            eyebrow="About LITAM"
-            title="Established in 2001, providing state-of-the-art technical & management education."
-            text="Loyola Institute of Technology and Management operates under the Santhi Nikethan Minority Education Society, serving students from urban, rural, and semi-urban communities across Andhra Pradesh."
-          />
-        </Reveal>
-        <div className="stats-grid">
-          {stats.map(([value, label], index) => {
-            const statValue = `${value}`;
-            const isAnimated = /^[0-9.]+(?:\s*[A-Za-z%]+|\+)?$/.test(statValue);
-
-            return (
-              <Reveal className="stat-card stat-card--featured glass" key={label} delay={index * 0.05}>
-                <strong>
-                  {isAnimated ? <AnimatedCounter value={statValue} /> : statValue}
-                </strong>
-                <span>{label}</span>
-              </Reveal>
-            );
-          })}
-        </div>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-        <Reveal className="institution-card glass">
-          {institutionDetails.map(([label, value]) => (
-            <div className="institution-row" key={label}>
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </div>
-          ))}
-        </Reveal>
-        <Reveal className="features-card">
-          <h3 style={{ marginBottom: "16px", fontSize: "1.25rem" }} className="gradient-text">Key Features</h3>
-          <ul>
-            {uniqueFeatures.map((feature, idx) => (
-              <li key={feature} className="glass" style={{ transitionDelay: `${idx * 0.05}s` }}>
-                {feature}
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-      </div>
     </section>
   );
 }
@@ -1018,58 +964,303 @@ function EligibilityEstimator() {
   );
 }
 
-function FacultyAndResearch({ content }) {
-  const apiFaculty = pickSection(content, "faculty");
-  const facultyCards = apiFaculty.length > 0
-    ? apiFaculty.map((item) => [item.title, item.message])
-    : facultyHighlights;
-  return (
-    <section className="section split-section" id="faculty">
-      <div className="glowing-orb orb-primary" style={{ bottom: "10%", right: "5%" }} />
-      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-        <Reveal>
-          <SectionHeading
-            eyebrow="Faculty"
-            title="A mentoring-first academic environment."
-            text="LITAM focuses heavily on student-faculty interactivity, ensuring concepts are fully digested in the classroom and actively applied in laboratories."
-          />
-        </Reveal>
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {facultyCards.map(([title, text], index) => (
-            <Reveal className="glass glass-card" key={title} delay={index * 0.05} style={{ padding: "24px" }}>
-              <strong style={{ fontSize: "1.15rem", color: "var(--primary)", display: "block", marginBottom: "6px", fontFamily: "var(--font-heading)" }}>{title}</strong>
-              <p style={{ fontSize: "0.92rem" }}>{text}</p>
-            </Reveal>
-          ))}
-        </div>
-      </div>
+function GradeCalculatorTabs() {
+  const [activeTab, setActiveTab] = useState("sgpa");
+  const [semesterRows, setSemesterRows] = useState([
+    { sgpa: "0", credits: "0" },
+    { sgpa: "0", credits: "0" },
+    { sgpa: "0", credits: "0" },
+    { sgpa: "0", credits: "0" },
+    { sgpa: "0", credits: "0" },
+    { sgpa: "0", credits: "0" },
+    { sgpa: "0", credits: "0" },
+    { sgpa: "0", credits: "0" },
+  ]);
+  const [courses, setCourses] = useState([
+    { credits: "0", grade: "F" },
+    { credits: "0", grade: "F" },
+    { credits: "0", grade: "F" },
+    { credits: "0", grade: "F" },
+    { credits: "0", grade: "F" },
+    { credits: "0", grade: "F" },
+    { credits: "0", grade: "F" },
+    { credits: "0", grade: "F" },
+  ]);
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }} id="research">
-        <Reveal>
-          <SectionHeading
-            eyebrow="Research & Innovation"
-            title="Translating practical ideas into technical prototypes."
-            text="LITAM provides computer labs, core technical design rooms, research journals, and expert mentoring to support student paper publication and patent design."
-          />
-        </Reveal>
-        <div className="stats-grid">
-          <Reveal className="stat-card glass">
-            <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--text-faint)", fontWeight: "800" }}>Focus Fields</span>
-            <strong style={{ fontSize: "1.75rem", marginBlock: "8px" }} className="gradient-text">AI, IoT & Energy</strong>
-            <p style={{ fontSize: "0.88rem" }}>Student research teams build smart microgrid modules, automation systems, and computer vision tools.</p>
-          </Reveal>
-          <Reveal className="stat-card glass">
-            <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--text-faint)", fontWeight: "800" }}>Innovation Path</span>
-            <strong style={{ fontSize: "1.75rem", marginBlock: "8px" }} className="gradient-text">Build, Test, Present</strong>
-            <p style={{ fontSize: "0.88rem" }}>Progress from simple laboratory projects to research paper publications and national engineering awards.</p>
-          </Reveal>
+  const sgpaGradePointsMap = {
+    O: 10,
+    S: 9,
+    A: 8,
+    B: 7,
+    C: 6,
+    D: 4,
+    F: 0,
+  };
+
+  const sgpaData = useMemo(() => {
+    let totalCredits = 0;
+    let totalGradePoints = 0;
+
+    courses.forEach((course) => {
+      const credits = Number.parseFloat(course.credits);
+      const gradePoint = sgpaGradePointsMap[course.grade];
+      if (Number.isFinite(credits) && credits > 0 && Number.isFinite(gradePoint)) {
+        totalCredits += credits;
+        totalGradePoints += credits * gradePoint;
+      }
+    });
+
+    const sgpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
+    return {
+      sgpa: sgpa.toFixed(2),
+      totalCredits: totalCredits.toFixed(0),
+      totalGradePoints: totalGradePoints.toFixed(2),
+    };
+  }, [courses]);
+
+  const cgpaData = useMemo(() => {
+    let totalWeightedPoints = 0;
+    let totalCredits = 0;
+    let validSemesters = 0;
+
+    semesterRows.forEach((row) => {
+      const sgpa = Number.parseFloat(row.sgpa);
+      const credits = Number.parseFloat(row.credits);
+      if (Number.isFinite(sgpa) && Number.isFinite(credits) && credits > 0) {
+        totalWeightedPoints += sgpa * credits;
+        totalCredits += credits;
+        validSemesters += 1;
+      }
+    });
+
+    const cgpa = totalCredits > 0 ? totalWeightedPoints / totalCredits : 0;
+    return {
+      cgpa: cgpa.toFixed(2),
+      totalCredits: totalCredits.toFixed(0),
+      validSemesters,
+      totalWeightedPoints: totalWeightedPoints.toFixed(2),
+    };
+  }, [semesterRows]);
+
+  const updateSemester = (index, field, value) => {
+    setSemesterRows((prev) =>
+      prev.map((row, rowIndex) => (rowIndex === index ? { ...row, [field]: value } : row))
+    );
+  };
+
+  const updateCourse = (index, field, value) => {
+    setCourses((prev) =>
+      prev.map((course, courseIndex) => (courseIndex === index ? { ...course, [field]: value } : course))
+    );
+  };
+
+  const resetSgpa = () => {
+    setCourses([
+      { credits: "0", grade: "F" },
+      { credits: "0", grade: "F" },
+      { credits: "0", grade: "F" },
+      { credits: "0", grade: "F" },
+      { credits: "0", grade: "F" },
+      { credits: "0", grade: "F" },
+      { credits: "0", grade: "F" },
+      { credits: "0", grade: "F" },
+    ]);
+  };
+
+  const resetCgpa = () => {
+    setSemesterRows([
+      { sgpa: "0", credits: "0" },
+      { sgpa: "0", credits: "0" },
+      { sgpa: "0", credits: "0" },
+      { sgpa: "0", credits: "0" },
+      { sgpa: "0", credits: "0" },
+      { sgpa: "0", credits: "0" },
+      { sgpa: "0", credits: "0" },
+      { sgpa: "0", credits: "0" },
+    ]);
+  };
+
+  return (
+    <section className="section" id="grade-calculator">
+      <div className="glowing-orb orb-primary" style={{ top: "20%", left: "8%" }} />
+      <Reveal>
+        <SectionHeading
+          eyebrow="Grade Calculator"
+          title="Switch between SGPA and CGPA in one place."
+          text="Use the tabs below to calculate semester SGPA or overall CGPA using the same academic reference format."
+        />
+      </Reveal>
+
+      <Reveal className="glass glass-card calculator-shell">
+        <div className="calculator-tabs" role="tablist" aria-label="SGPA and CGPA calculator tabs">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "sgpa"}
+            className={`calculator-tab ${activeTab === "sgpa" ? "active" : ""}`}
+            onClick={() => setActiveTab("sgpa")}
+          >
+            SGPA
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "cgpa"}
+            className={`calculator-tab ${activeTab === "cgpa" ? "active" : ""}`}
+            onClick={() => setActiveTab("cgpa")}
+          >
+            CGPA
+          </button>
         </div>
-      </div>
+
+        {activeTab === "sgpa" ? (
+          <div className="calculator-tab-panel">
+            <div className="table-scroll">
+              <table className="sgpa-table">
+                <thead>
+                  <tr>
+                    <th>Course</th>
+                    <th>Credit</th>
+                    <th>Grade letter</th>
+                    <th>Grade point</th>
+                    <th>Credit Point (Credit x Grade Point)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {courses.map((course, index) => {
+                    const credits = Number.parseFloat(course.credits);
+                    const gradePoint = sgpaGradePointsMap[course.grade] ?? 0;
+                    const creditPoint = Number.isFinite(credits) && credits > 0 && gradePoint > 0
+                      ? credits * gradePoint
+                      : 0;
+                    return (
+                      <tr key={`sgpa-row-${index + 1}`}>
+                        <td>Course {index + 1}</td>
+                        <td>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.5"
+                            className="form-input table-input"
+                            value={course.credits}
+                            onChange={(e) => updateCourse(index, "credits", e.target.value)}
+                          />
+                        </td>
+                        <td>
+                            <select
+                            className="form-select table-input"
+                            value={course.grade}
+                            onChange={(e) => updateCourse(index, "grade", e.target.value)}
+                          >
+                            <option value="F">Grade</option>
+                            <option value="O">O</option>
+                            <option value="S">S</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="F">F</option>
+                          </select>
+                        </td>
+                        <td>{course.grade ? sgpaGradePointsMap[course.grade] : 0}</td>
+                        <td>{creditPoint ? `${credits} x ${gradePoint} = ${creditPoint}` : "0"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td />
+                    <td>{sgpaData.totalCredits}</td>
+                    <td colSpan={2}>Total</td>
+                    <td>{sgpaData.totalGradePoints}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <div className="calculator-footer">
+              <div className="calculator-total">
+                Thus, <strong>SGPA = {sgpaData.totalGradePoints}/{sgpaData.totalCredits} = {sgpaData.sgpa}</strong>
+              </div>
+              <button type="button" className="btn btn-secondary cgpa-reset-btn" onClick={resetSgpa}>
+                Reset SGPA
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="calculator-tab-panel">
+            <div className="cgpa-layout">
+              <Reveal className="glass glass-card cgpa-input-card">
+                <div className="cgpa-header">
+                  <h3 className="gradient-text">Semester Inputs</h3>
+                  <button type="button" className="btn btn-secondary cgpa-reset-btn" onClick={resetCgpa}>
+                    Reset
+                  </button>
+                </div>
+                <div className="cgpa-grid">
+                  {semesterRows.map((row, index) => (
+                    <div className="cgpa-row" key={`semester-${index + 1}`}>
+                      <span className="cgpa-semester">Semester {index + 1}</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.01"
+                        className="form-input"
+                        placeholder="SGPA"
+                        value={row.sgpa}
+                        onChange={(e) => updateSemester(index, "sgpa", e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        className="form-input"
+                        placeholder="Credits"
+                        value={row.credits}
+                        onChange={(e) => updateSemester(index, "credits", e.target.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+
+              <Reveal className="estimator-results glass glass-card cgpa-summary-card">
+                <div className="results-header">
+                  <h3 className="gradient-text">CGPA Summary</h3>
+                  <span className="badge badge-info">{cgpaData.validSemesters} semesters entered</span>
+                </div>
+
+                <div className="cgpa-hero">
+                  <strong>{cgpaData.cgpa}</strong>
+                  <span>Weighted CGPA</span>
+                </div>
+
+                <div className="results-grid">
+                  <div className="result-item">
+                    <span>Total Credits</span>
+                    <strong>{cgpaData.totalCredits}</strong>
+                  </div>
+                  <div className="result-item">
+                    <span>Weighted Points</span>
+                    <strong>{cgpaData.totalWeightedPoints}</strong>
+                  </div>
+                  <div className="result-item" style={{ gridColumn: "1 / -1" }}>
+                    <span>How it works</span>
+                    <p style={{ fontSize: "0.92rem", marginTop: "4px" }}>
+                      CGPA = sum of (SGPA x credits) divided by total credits.
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        )}
+      </Reveal>
     </section>
   );
 }
-
-
 
 function Placements({ content }) {
   const placementItems = pickSection(content, "placement");
@@ -1301,13 +1492,13 @@ function GalleryPreview({ content }) {
 
 function ContactSection() {
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", course: "btech", message: "" });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<any>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   const validate = () => {
-    const tempErrors = {};
+    const tempErrors: any = {};
     if (!formData.name.trim()) tempErrors.name = "Full name is required";
     if (!formData.phone.trim()) {
       tempErrors.phone = "Phone number is required";
@@ -1503,32 +1694,25 @@ function WebsiteContent({ theme, onToggleTheme, content, loadingContent }) {
       <HeroSection content={content} />
       <HomeUpdates content={content} loadingContent={loadingContent} />
       <PrincipalMessage />
-      <AboutAndStats />
       <AcademicsSection content={content} />
       <EligibilityEstimator />
-      <FacultyAndResearch content={content} />
-
+      <GradeCalculatorTabs />
       <Placements content={content} />
       <Testimonials content={content} />
       <GalleryPreview content={content} />
       <ContactSection />
-      <footer className="site-footer">
-        <div className="footer-inner">
-          <p>© {new Date().getFullYear()} Loyola Institute of Technology & Management. All rights reserved.</p>
-          <p style={{ fontSize: "0.75rem", color: "var(--text-faint)" }}>
-            Approved by AICTE | Affiliated to JNTUK | NAAC &apos;A&apos; Accredited Institution | ISO 9001:2015
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </motion.main>
   );
 }
 
 export default function App() {
+  const location = useLocation();
   const [introComplete, setIntroComplete] = useState(false);
   const [theme, setTheme] = useState(getInitialTheme);
   const [content, setContent] = useState({});
   const [loadingContent, setLoadingContent] = useState(true);
+  const showIntro = location.pathname !== "/about";
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -1549,9 +1733,18 @@ export default function App() {
   return (
     <>
       <AnimatePresence>
-        {!introComplete && <Intro onComplete={() => setIntroComplete(true)} />}
+        {showIntro && !introComplete && <Intro onComplete={() => setIntroComplete(true)} />}
       </AnimatePresence>
       <Routes>
+        <Route
+          path="/about"
+          element={
+            <AboutPage
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
         <Route
           path="/updates"
           element={
@@ -1584,14 +1777,7 @@ export default function App() {
                 theme={theme}
                 onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
               />
-              <footer className="site-footer">
-                <div className="footer-inner">
-                  <p>© {new Date().getFullYear()} Loyola Institute of Technology & Management. All rights reserved.</p>
-                  <p style={{ fontSize: "0.75rem", color: "var(--text-faint)" }}>
-                    Approved by AICTE | Affiliated to JNTUK | NAAC &apos;A&apos; Accredited Institution | ISO 9001:2015
-                  </p>
-                </div>
-              </footer>
+              <SiteFooter />
             </motion.main>
           }
         />
@@ -1681,6 +1867,9 @@ function HomeUpdates({ content, loadingContent }) {
     </section>
   );
 }
+
+
+
 
 
 
