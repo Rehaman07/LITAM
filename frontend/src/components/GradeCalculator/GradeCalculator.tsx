@@ -49,21 +49,29 @@ const GRADING_SYSTEMS: { [key: string]: SystemInfo } = {
   },
 };
 
-const PERCENTAGE_FORMULAS: { [key: string]: { name: string; calc: (val: number) => number; formulaText: string } } = {
-  jntuk_r23: {
-    name: "JNTUK R23: Percentage = CGPA × 10",
-    calc: (val: number) => val * 10,
-    formulaText: "Percentage = CGPA × 10",
-  },
-  jntuk_r20: {
-    name: "JNTUK R20 / AICTE: (CGPA - 0.75) × 10",
+interface FormulaInfo {
+  name: string;
+  calc: (val: number) => number;
+  formulaText: string;
+  explanation?: string;
+}
+
+const PERCENTAGE_FORMULAS: { [key: string]: FormulaInfo } = {
+  jntuk_official: {
+    name: "Official Offset: (CGPA - 0.75) × 10",
     calc: (val: number) => (val > 0.75 ? (val - 0.75) * 10 : 0),
-    formulaText: "Percentage = (CGPA - 0.75) × 10",
+    formulaText: "Percentage (%) = (CGPA - 0.75) × 10",
+    explanation: "The university uses a standard reduction offset (0.75) to normalize credit points into raw marks.",
+  },
+  jntuk_direct: {
+    name: "Direct Scale: CGPA × 10",
+    calc: (val: number) => val * 10,
+    formulaText: "Percentage (%) = CGPA × 10",
   },
   cbse: {
-    name: "Standard: CGPA × 9.5",
+    name: "Standard CBSE: CGPA × 9.5",
     calc: (val: number) => val * 9.5,
-    formulaText: "Percentage = CGPA × 9.5",
+    formulaText: "Percentage (%) = CGPA × 9.5",
   },
 };
 
@@ -98,7 +106,7 @@ const initialSemesters: SemesterRow[] = Array.from({ length: 8 }, (_, i) => ({
 export function GradeCalculator() {
   const [activeTab, setActiveTab] = useState<"sgpa" | "cgpa">("sgpa");
   const [selectedSystemKey, setSelectedSystemKey] = useState("jntuk_r23");
-  const [selectedFormulaKey, setSelectedFormulaKey] = useState("jntuk_r23");
+  const [selectedFormulaKey, setSelectedFormulaKey] = useState("jntuk_official");
 
   const [courses, setCourses] = useState<CourseRow[]>(initialCourses);
   const [semesters, setSemesters] = useState<SemesterRow[]>(initialSemesters);
@@ -106,7 +114,7 @@ export function GradeCalculator() {
   const currentSystem = GRADING_SYSTEMS[selectedSystemKey] || GRADING_SYSTEMS.jntuk_r23;
   const currentGradeScale = currentSystem.scale;
   const currentDescriptions = currentSystem.descriptions;
-  const currentFormulaObj = PERCENTAGE_FORMULAS[selectedFormulaKey] || PERCENTAGE_FORMULAS.jntuk_r23;
+  const currentFormulaObj = PERCENTAGE_FORMULAS[selectedFormulaKey] || PERCENTAGE_FORMULAS.jntuk_official;
   const currentFormula = currentFormulaObj.calc;
 
   // SGPA Calculation
@@ -243,7 +251,7 @@ export function GradeCalculator() {
             </div>
             <div className="grade-calc-title-text">
               <h2>Academic Grade Calculator</h2>
-              <p>Supports JNTUK R23, R20 & Custom Regulations</p>
+              <p>Official University Reduction Formula: Percentage (%) = (CGPA - 0.75) × 10</p>
             </div>
           </div>
 
@@ -291,13 +299,7 @@ export function GradeCalculator() {
               <select
                 className="grade-calc-system-select"
                 value={selectedSystemKey}
-                onChange={(e) => {
-                  const newSysKey = e.target.value;
-                  setSelectedSystemKey(newSysKey);
-                  // Automatically align percentage formula if switching to R23 or R20
-                  if (newSysKey === "jntuk_r23") setSelectedFormulaKey("jntuk_r23");
-                  else if (newSysKey === "jntuk_r20") setSelectedFormulaKey("jntuk_r20");
-                }}
+                onChange={(e) => setSelectedSystemKey(e.target.value)}
                 title="Select Academic Grading System"
               >
                 {Object.keys(GRADING_SYSTEMS).map((key) => (
@@ -572,7 +574,14 @@ export function GradeCalculator() {
               <div className="calc-perc-val">
                 {activeTab === "sgpa" ? sgpaResult.percentage : cgpaResult.percentage}%
               </div>
-              <div className="calc-perc-sub">Formula: {currentFormulaObj.formulaText}</div>
+              <div className="calc-perc-sub" style={{ fontWeight: 600, color: "var(--calc-accent-yellow)" }}>
+                {currentFormulaObj.formulaText}
+              </div>
+              {currentFormulaObj.explanation && (
+                <div style={{ fontSize: "0.72rem", color: "var(--calc-text-muted)", marginTop: "0.25rem", fontStyle: "italic" }}>
+                  {currentFormulaObj.explanation}
+                </div>
+              )}
               <div style={{ marginTop: "0.5rem" }}>
                 <select
                   className="grade-calc-system-select"
