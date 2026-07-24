@@ -1,0 +1,851 @@
+/* =========================================================
+   FLUID SGPA & CGPA CALCULATOR DESIGN SYSTEM (9:16 ENHANCED)
+   ========================================================= */
+
+:root {
+  --calc-bg-card: rgba(13, 17, 34, 0.75);
+  --calc-bg-card-hover: rgba(20, 26, 50, 0.85);
+  --calc-border: rgba(99, 102, 241, 0.18);
+  --calc-border-glow: rgba(99, 102, 241, 0.4);
+  --calc-primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+  --calc-accent-blue: #38bdf8;
+  --calc-accent-green: #22c55e;
+  --calc-accent-yellow: #eab308;
+  --calc-accent-purple: #a855f7;
+  --calc-text-main: #f8fafc;
+  --calc-text-muted: #94a3b8;
+  --calc-text-dim: #64748b;
+  --calc-radius-lg: clamp(0.85rem, 2vw, 1.5rem);
+  --calc-radius-md: clamp(0.6rem, 1.2vw, 0.85rem);
+  --calc-radius-sm: 0.5rem;
+  --calc-fluid-padding: clamp(0.85rem, 2.5vw, 1.75rem);
+  --calc-fluid-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+
+/* Ensure box-sizing across calculator scope */
+.grade-calc-shell,
+.grade-calc-shell * {
+  box-sizing: border-box !important;
+}
+
+/* Base Section Wrapper */
+.grade-calc-section {
+  position: relative;
+  width: 100%;
+  padding-block: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.grade-calc-shell {
+  background: rgba(10, 14, 29, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--calc-border);
+  border-radius: var(--calc-radius-lg);
+  padding: var(--calc-fluid-padding);
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.5),
+    0 0 30px 0 rgba(99, 102, 241, 0.12);
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Header & Navigation Bar */
+.grade-calc-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: clamp(0.85rem, 1.8vw, 1.25rem);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.grade-calc-title-group {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.65rem, 1.2vw, 1.15rem);
+  min-width: 0;
+}
+
+.grade-calc-icon-badge {
+  width: clamp(2.4rem, 4.5vw, 3.25rem);
+  height: clamp(2.4rem, 4.5vw, 3.25rem);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25));
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a855f7;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  flex-shrink: 0;
+}
+
+.grade-calc-title-text {
+  min-width: 0;
+}
+
+.grade-calc-title-text h2 {
+  font-size: clamp(1.1rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  color: var(--calc-text-main);
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.grade-calc-title-text p {
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  color: var(--calc-text-muted);
+  margin: 0.2rem 0 0 0;
+  white-space: normal;
+}
+
+/* Nav Switcher Pills */
+.grade-calc-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.grade-calc-switcher {
+  display: inline-flex;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.25rem;
+  border-radius: 9999px;
+  position: relative;
+  width: auto;
+}
+
+.grade-calc-tab-btn {
+  padding: clamp(0.4rem, 1vw, 0.55rem) clamp(1rem, 2vw, 1.75rem);
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  color: var(--calc-text-muted);
+  font-weight: 600;
+  font-size: clamp(0.8rem, 1.3vw, 0.9rem);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.grade-calc-tab-btn:hover {
+  color: var(--calc-text-main);
+}
+
+.grade-calc-tab-btn.active {
+  color: #ffffff;
+  background: var(--calc-primary-gradient);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+/* Body Grid: 2 columns on desktop, 1 column on tablet & 9:16 portrait mobile */
+.grade-calc-body-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--calc-fluid-gap);
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .grade-calc-body-grid {
+    grid-template-columns: minmax(0, 1.65fr) minmax(310px, 1fr);
+  }
+}
+
+/* Left Input Card */
+.grade-calc-main-card {
+  background: var(--calc-bg-card);
+  border: 1px solid var(--calc-border);
+  border-radius: var(--calc-radius-md);
+  padding: var(--calc-fluid-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Info Banner */
+.grade-calc-info-banner {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--calc-radius-sm);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.grade-calc-info-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--calc-text-muted);
+  font-size: clamp(0.78rem, 1.2vw, 0.88rem);
+  flex: 1 1 240px;
+}
+
+.grade-calc-info-icon {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.grade-calc-system-select {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--calc-text-main);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--calc-radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  max-width: 100%;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.grade-calc-system-select:hover,
+.grade-calc-system-select:focus {
+  border-color: #818cf8;
+}
+
+/* SGPA Table Wrapper */
+.grade-calc-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--calc-radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 14, 29, 0.5);
+  -webkit-overflow-scrolling: touch;
+}
+
+.grade-calc-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 540px;
+}
+
+.grade-calc-table th {
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--calc-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.grade-calc-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.grade-calc-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.grade-calc-table tbody tr:hover {
+  background: rgba(30, 41, 59, 0.35);
+}
+
+/* Row Form Controls */
+.row-num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.4rem;
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.calc-input-course {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--calc-text-main);
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.4rem;
+  width: 100%;
+  min-width: 0;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.calc-input-course:focus {
+  outline: none;
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.credit-input-group {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.4rem;
+  padding-right: 0.4rem;
+  width: 100%;
+  max-width: 6rem;
+  min-width: 0;
+}
+
+.credit-input-group input {
+  background: transparent;
+  border: none;
+  color: var(--calc-text-main);
+  padding: 0.45rem;
+  width: 100%;
+  min-width: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.credit-input-group input:focus {
+  outline: none;
+}
+
+.credit-input-group span {
+  font-size: 0.72rem;
+  color: var(--calc-text-dim);
+  font-weight: 600;
+}
+
+.calc-select-grade {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--calc-text-main);
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.4rem;
+  width: 100%;
+  min-width: 0;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.val-grade-point {
+  font-weight: 700;
+  color: var(--calc-accent-blue);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.val-credit-point {
+  font-weight: 700;
+  color: var(--calc-accent-green);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-remove-row {
+  background: transparent;
+  border: none;
+  color: var(--calc-text-dim);
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-remove-row:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Footer Summary Row */
+.grade-calc-table tfoot td {
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 2px solid rgba(99, 102, 241, 0.3);
+  font-weight: 700;
+  color: var(--calc-text-main);
+  padding: 0.75rem 0.85rem;
+}
+
+/* Action Controls Bar */
+.grade-calc-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  width: 100%;
+}
+
+.grade-calc-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.btn-calc-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: clamp(0.45rem, 1vw, 0.6rem) clamp(0.85rem, 1.8vw, 1.25rem);
+  border-radius: var(--calc-radius-sm);
+  font-weight: 600;
+  font-size: clamp(0.8rem, 1.2vw, 0.88rem);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-calc-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--calc-text-muted);
+}
+
+.btn-calc-secondary:hover {
+  background: rgba(51, 65, 85, 0.9);
+  color: var(--calc-text-main);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-calc-primary {
+  background: var(--calc-primary-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+}
+
+.btn-calc-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6);
+}
+
+/* Grading Legend Banner */
+.grade-legend-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: var(--calc-radius-sm);
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--calc-text-muted);
+  width: 100%;
+}
+
+.grade-legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.65rem;
+  font-family: monospace;
+}
+
+.grade-legend-pill {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* =========================================================
+   CGPA SEMESTERS GRID LAYOUT (STRICT CONTAINER BOUNDS FIX)
+   ========================================================= */
+.cgpa-semesters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.cgpa-sem-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--calc-radius-sm);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  transition: all 0.2s ease;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cgpa-sem-card:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  background: rgba(20, 30, 55, 0.85);
+}
+
+.cgpa-sem-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.cgpa-sem-title {
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: #818cf8;
+}
+
+/* CRITICAL FIX FOR SCREEN OVERFLOW IN GRID CARDS */
+.cgpa-inputs-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* Force columns to constrain within container */
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.cgpa-input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.cgpa-input-field label {
+  font-size: 0.68rem;
+  color: var(--calc-text-dim);
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cgpa-input-field input {
+  background: rgba(10, 14, 29, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.35rem;
+  color: var(--calc-text-main);
+  padding: 0.38rem 0.45rem;
+  font-size: 0.83rem;
+  font-weight: 600;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box !important;
+}
+
+.cgpa-input-field input:focus {
+  outline: none;
+  border-color: #818cf8;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+/* RIGHT RESULTS PANEL */
+.grade-calc-results-card {
+  background: var(--calc-bg-card);
+  border: 1px solid var(--calc-border);
+  border-radius: var(--calc-radius-md);
+  padding: var(--calc-fluid-padding);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+}
+
+.results-top-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.results-top-header h3 {
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 700;
+  color: var(--calc-text-main);
+  margin: 0;
+}
+
+.trophy-badge {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #eab308;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* RADIAL SVG GAUGE */
+.gauge-container {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1.3 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.gauge-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.gauge-bg-path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.gauge-fill-path {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.4s ease;
+}
+
+.gauge-content {
+  position: absolute;
+  bottom: 8%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.gauge-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--calc-text-muted);
+}
+
+.gauge-val {
+  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  margin-block: 0.2rem;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+.gauge-sub {
+  font-size: 0.75rem;
+  color: var(--calc-text-dim);
+}
+
+/* PERCENTAGE DISPLAY */
+.calc-percentage-box {
+  width: 100%;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--calc-radius-sm);
+  padding: 0.75rem 0.85rem;
+}
+
+.calc-perc-title {
+  font-size: 0.75rem;
+  color: var(--calc-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.calc-perc-val {
+  font-size: clamp(1.4rem, 2.8vw, 1.85rem);
+  font-weight: 800;
+  color: var(--calc-accent-yellow);
+  margin-block: 0.1rem;
+  text-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-perc-sub {
+  font-size: 0.72rem;
+  color: var(--calc-text-dim);
+}
+
+/* STATS ACCORDION / LIST */
+.calc-stats-card {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--calc-radius-sm);
+  overflow: hidden;
+}
+
+.calc-stats-header {
+  padding: 0.65rem 0.85rem;
+  background: rgba(30, 41, 59, 0.5);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--calc-text-main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.calc-stats-list {
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+}
+
+.calc-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.calc-stat-label {
+  color: var(--calc-text-muted);
+}
+
+.calc-stat-val {
+  font-weight: 700;
+  color: var(--calc-text-main);
+  font-variant-numeric: tabular-nums;
+}
+
+.badge-status {
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.badge-status.distinction {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-status.first-class {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.badge-status.second-class {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.badge-status.pass {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.badge-status.pending {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* =========================================================
+   MEDIA QUERIES FOR MOBILE (9:16 RATIO & SMALL SCREENS)
+   ========================================================= */
+
+@media (max-width: 640px), (max-aspect-ratio: 9/16) {
+  .grade-calc-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .grade-calc-nav-group {
+    width: 100%;
+  }
+
+  .grade-calc-switcher {
+    width: 100%;
+    display: flex;
+  }
+
+  .grade-calc-tab-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .grade-calc-actions-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .grade-calc-btn-group {
+    width: 100%;
+  }
+
+  .grade-calc-btn-group .btn-calc-action {
+    flex: 1;
+  }
+
+  .btn-calc-primary {
+    width: 100%;
+  }
+
+  .cgpa-semesters-grid {
+    grid-template-columns: 1fr; /* Single column on narrow screens */
+  }
+
+  .grade-calc-info-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .grade-calc-system-select {
+    width: 100%;
+  }
+}
