@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'updates',
     'litam',
-    'results',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -157,11 +157,26 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     "https://litam.vercel.app",
+    "http://127.0.0.1:4174",
+    "http://localhost:4174",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://litam.vercel.app",
+    "http://127.0.0.1:4174",
+    "http://localhost:4174",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "LITAM Public API",
+    "DESCRIPTION": "Public website API for CMS content, contact inquiries, and student placements.",
+    "VERSION": "1.0.0",
+    "SCHEMA_PATH_PREFIX": "/api/updates/",
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

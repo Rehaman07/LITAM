@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
-import api from './api';
+import { fetchSiteContent, fetchStudentPlacements, submitContactInquiry } from "./api";
 import UpdatesPage from "./UpdatesPage";
 import PlacementsPage from "./PlacementsPage";
 import CampusPage from "./CampusPage";
 import AboutPage from "./AboutPage";
 import SiteFooter from "./SiteFooter";
-import { fetchPlacements } from "./api";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import * as THREE from "three";
@@ -743,20 +742,6 @@ function PrincipalMessage() {
 
 function AcademicsSection({ content }) {
   const [activeTab, setActiveTab] = useState("btech");
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    api.get('/courses/')
-      .then(res => {
-        setCourses(normalizeListResponse(res.data));
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
 
   const categoryMap = {
     "btech": { title: "B.Tech Programs", code: "AP EAPCET / ECET Code: LOYL" },
@@ -765,7 +750,6 @@ function AcademicsSection({ content }) {
     "postgrad": { title: "Post-Graduate Programs", code: "AP ICET Code: LITM" }
   };
   const categoryKeys = Object.keys(categoryMap);
-  const activeCourses = courses.filter((course) => course.category === activeTab);
   const fallbackCourses = courseCategories[activeTab]?.courses ?? [];
   const apiCourses = pickSection(content, "course")
     .filter((course) => (course.section || "course") === "course")
@@ -773,6 +757,7 @@ function AcademicsSection({ content }) {
       name: course.title,
       desc: course.message,
     }));
+  const displayedCourses = apiCourses.length > 0 ? apiCourses : fallbackCourses;
 
   return (
     <section className="section" id="academics">
@@ -803,17 +788,13 @@ function AcademicsSection({ content }) {
         </Reveal>
 
         <div className="courses-grid">
-          {loading ? (
-            <p>Loading courses...</p>
-          ) : (
-            (apiCourses.length > 0 ? apiCourses : activeCourses.length > 0 ? activeCourses : fallbackCourses).map((course, index) => (
-              <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
-                <span className="course-tag">{categoryMap[activeTab].title}</span>
-                <strong>{course.name}</strong>
-                <p>{course.description ?? course.desc}</p>
-              </Reveal>
-            ))
-          )}
+          {displayedCourses.map((course, index) => (
+            <Reveal className="course-card glass" key={course.name} delay={index * 0.05}>
+              <span className="course-tag">{categoryMap[activeTab].title}</span>
+              <strong>{course.name}</strong>
+              <p>{course.description ?? course.desc}</p>
+            </Reveal>
+          ))}
         </div>
 
         <Reveal style={{ textAlign: "center", marginTop: "16px" }}>
@@ -975,7 +956,7 @@ function Placements({ content }) {
   const [topPlacements, setTopPlacements] = useState([]);
 
   useEffect(() => {
-    fetchPlacements(3)
+    fetchStudentPlacements(3)
       .then((data) => setTopPlacements(data))
       .catch((err) => console.error(err));
   }, []);
@@ -1236,7 +1217,7 @@ function ContactSection() {
     setIsSubmitting(true);
     setSubmitError("");
 
-    api.post("/updates/contact-inquiries/", formData)
+    submitContactInquiry(formData)
       .then(() => {
         setIsSubmitted(true);
       })
@@ -1431,8 +1412,8 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    api.get("/content/")
-      .then((res) => setContent(res.data || {}))
+    fetchSiteContent()
+      .then((data) => setContent(data || {}))
       .catch(() => setContent({}))
       .finally(() => setLoadingContent(false));
   }, []);

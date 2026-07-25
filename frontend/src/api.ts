@@ -1,25 +1,42 @@
 /// <reference types="vite/client" />
-import axios from 'axios';
+import axios from "axios";
+import type {
+  ContactInquiryPayload,
+  SiteContent,
+  StudentPlacement,
+  UpdateItem,
+} from "./types/api";
 
 const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 const api = axios.create({
   baseURL: `${API}/api`,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-export const fetchPlacements = async (top?: number) => {
-  const url = `/litam/placements/`;
-  const response = await api.get(url);
-  // Optional: slice if top is provided
-  return top ? response.data.slice(0, top) : response.data;
-};
-
-export const fetchCourses = async () => {
-  const response = await api.get('/litam/courses/');
+export async function fetchSiteContent(): Promise<SiteContent> {
+  const response = await api.get<SiteContent>("/updates/content/");
   return response.data;
-};
+}
+
+export async function fetchUpdates(): Promise<UpdateItem[]> {
+  const response = await api.get<UpdateItem[]>("/updates/");
+  return response.data;
+}
+
+export async function fetchStudentPlacements(top?: number): Promise<StudentPlacement[]> {
+  const params = top !== undefined ? { top } : undefined;
+  const response = await api.get<StudentPlacement[]>("/updates/student-placements/", { params });
+  return response.data;
+}
+
+export async function submitContactInquiry(data: ContactInquiryPayload): Promise<void> {
+  await api.post("/updates/contact-inquiries/", data);
+}
+
+/** @deprecated Use fetchStudentPlacements instead */
+export const fetchPlacements = fetchStudentPlacements;
 
 export default api;

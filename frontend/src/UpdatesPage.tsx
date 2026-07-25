@@ -1,17 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import api from "./api";
+import { fetchUpdates } from "./api";
 import litamLogo from "../images/logo.png";
 import { Link } from "react-router-dom";
-
-function normalizeListResponse(data) {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.results)) return data.results;
-  if (Array.isArray(data?.updates)) return data.updates;
-  if (Array.isArray(data?.data)) return data.data;
-  if (Array.isArray(data?.items)) return data.items;
-  return [];
-}
 
 export default function UpdatesPage({ theme, onToggleTheme }) {
   const [updates, setUpdates] = useState([]);
@@ -21,9 +12,9 @@ export default function UpdatesPage({ theme, onToggleTheme }) {
   useEffect(() => {
     // Scroll to top when landing on page
     window.scrollTo(0, 0);
-    api.get("/updates/")
-      .then((res) => {
-        setUpdates(normalizeListResponse(res.data));
+    fetchUpdates()
+      .then((data) => {
+        setUpdates(data);
       })
       .catch((err) => {
         console.error("Failed to load updates", err);

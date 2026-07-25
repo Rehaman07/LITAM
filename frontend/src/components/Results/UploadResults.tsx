@@ -1,3 +1,5 @@
+// Results feature deferred. Components intentionally not routed.
+// Restore requires re-adding the `results` app, Celery task, and API routes.
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import api from '../../api';

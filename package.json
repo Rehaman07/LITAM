@@ -1,19 +1,16 @@
 {
-  "name": "litam-cinematic-intro",
+  "name": "litam",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --configLoader runner",
-    "build": "vite build --configLoader runner",
-    "preview": "vite preview --configLoader runner"
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd backend/backend && python manage.py runserver",
+    "dev:web": "cd frontend && npm run dev",
+    "generate:api-types": "openapi-typescript http://127.0.0.1:8000/api/schema/ -o frontend/src/types/api.generated.ts"
   },
-  "dependencies": {
-    "framer-motion": "^12.23.12",
-    "three": "^0.179.1",
-    "vite": "^7.1.2",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
-  },
-  "devDependencies": {}
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "openapi-typescript": "^7.6.1"
+  }
 }

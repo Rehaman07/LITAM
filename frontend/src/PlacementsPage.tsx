@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { fetchPlacements } from "./api";
+import { fetchStudentPlacements } from "./api";
 import litamLogo from "../images/logo.png";
 import { Link } from "react-router-dom";
-
-function normalizeListResponse(data) {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.results)) return data.results;
-  if (Array.isArray(data?.data)) return data.data;
-  return [];
-}
 
 export default function PlacementsPage({ theme, onToggleTheme }) {
   const [placements, setPlacements] = useState([]);
@@ -19,9 +12,9 @@ export default function PlacementsPage({ theme, onToggleTheme }) {
   useEffect(() => {
     // Scroll to top when landing on page
     window.scrollTo(0, 0);
-    fetchPlacements()
+    fetchStudentPlacements()
       .then((data) => {
-        setPlacements(normalizeListResponse(data));
+        setPlacements(data);
       })
       .catch((err) => {
         console.error("Failed to load placements", err);
