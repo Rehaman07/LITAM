@@ -1,851 +1,867 @@
-/* =========================================================
-   FLUID SGPA & CGPA CALCULATOR DESIGN SYSTEM (9:16 ENHANCED)
-   ========================================================= */
+/* ==========================================================================
+   ACADEMIC GRADE CALCULATOR - MODERN DASHBOARD DESIGN SYSTEM
+   Inspired by Apple, Linear, Notion, and Stripe visual design principles.
+   ========================================================================== */
 
 :root {
-  --calc-bg-card: rgba(13, 17, 34, 0.75);
-  --calc-bg-card-hover: rgba(20, 26, 50, 0.85);
-  --calc-border: rgba(99, 102, 241, 0.18);
-  --calc-border-glow: rgba(99, 102, 241, 0.4);
-  --calc-primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
-  --calc-accent-blue: #38bdf8;
-  --calc-accent-green: #22c55e;
-  --calc-accent-yellow: #eab308;
-  --calc-accent-purple: #a855f7;
-  --calc-text-main: #f8fafc;
-  --calc-text-muted: #94a3b8;
-  --calc-text-dim: #64748b;
-  --calc-radius-lg: clamp(0.85rem, 2vw, 1.5rem);
-  --calc-radius-md: clamp(0.6rem, 1.2vw, 0.85rem);
-  --calc-radius-sm: 0.5rem;
-  --calc-fluid-padding: clamp(0.85rem, 2.5vw, 1.75rem);
-  --calc-fluid-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  /* Color Palette Engine */
+  --calc-bg-card: rgba(15, 23, 42, 0.65);
+  --calc-bg-card-hover: rgba(30, 41, 59, 0.75);
+  --calc-border-subtle: rgba(255, 255, 255, 0.08);
+  --calc-border-focus: rgba(56, 189, 248, 0.5);
+
+  /* Primary Action Gradient (Purple / Violet) */
+  --calc-btn-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+  --calc-btn-primary-hover: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c026d3 100%);
+  --calc-primary-shadow: 0 8px 25px -4px rgba(99, 102, 241, 0.45);
+
+  /* Functional Status Colors */
+  --calc-status-green: #22c55e;
+  --calc-status-green-bg: rgba(34, 197, 94, 0.12);
+  --calc-status-orange: #f59e0b;
+  --calc-status-orange-bg: rgba(245, 158, 11, 0.12);
+  --calc-status-red: #ef4444;
+  --calc-status-red-bg: rgba(239, 68, 68, 0.12);
+  --calc-input-blue: #38bdf8;
+  --calc-text-gray: #94a3b8;
+
+  /* Spacing & Radii Scale */
+  --calc-radius-lg: 1.5rem;
+  --calc-radius-md: 1rem;
+  --calc-radius-sm: 0.625rem;
+  --calc-space-gap: clamp(1rem, 2.5vw, 2rem);
 }
 
-/* Ensure box-sizing across calculator scope */
+/* Ensure box-sizing across calculator component tree */
 .grade-calc-shell,
 .grade-calc-shell * {
   box-sizing: border-box !important;
 }
 
-/* Base Section Wrapper */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Main Section Outer Container */
 .grade-calc-section {
   position: relative;
   width: 100%;
-  padding-block: clamp(1.5rem, 4vw, 3.5rem);
+  padding-block: clamp(1.5rem, 3.5vw, 3rem);
 }
 
 .grade-calc-shell {
-  background: rgba(10, 14, 29, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--calc-border);
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--calc-border-subtle);
   border-radius: var(--calc-radius-lg);
-  padding: var(--calc-fluid-padding);
+  padding: clamp(1.25rem, 2.5vw, 2.25rem);
   box-shadow: 
-    0 20px 50px -10px rgba(0, 0, 0, 0.5),
-    0 0 30px 0 rgba(99, 102, 241, 0.12);
-  overflow: hidden;
+    0 25px 60px -15px rgba(0, 0, 0, 0.6),
+    0 0 40px 0 rgba(99, 102, 241, 0.08);
   width: 100%;
+  color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Header & Navigation Bar */
+/* --------------------------------------------------------------------------
+   1. Clean Minimal Header
+   -------------------------------------------------------------------------- */
 .grade-calc-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding-bottom: clamp(0.85rem, 1.8vw, 1.25rem);
-  margin-bottom: clamp(1rem, 2vw, 1.5rem);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--calc-border-subtle);
 }
 
-.grade-calc-title-group {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.65rem, 1.2vw, 1.15rem);
+.grade-calc-header-brand {
   min-width: 0;
 }
 
-.grade-calc-icon-badge {
-  width: clamp(2.4rem, 4.5vw, 3.25rem);
-  height: clamp(2.4rem, 4.5vw, 3.25rem);
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25));
-  border: 1px solid rgba(168, 85, 247, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #a855f7;
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
-  flex-shrink: 0;
-}
-
-.grade-calc-title-text {
-  min-width: 0;
-}
-
-.grade-calc-title-text h2 {
-  font-size: clamp(1.1rem, 2.2vw, 1.65rem);
+.grade-calc-main-title {
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
   font-weight: 700;
-  color: var(--calc-text-main);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  color: #ffffff;
   margin: 0;
   line-height: 1.2;
 }
 
-.grade-calc-title-text p {
-  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
-  color: var(--calc-text-muted);
-  margin: 0.2rem 0 0 0;
-  white-space: normal;
+.grade-calc-subtitle {
+  font-size: clamp(0.82rem, 1.2vw, 0.95rem);
+  color: var(--calc-text-gray);
+  margin: 0.25rem 0 0 0;
+  font-weight: 400;
 }
 
-/* Nav Switcher Pills */
-.grade-calc-nav-group {
+/* Navigation Switcher Pills */
+.grade-calc-mode-nav {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
 }
 
 .grade-calc-switcher {
   display: inline-flex;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.25rem;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.3rem;
   border-radius: 9999px;
-  position: relative;
-  width: auto;
+  gap: 0.25rem;
 }
 
 .grade-calc-tab-btn {
-  padding: clamp(0.4rem, 1vw, 0.55rem) clamp(1rem, 2vw, 1.75rem);
+  padding: 0.45rem 1.4rem;
   border-radius: 9999px;
   border: none;
   background: transparent;
-  color: var(--calc-text-muted);
+  color: var(--calc-text-gray);
   font-weight: 600;
-  font-size: clamp(0.8rem, 1.3vw, 0.9rem);
+  font-size: 0.88rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 1;
+  transition: all 0.25s ease;
   white-space: nowrap;
 }
 
 .grade-calc-tab-btn:hover {
-  color: var(--calc-text-main);
+  color: #ffffff;
 }
 
 .grade-calc-tab-btn.active {
   color: #ffffff;
-  background: var(--calc-primary-gradient);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  background: var(--calc-btn-primary);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
 }
 
-/* Body Grid: 2 columns on desktop, 1 column on tablet & 9:16 portrait mobile */
-.grade-calc-body-grid {
+/* --------------------------------------------------------------------------
+   2. Core Dashboard Layout (Desktop Two-Column Dashboard)
+   -------------------------------------------------------------------------- */
+.grade-calc-dashboard {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--calc-fluid-gap);
-  width: 100%;
+  gap: var(--calc-space-gap);
+  align-items: start;
 }
 
 @media (min-width: 992px) {
-  .grade-calc-body-grid {
-    grid-template-columns: minmax(0, 1.65fr) minmax(310px, 1fr);
+  .grade-calc-dashboard {
+    grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
   }
 }
 
-/* Left Input Card */
-.grade-calc-main-card {
+/* --------------------------------------------------------------------------
+   3. Input Panel (Left Column)
+   -------------------------------------------------------------------------- */
+.grade-calc-input-panel {
   background: var(--calc-bg-card);
-  border: 1px solid var(--calc-border);
+  border: 1px solid var(--calc-border-subtle);
   border-radius: var(--calc-radius-md);
-  padding: var(--calc-fluid-padding);
+  padding: clamp(1rem, 2vw, 1.5rem);
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
-  min-width: 0;
-  width: 100%;
+  gap: 1.25rem;
 }
 
-/* Info Banner */
-.grade-calc-info-banner {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  border-radius: var(--calc-radius-sm);
-  padding: 0.75rem 1rem;
+/* Toolbar & System Picker */
+.grade-calc-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.85rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.grade-calc-system-picker {
+  flex: 1 1 200px;
+}
+
+.grade-calc-select-pill {
   width: 100%;
-}
-
-.grade-calc-info-left {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  color: var(--calc-text-muted);
-  font-size: clamp(0.78rem, 1.2vw, 0.88rem);
-  flex: 1 1 240px;
-}
-
-.grade-calc-info-icon {
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 50%;
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.grade-calc-system-select {
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--calc-text-main);
-  padding: 0.45rem 0.75rem;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--calc-border-subtle);
+  color: #f1f5f9;
+  padding: 0.5rem 0.85rem;
   border-radius: var(--calc-radius-sm);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 500;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.2s;
-  max-width: 100%;
-  min-width: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
   text-overflow: ellipsis;
 }
 
-.grade-calc-system-select:hover,
-.grade-calc-system-select:focus {
-  border-color: #818cf8;
+.grade-calc-select-pill:hover,
+.grade-calc-select-pill:focus {
+  border-color: var(--calc-input-blue);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
 }
 
-/* SGPA Table Wrapper */
-.grade-calc-table-wrapper {
+.grade-calc-icon-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--calc-border-subtle);
+  color: var(--calc-text-gray);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--calc-radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.grade-calc-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* Collapsible Grade Scale Drawer */
+.grade-scale-drawer {
+  background: rgba(10, 14, 26, 0.95);
+  border: 1px solid var(--calc-border-subtle);
+  border-radius: var(--calc-radius-sm);
+  padding: 1rem;
+  animation: fadeInDown 0.25s ease-out;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.drawer-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  color: var(--calc-text-gray);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.grade-scale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.5rem;
+}
+
+.grade-scale-item {
+  background: rgba(30, 41, 59, 0.6);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+}
+
+.grade-badge {
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.grade-pts {
+  color: #e2e8f0;
+}
+
+.grade-desc {
+  font-size: 0.7rem;
+  color: var(--calc-text-gray);
+}
+
+/* --------------------------------------------------------------------------
+   4. Borderless Desktop Table (Visual Noise Elimination)
+   -------------------------------------------------------------------------- */
+.grade-calc-table-desktop {
   width: 100%;
   overflow-x: auto;
-  border-radius: var(--calc-radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(10, 14, 29, 0.5);
-  -webkit-overflow-scrolling: touch;
 }
 
-.grade-calc-table {
+.grade-calc-clean-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  min-width: 540px;
 }
 
-.grade-calc-table th {
-  background: rgba(15, 23, 42, 0.95);
-  color: var(--calc-text-muted);
-  font-size: 0.75rem;
+.grade-calc-clean-table th {
+  padding: 0.6rem 0.5rem 0.85rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.75rem 0.85rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-weight: 600;
-  white-space: nowrap;
+  color: var(--calc-text-gray);
+  border-bottom: 1px solid var(--calc-border-subtle);
 }
 
-.grade-calc-table td {
-  padding: 0.65rem 0.85rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+.grade-calc-clean-table td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   vertical-align: middle;
+  transition: background 0.2s;
 }
 
-.grade-calc-table tbody tr {
-  transition: background-color 0.2s;
+.clean-row:hover td {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.grade-calc-table tbody tr:hover {
-  background: rgba(30, 41, 59, 0.35);
-}
-
-/* Row Form Controls */
-.row-num-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 0.4rem;
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
-  font-weight: 700;
-  font-size: 0.8rem;
-}
-
-.calc-input-course {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--calc-text-main);
-  padding: 0.45rem 0.65rem;
-  border-radius: 0.4rem;
+/* Clean Form Controls */
+.clean-input-text {
   width: 100%;
-  min-width: 0;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-}
-
-.calc-input-course:focus {
-  outline: none;
-  border-color: #818cf8;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
-.credit-input-group {
-  display: flex;
-  align-items: center;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.4rem;
-  padding-right: 0.4rem;
-  width: 100%;
-  max-width: 6rem;
-  min-width: 0;
-}
-
-.credit-input-group input {
   background: transparent;
   border: none;
-  color: var(--calc-text-main);
-  padding: 0.45rem;
-  width: 100%;
-  min-width: 0;
+  border-bottom: 1px solid transparent;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 0.4rem 0.2rem;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.clean-input-text:hover,
+.clean-input-text:focus {
+  border-bottom-color: var(--calc-input-blue);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.clean-input-num-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.clean-input-num {
+  width: 70px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--calc-border-subtle);
+  border-radius: var(--calc-radius-sm);
+  color: #f8fafc;
+  padding: 0.4rem 0.5rem;
   font-size: 0.88rem;
   font-weight: 600;
-  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.credit-input-group input:focus {
+.clean-input-num:focus {
+  border-color: var(--calc-input-blue);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.clean-select {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--calc-border-subtle);
+  border-radius: var(--calc-radius-sm);
+  color: #f8fafc;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.clean-select:focus {
+  border-color: var(--calc-input-blue);
+}
+
+.points-display-val {
+  font-weight: 700;
+  color: #38bdf8;
+  font-size: 0.95rem;
+}
+
+.row-delete-btn {
+  background: none;
+  border: none;
+  color: var(--calc-text-gray);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
+  transition: color 0.2s, background 0.2s;
+}
+
+.row-delete-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Secondary Action Controls */
+.grade-calc-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+}
+
+.btn-secondary-link {
+  background: none;
+  border: none;
+  color: var(--calc-input-blue);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--calc-radius-sm);
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-secondary-link:hover {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.btn-secondary-link.text-subtle {
+  color: var(--calc-text-gray);
+}
+
+.btn-secondary-link.text-subtle:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   5. Mobile Transformation Cards (11. Mobile Layout)
+   -------------------------------------------------------------------------- */
+.grade-calc-cards-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .grade-calc-table-desktop {
+    display: none;
+  }
+  .grade-calc-cards-mobile {
+    display: flex;
+  }
+}
+
+.mobile-course-card {
+  background: rgba(10, 14, 26, 0.7);
+  border: 1px solid var(--calc-border-subtle);
+  border-radius: var(--calc-radius-sm);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mobile-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.mobile-card-title-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--calc-border-subtle);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.2rem 0;
   outline: none;
 }
 
-.credit-input-group span {
-  font-size: 0.72rem;
-  color: var(--calc-text-dim);
-  font-weight: 600;
+.mobile-card-title-input:focus {
+  border-bottom-color: var(--calc-input-blue);
 }
 
-.calc-select-grade {
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--calc-text-main);
-  padding: 0.45rem 0.65rem;
-  border-radius: 0.4rem;
-  width: 100%;
-  min-width: 0;
-  font-size: 0.83rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-overflow: ellipsis;
-}
-
-.val-grade-point {
-  font-weight: 700;
-  color: var(--calc-accent-blue);
-  font-size: 0.9rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.val-credit-point {
-  font-weight: 700;
-  color: var(--calc-accent-green);
-  font-size: 0.9rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.btn-remove-row {
-  background: transparent;
-  border: none;
-  color: var(--calc-text-dim);
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 0.35rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.btn-remove-row:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-/* Footer Summary Row */
-.grade-calc-table tfoot td {
-  background: rgba(15, 23, 42, 0.95);
-  border-top: 2px solid rgba(99, 102, 241, 0.3);
-  font-weight: 700;
-  color: var(--calc-text-main);
-  padding: 0.75rem 0.85rem;
-}
-
-/* Action Controls Bar */
-.grade-calc-actions-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 0.25rem;
-  width: 100%;
-}
-
-.grade-calc-btn-group {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  flex-wrap: wrap;
-}
-
-.btn-calc-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  padding: clamp(0.45rem, 1vw, 0.6rem) clamp(0.85rem, 1.8vw, 1.25rem);
-  border-radius: var(--calc-radius-sm);
-  font-weight: 600;
-  font-size: clamp(0.8rem, 1.2vw, 0.88rem);
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  white-space: nowrap;
-}
-
-.btn-calc-secondary {
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--calc-text-muted);
-}
-
-.btn-calc-secondary:hover {
-  background: rgba(51, 65, 85, 0.9);
-  color: var(--calc-text-main);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.btn-calc-primary {
-  background: var(--calc-primary-gradient);
-  color: #ffffff;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-}
-
-.btn-calc-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6);
-}
-
-/* Grading Legend Banner */
-.grade-legend-card {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px dashed rgba(255, 255, 255, 0.12);
-  border-radius: var(--calc-radius-sm);
-  padding: 0.65rem 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  font-size: 0.78rem;
-  color: var(--calc-text-muted);
-  width: 100%;
-}
-
-.grade-legend-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 0.65rem;
-  font-family: monospace;
-}
-
-.grade-legend-pill {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.15rem 0.4rem;
-  border-radius: 0.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* =========================================================
-   CGPA SEMESTERS GRID LAYOUT (STRICT CONTAINER BOUNDS FIX)
-   ========================================================= */
-.cgpa-semesters-grid {
+.mobile-card-controls {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
-  gap: 0.75rem;
-  width: 100%;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.6rem;
+  align-items: center;
 }
 
-.cgpa-sem-card {
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--calc-radius-sm);
-  padding: 0.75rem;
+.mobile-field-group {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  transition: all 0.2s ease;
-  min-width: 0;
-  width: 100%;
-  overflow: hidden;
+  gap: 0.25rem;
 }
 
-.cgpa-sem-card:hover {
-  border-color: rgba(99, 102, 241, 0.35);
-  background: rgba(20, 30, 55, 0.85);
+.mobile-field-group label {
+  font-size: 0.72rem;
+  color: var(--calc-text-gray);
+  font-weight: 500;
 }
 
-.cgpa-sem-header {
+.mobile-points-val {
+  font-weight: 700;
+  color: var(--calc-input-blue);
+  font-size: 1.05rem;
+  padding-top: 0.25rem;
+}
+
+/* CGPA Semesters Layout */
+.cgpa-semesters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cgpa-row-item {
+  background: rgba(10, 14, 26, 0.6);
+  border: 1px solid var(--calc-border-subtle);
+  border-radius: var(--calc-radius-sm);
+  padding: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cgpa-row-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  width: 100%;
 }
 
-.cgpa-sem-title {
-  font-size: 0.83rem;
-  font-weight: 700;
-  color: #818cf8;
+.sem-name-input {
+  font-weight: 600;
+  color: #38bdf8;
 }
 
-/* CRITICAL FIX FOR SCREEN OVERFLOW IN GRID CARDS */
-.cgpa-inputs-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)); /* Force columns to constrain within container */
-  gap: 0.5rem;
-  width: 100%;
-  min-width: 0;
+.cgpa-inputs-flex {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.cgpa-input-field {
+.cgpa-field {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  min-width: 0;
-  width: 100%;
 }
 
-.cgpa-input-field label {
-  font-size: 0.68rem;
-  color: var(--calc-text-dim);
-  text-transform: uppercase;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.cgpa-field label {
+  font-size: 0.72rem;
+  color: var(--calc-text-gray);
 }
 
-.cgpa-input-field input {
-  background: rgba(10, 14, 29, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.35rem;
-  color: var(--calc-text-main);
-  padding: 0.38rem 0.45rem;
-  font-size: 0.83rem;
-  font-weight: 600;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box !important;
+/* --------------------------------------------------------------------------
+   6. Sticky Results Panel (Right Column - High Visual Hierarchy)
+   -------------------------------------------------------------------------- */
+.grade-calc-results-panel {
+  position: sticky;
+  top: 2rem;
 }
 
-.cgpa-input-field input:focus {
-  outline: none;
-  border-color: #818cf8;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
-}
-
-/* RIGHT RESULTS PANEL */
-.grade-calc-results-card {
+.focal-result-card {
   background: var(--calc-bg-card);
-  border: 1px solid var(--calc-border);
+  border: 1px solid var(--calc-border-subtle);
   border-radius: var(--calc-radius-md);
-  padding: var(--calc-fluid-padding);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  text-align: center;
   gap: 1.25rem;
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* Color Status Border Indicators */
+.focal-result-card.green {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.focal-result-card.orange {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.focal-result-card.red {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Radial Gauge Focal Container */
+.focal-gauge-wrapper {
   position: relative;
-  overflow: hidden;
-  width: 100%;
-  min-width: 0;
-}
-
-.results-top-header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.results-top-header h3 {
-  font-size: clamp(1rem, 1.8vw, 1.25rem);
-  font-weight: 700;
-  color: var(--calc-text-main);
-  margin: 0;
-}
-
-.trophy-badge {
-  width: 2.1rem;
-  height: 2.1rem;
-  border-radius: 50%;
-  background: rgba(234, 179, 8, 0.15);
-  border: 1px solid rgba(234, 179, 8, 0.3);
-  color: #eab308;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/* RADIAL SVG GAUGE */
-.gauge-container {
-  position: relative;
-  width: 100%;
-  max-width: 220px;
-  aspect-ratio: 1.3 / 1;
+  width: min(100%, 220px);
+  aspect-ratio: 160 / 100;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  margin-top: 0.25rem;
 }
 
-.gauge-svg {
+.focal-gauge-svg {
   width: 100%;
   height: 100%;
+  display: block;
   overflow: visible;
 }
 
-.gauge-bg-path {
+.focal-gauge-bg {
   fill: none;
   stroke: rgba(255, 255, 255, 0.08);
   stroke-width: 12;
   stroke-linecap: round;
 }
 
-.gauge-fill-path {
+.focal-gauge-fill {
   fill: none;
   stroke-width: 12;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.4s ease;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.gauge-content {
+/* Overlay Positioned Cleanly Inside the Arc Curve (No Overlapping!) */
+.focal-metric-overlay {
   position: absolute;
-  bottom: 8%;
+  top: 44px;
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
 }
 
-.gauge-label {
+.focal-metric-label {
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--calc-text-muted);
+  color: var(--calc-text-gray);
+  margin-bottom: 0.1rem;
 }
 
-.gauge-val {
-  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+.focal-score-display {
+  font-size: clamp(2.4rem, 4.5vw, 3.2rem);
   font-weight: 800;
-  color: #ffffff;
   line-height: 1;
-  margin-block: 0.2rem;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0.15rem 0;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
-.gauge-sub {
-  font-size: 0.75rem;
-  color: var(--calc-text-dim);
-}
-
-/* PERCENTAGE DISPLAY */
-.calc-percentage-box {
-  width: 100%;
-  text-align: center;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--calc-radius-sm);
-  padding: 0.75rem 0.85rem;
-}
-
-.calc-perc-title {
-  font-size: 0.75rem;
-  color: var(--calc-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.calc-perc-val {
-  font-size: clamp(1.4rem, 2.8vw, 1.85rem);
-  font-weight: 800;
-  color: var(--calc-accent-yellow);
-  margin-block: 0.1rem;
-  text-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
-  font-variant-numeric: tabular-nums;
-}
-
-.calc-perc-sub {
-  font-size: 0.72rem;
-  color: var(--calc-text-dim);
-}
-
-/* STATS ACCORDION / LIST */
-.calc-stats-card {
-  width: 100%;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--calc-radius-sm);
-  overflow: hidden;
-}
-
-.calc-stats-header {
-  padding: 0.65rem 0.85rem;
-  background: rgba(30, 41, 59, 0.5);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--calc-text-main);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.calc-stats-list {
-  padding: 0.75rem 0.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  font-size: 0.8rem;
-}
-
-.calc-stat-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.calc-stat-label {
-  color: var(--calc-text-muted);
-}
-
-.calc-stat-val {
-  font-weight: 700;
-  color: var(--calc-text-main);
-  font-variant-numeric: tabular-nums;
-}
-
-.badge-status {
-  padding: 0.18rem 0.55rem;
+.focal-status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
   border-radius: 9999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
 }
 
-.badge-status.distinction {
-  background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+.focal-status-badge.status-excellent {
+  background: var(--calc-status-green-bg);
+  color: var(--calc-status-green);
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
-.badge-status.first-class {
-  background: rgba(56, 189, 248, 0.15);
+.focal-status-badge.status-good {
+  background: var(--calc-status-green-bg);
+  color: var(--calc-status-green);
+}
+
+.focal-status-badge.status-average {
+  background: var(--calc-status-orange-bg);
+  color: var(--calc-status-orange);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.focal-status-badge.status-fail {
+  background: var(--calc-status-red-bg);
+  color: var(--calc-status-red);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.focal-status-badge.status-pending {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--calc-text-gray);
+}
+
+/* Percentage Card Component */
+.percentage-card {
+  width: 100%;
+  background: rgba(10, 14, 26, 0.7);
+  border: 1px solid var(--calc-border-subtle);
+  border-radius: var(--calc-radius-sm);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.perc-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.perc-card-title {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--calc-text-gray);
+}
+
+.formula-tooltip-trigger {
+  background: none;
+  border: none;
+  color: var(--calc-input-blue);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.formula-tooltip-trigger:hover {
+  text-decoration: underline;
+}
+
+.perc-card-val {
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 700;
   color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  letter-spacing: -0.02em;
 }
 
-.badge-status.second-class {
-  background: rgba(234, 179, 8, 0.15);
-  color: #facc15;
-  border: 1px solid rgba(234, 179, 8, 0.3);
+.formula-tooltip-popover {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--calc-border-subtle);
+  text-align: left;
+  animation: fadeInDown 0.2s ease;
 }
 
-.badge-status.pass {
-  background: rgba(168, 85, 247, 0.15);
-  color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.3);
+.formula-select-row {
+  margin-bottom: 0.4rem;
 }
 
-.badge-status.pending {
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+.formula-select {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.5rem;
 }
 
-/* =========================================================
-   MEDIA QUERIES FOR MOBILE (9:16 RATIO & SMALL SCREENS)
-   ========================================================= */
+.formula-expression {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
 
-@media (max-width: 640px), (max-aspect-ratio: 9/16) {
-  .grade-calc-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.formula-explanation {
+  font-size: 0.72rem;
+  color: var(--calc-text-gray);
+  margin: 0.25rem 0 0 0;
+  line-height: 1.3;
+}
 
-  .grade-calc-nav-group {
-    width: 100%;
-  }
+/* --------------------------------------------------------------------------
+   7. Dominant Calculate CTA Button (Prominent Purple/Violet Gradient)
+   -------------------------------------------------------------------------- */
+.btn-dominant-calculate {
+  width: 100%;
+  background: var(--calc-btn-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--calc-radius-sm);
+  padding: 0.9rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: var(--calc-primary-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
 
-  .grade-calc-switcher {
-    width: 100%;
-    display: flex;
-  }
+.btn-dominant-calculate:hover {
+  background: var(--calc-btn-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -4px rgba(99, 102, 241, 0.6);
+}
 
-  .grade-calc-tab-btn {
-    flex: 1;
-    text-align: center;
-  }
+.btn-dominant-calculate:active {
+  transform: translateY(0);
+}
 
-  .grade-calc-actions-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
+/* --------------------------------------------------------------------------
+   8. Progressive Disclosure Details (10. Expandable Breakdown)
+   -------------------------------------------------------------------------- */
+.progressive-details-toggle {
+  width: 100%;
+}
 
-  .grade-calc-btn-group {
-    width: 100%;
-  }
+.btn-toggle-breakdown {
+  background: none;
+  border: none;
+  color: var(--calc-text-gray);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s;
+}
 
-  .grade-calc-btn-group .btn-calc-action {
-    flex: 1;
-  }
+.btn-toggle-breakdown:hover {
+  color: #ffffff;
+}
 
-  .btn-calc-primary {
-    width: 100%;
-  }
+.breakdown-details-panel {
+  width: 100%;
+  background: rgba(10, 14, 26, 0.5);
+  border: 1px solid var(--calc-border-subtle);
+  border-radius: var(--calc-radius-sm);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: fadeInDown 0.2s ease-out;
+  text-align: left;
+}
 
-  .cgpa-semesters-grid {
-    grid-template-columns: 1fr; /* Single column on narrow screens */
-  }
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
 
-  .grade-calc-info-banner {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.bd-label {
+  color: var(--calc-text-gray);
+}
 
-  .grade-calc-system-select {
-    width: 100%;
-  }
+.bd-val {
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.breakdown-formula-note {
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--calc-border-subtle);
+  font-size: 0.72rem;
+  color: var(--calc-text-gray);
+  text-align: center;
 }
