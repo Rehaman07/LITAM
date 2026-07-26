@@ -154,16 +154,21 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
 }
 
+FRONTEND_ORIGIN = config(
+    "FRONTEND_ORIGIN",
+    default="https://litam-six.vercel.app",
+).rstrip("/")
+
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    "https://litam-six.vercel.app",
+    FRONTEND_ORIGIN,
     "http://127.0.0.1:4174",
     "http://localhost:4174",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://litam.vercel.app",
+    FRONTEND_ORIGIN,
     "http://127.0.0.1:4174",
     "http://localhost:4174",
 ]
