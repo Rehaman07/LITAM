@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     "testserver",
     "0.0.0.0",
     "litam-ol1m.onrender.com",
+    "litam-six.vercel.app",
 ]
 
 
@@ -156,7 +157,7 @@ CLOUDINARY_STORAGE = {
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    "https://litam.vercel.app",
+    "https://litam-six.vercel.app",
     "http://127.0.0.1:4174",
     "http://localhost:4174",
 ]
