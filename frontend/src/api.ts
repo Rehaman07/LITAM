@@ -9,6 +9,19 @@ import type {
 
 const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
+function asArray<T>(payload: unknown): T[] {
+  if (Array.isArray(payload)) {
+    return payload as T[];
+  }
+
+  if (payload && typeof payload === "object" && "results" in payload) {
+    const results = (payload as { results?: unknown }).results;
+    return Array.isArray(results) ? (results as T[]) : [];
+  }
+
+  return [];
+}
+
 const api = axios.create({
   baseURL: `${API}/api`,
   headers: {
@@ -23,13 +36,13 @@ export async function fetchSiteContent(): Promise<SiteContent> {
 
 export async function fetchUpdates(): Promise<UpdateItem[]> {
   const response = await api.get<UpdateItem[]>("/updates/");
-  return response.data;
+  return asArray<UpdateItem>(response.data);
 }
 
 export async function fetchStudentPlacements(top?: number): Promise<StudentPlacement[]> {
   const params = top !== undefined ? { top } : undefined;
   const response = await api.get<StudentPlacement[]>("/updates/student-placements/", { params });
-  return response.data;
+  return asArray<StudentPlacement>(response.data);
 }
 
 export async function submitContactInquiry(data: ContactInquiryPayload): Promise<void> {
