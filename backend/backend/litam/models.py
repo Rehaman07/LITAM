@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 class User(AbstractUser):
     class Role(models.TextChoices):
@@ -8,6 +9,10 @@ class User(AbstractUser):
         STUDENT = 'STUDENT', 'Student'
         
     role = models.CharField(max_length=50, choices=Role.choices, default=Role.STUDENT)
+
+    def __str__(self):
+        return f"{self.username} ({self.get_role_display()})"
+
 
 class Course(models.Model):
     class Category(models.TextChoices):
@@ -21,21 +26,50 @@ class Course(models.Model):
     code = models.CharField(max_length=50, unique=True)
     duration = models.CharField(max_length=50) # E.g., '4 Years'
     description = models.TextField()
-    fee = models.DecimalField(max_digits=10, decimal_places=2)
-    eligibility = models.TextField()
+    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    eligibility = models.TextField(blank=True, default="")
+    is_featured = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['category', 'title']
 
     def __str__(self):
         return f"{self.title} ({self.code})"
 
+
 class Placement(models.Model):
     highest_package = models.CharField(max_length=50) # E.g., '44 LPA'
     average_package = models.CharField(max_length=50)
-    year = models.IntegerField()
-    recruiters = models.IntegerField() # Number of recruiters
-    training_hours = models.IntegerField()
+    year = models.IntegerField(default=2024)
+    recruiters = models.IntegerField(default=50) # Number of recruiters
+    training_hours = models.IntegerField(default=200)
+    students_placed = models.IntegerField(default=500)
+    created_at = models.DateTimeField(default=timezone.now)
     
+    class Meta:
+        ordering = ['-year']
+
     def __str__(self):
-        return f"Placements {self.year}"
+        return f"Placements {self.year} - Max {self.highest_package}"
+
+
+class StudentPlacement(models.Model):
+    student_name = models.CharField(max_length=255)
+    company_name = models.CharField(max_length=255)
+    package_lpa = models.DecimalField(max_digits=5, decimal_places=2, help_text="Package in LPA (e.g., 12.50)")
+    photo = models.ImageField(upload_to="placements/", blank=True, null=True)
+    year = models.IntegerField(default=2024)
+    branch = models.CharField(max_length=100, default="CSE")
+    is_featured = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-package_lpa', '-created_at']
+
+    def __str__(self):
+        return f"{self.student_name} - {self.company_name} ({self.package_lpa} LPA)"
+
 
 class Inquiry(models.Model):
     class Status(models.TextChoices):
@@ -44,41 +78,67 @@ class Inquiry(models.Model):
         ANSWERED = 'ANSWERED', 'Answered'
         
     name = models.CharField(max_length=255)
-    email = models.EmailField()
+    email = models.EmailField(blank=True, default="")
     phone = models.CharField(max_length=20)
     course_of_interest = models.CharField(max_length=255)
-    message = models.TextField()
+    message = models.TextField(blank=True, default="")
     status = models.CharField(max_length=50, choices=Status.choices, default=Status.NEW)
     timestamp = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        verbose_name_plural = "Inquiries"
+        ordering = ['-timestamp']
+
     def __str__(self):
         return f"{self.name} - {self.course_of_interest}"
+
 
 class News(models.Model):
     date = models.DateField()
     title = models.CharField(max_length=255)
     content = models.TextField()
-    tag = models.CharField(max_length=100)
+    tag = models.CharField(max_length=100, default="Notice")
+    image = models.ImageField(upload_to="news/", blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         verbose_name_plural = "News"
+        ordering = ['-date', '-created_at']
     
     def __str__(self):
         return self.title
+
 
 class Event(models.Model):
     date = models.DateTimeField()
     title = models.CharField(max_length=255)
     description = models.TextField()
-    venue = models.CharField(max_length=255)
+    venue = models.CharField(max_length=255, default="Main Auditorium")
+    image = models.ImageField(upload_to="events/", blank=True, null=True)
+    is_featured = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
     
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
         return self.title
+
 
 class Testimonial(models.Model):
     quote = models.TextField()
     student_name = models.CharField(max_length=255)
-    metadata = models.CharField(max_length=255) # E.g., placement info
+    metadata = models.CharField(max_length=255, blank=True, default="") # E.g., placement info
+    role_or_company = models.CharField(max_length=255, blank=True, default="")
+    photo = models.ImageField(upload_to="testimonials/", blank=True, null=True)
+    rating = models.IntegerField(default=5)
+    is_active = models.BooleanField(default=True)
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(default=timezone.now)
     
+    class Meta:
+        ordering = ['order', '-created_at']
+
     def __str__(self):
         return f"Testimonial by {self.student_name}"
+
