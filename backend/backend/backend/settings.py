@@ -159,10 +159,11 @@ FRONTEND_ORIGIN = config(
     default="https://litam-six.vercel.app",
 ).rstrip("/")
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     FRONTEND_ORIGIN,
+    "https://litam-six.vercel.app",
     "http://127.0.0.1:4174",
     "http://localhost:4174",
 ]
