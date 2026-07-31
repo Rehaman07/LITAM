@@ -182,7 +182,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "LITAM Public API",
     "DESCRIPTION": "Public website API for CMS content, contact inquiries, and student placements.",
     "VERSION": "1.0.0",
-    "SCHEMA_PATH_PREFIX": "/api/updates/",
+    "SCHEMA_PATH_PREFIX": "/api/",
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

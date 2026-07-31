@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { fetchSiteContent, fetchStudentPlacements, submitContactInquiry } from "./api";
 import UpdatesPage from "./UpdatesPage";
+import UpdatesFeed from "./components/UpdatesFeed";
 import PlacementsPage from "./PlacementsPage";
 import CampusPage from "./CampusPage";
 import AboutPage from "./AboutPage";
@@ -1005,19 +1006,17 @@ function Placements({ content }) {
           <Reveal style={{ marginTop: "32px", marginBottom: "16px" }}>
             <h3 style={{ fontSize: "1.25rem", color: "var(--text)" }}>Top Placements</h3>
           </Reveal>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+          <div className="top-placement-list">
             {topPlacements.map((p, idx) => (
-              <Reveal key={p.id} className="placement-highlight glass" delay={0.1 * idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '20px' }}>
-                <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--primary)', marginBottom: '12px' }}>
+              <Reveal key={p.id} className="top-placement-card glass" delay={0.1 * idx}>
+                <div className="top-placement-avatar">
                   <img src={p.photo || litamLogo} alt={p.student_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
-                <strong style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{p.student_name}</strong>
-                <span style={{ color: 'var(--text-muted)' }}>{p.company_name}</span>
-                <span style={{ 
-                  display: 'inline-block', padding: '4px 12px', borderRadius: '100px', 
-                  background: 'var(--primary-glow)', color: 'var(--primary)', 
-                  fontWeight: 'bold', fontSize: '0.85rem', marginTop: '8px' 
-                }}>
+                <div className="top-placement-details">
+                  <strong>{p.student_name}</strong>
+                  <span>{p.company_name}</span>
+                </div>
+                <span className="top-placement-package">
                   {p.package_lpa} LPA
                 </span>
               </Reveal>
@@ -1380,7 +1379,7 @@ function WebsiteContent({ theme, onToggleTheme, content, loadingContent }) {
     >
       <SiteHeader theme={theme} onToggleTheme={onToggleTheme} />
       <HeroSection content={content} />
-      <HomeUpdates content={content} loadingContent={loadingContent} />
+      <HomeUpdates />
       <PrincipalMessage />
       <AcademicsSection content={content} />
       <EligibilityEstimator />
@@ -1485,12 +1484,7 @@ export default function App() {
   );
 }
 
-function HomeUpdates({ content, loadingContent }) {
-  const notices = pickSection(content, "notice");
-  const eventsList = pickSection(content, "event");
-  const noticeCards = notices;
-  const eventCards = eventsList;
-
+function HomeUpdates() {
   return (
     <section className="section" id="updates">
       <div className="glowing-orb orb-accent" style={{ top: "15%", right: "8%" }} />
@@ -1498,66 +1492,11 @@ function HomeUpdates({ content, loadingContent }) {
         <SectionHeading
           eyebrow="Updates"
           title="Latest Notices & Upcoming Events"
-          text="Stay informed with the latest announcements, admissions updates, academic schedules, campus activities, and upcoming events at Loyola Institute of Technology & Management."
+          text="Stay informed with the latest announcements, announcements, admissions updates, academic schedules, campus activities, and upcoming events at Loyola Institute of Technology & Management."
         />
       </Reveal>
 
-      <div className="dashboard-layout">
-        <Reveal className="news-feed">
-          {loadingContent ? (
-            <p style={{ padding: "1rem" }}>Loading latest notices...</p>
-          ) : noticeCards.length > 0 ? (
-            noticeCards.map((item, index) => (
-              <article className="news-card glass" key={`${item.title}-${index}`}>
-                <div className="news-date">
-                  <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "Now"}</strong>
-                  <span>Notice</span>
-                </div>
-                <div className="news-body">
-                  <span className="news-tag">{item.message || "Notice"}</span>
-                  <h4>{item.title}</h4>
-                  <p>{item.message}</p>
-                </div>
-              </article>
-            ))
-          ) : (
-            <p style={{ padding: "1rem" }}>No notices available at the moment.</p>
-          )}
-        </Reveal>
-
-        <Reveal className="events-panel">
-          <h3 style={{ marginBottom: "18px" }} className="gradient-text">Upcoming Events</h3>
-          <div className="events-list">
-            {loadingContent ? (
-              <p style={{ padding: "1rem" }}>Loading upcoming events...</p>
-            ) : eventCards.length > 0 ? (
-              eventCards.map((item, index) => (
-                <div className="event-item" key={`${item.title}-${index}`}>
-                  <div className="event-date">
-                    <strong>{item.created_at ? `${item.created_at}`.slice(0, 6) : "TBA"}</strong>
-                    <span>Event</span>
-                  </div>
-                  <div className="event-info">
-                    <div className="event-topline">
-                      <h4>{item.title}</h4>
-                      <span className="event-location">{item.message}</span>
-                    </div>
-                    <p>{item.message}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p style={{ padding: "1rem" }}>No events available at the moment.</p>
-            )}
-          </div>
-        </Reveal>
-      </div>
+      <UpdatesFeed limit={6} showViewAll={true} />
     </section>
   );
 }
-
-
-
-
-
-

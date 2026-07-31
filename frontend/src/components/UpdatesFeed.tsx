@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { fetchUpdates } from "../api";
 import litamLogo from "../../images/logo.png";
 import { Link } from "react-router-dom";
@@ -18,9 +18,13 @@ export default function UpdatesFeed({
 }: UpdatesFeedProps) {
   const [updates, setUpdates] = useState<UpdateItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  // Touch handling for mobile swiping in modal viewer
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -39,6 +43,56 @@ export default function UpdatesFeed({
         setLoading(false);
       });
   }, [search, selectedCategory, limit]);
+
+  // Modal navigation & keyboard controls
+  const handlePrev = useCallback(() => {
+    if (selectedIndex === null) return;
+    setSelectedIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : updates.length - 1));
+  }, [selectedIndex, updates.length]);
+
+  const handleNext = useCallback(() => {
+    if (selectedIndex === null) return;
+    setSelectedIndex((prev) => (prev !== null && prev < updates.length - 1 ? prev + 1 : 0));
+  }, [selectedIndex, updates.length]);
+
+  const handleClose = useCallback(() => {
+    setSelectedIndex(null);
+  }, []);
+
+  useEffect(() => {
+    if (selectedIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "ArrowRight") handleNext();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedIndex, handleClose, handlePrev, handleNext]);
+
+  // Mobile swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX || !touchEndX) return;
+    const distance = touchStartX - touchEndX;
+    const isLeftSwipe = distance > 40;
+    const isRightSwipe = distance < -40;
+
+    if (isLeftSwipe) handleNext();
+    if (isRightSwipe) handlePrev();
+
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
 
   return (
     <div className="updates-feed-wrapper" style={{ width: "100%" }}>
@@ -118,79 +172,128 @@ export default function UpdatesFeed({
             </p>
           </div>
         ) : (
-          updates.map((post) => (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="update-card"
-              style={{
-                display: "flex",
-                gap: "16px",
-                padding: "20px",
-                background: "var(--surface)",
-                borderRadius: "16px",
-                border: "1px solid var(--line)",
-                boxShadow: "var(--shadow-sm)",
-              }}
-            >
-              <div
-                className="update-avatar"
+          updates.map((post, idx) => {
+            const formattedDate = new Date(post.created_at).toLocaleDateString(undefined, {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            });
+            const imgSrc = post.image || litamLogo;
+
+            return (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="update-card"
                 style={{
-                  width: "60px",
-                  height: "60px",
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  flexShrink: 0,
-                  cursor: post.image ? "pointer" : "default",
-                  border: "2px solid var(--primary)",
-                  background: "#fff",
+                  display: "flex",
+                  gap: "20px",
+                  padding: "20px",
+                  background: "var(--surface)",
+                  borderRadius: "16px",
+                  border: "1px solid var(--line)",
+                  boxShadow: "var(--shadow-sm)",
+                  alignItems: "flex-start",
                 }}
-                onClick={() => post.image && setSelectedImage(post.image)}
               >
-                <img
-                  src={post.image || litamLogo}
-                  alt={post.title || "Update Logo"}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>
-              <div
-                className="update-content"
-                style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}
-              >
+                {/* Fluid-based Image Thumbnail with Date Badge */}
                 <div
+                  className="update-image-wrapper"
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: "12px",
+                    position: "relative",
+                    width: "clamp(80px, 18vw, 96px)",
+                    height: "clamp(80px, 18vw, 96px)",
+                    borderRadius: "14px",
+                    overflow: "hidden",
+                    flexShrink: 0,
+                    cursor: "pointer",
+                    border: "1.5px solid var(--line)",
+                    background: "var(--surface-hover, #f8fafc)",
                   }}
+                  onClick={() => setSelectedIndex(idx)}
                 >
+                  <img
+                    src={imgSrc}
+                    alt={post.title || "Update Image"}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: post.image ? "cover" : "contain",
+                      padding: post.image ? "0" : "8px",
+                      transition: "transform 0.3s ease",
+                    }}
+                  />
+                  <span
+                    style={{
+                      position: "absolute",
+                      bottom: "4px",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      background: "rgba(15, 23, 42, 0.85)",
+                      backdropFilter: "blur(4px)",
+                      color: "#ffffff",
+                      fontSize: "0.68rem",
+                      fontWeight: 600,
+                      padding: "2px 8px",
+                      borderRadius: "10px",
+                      whiteSpace: "nowrap",
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    {formattedDate}
+                  </span>
+                </div>
+
+                {/* Content with Correct Hierarchy */}
+                <div
+                  className="update-content"
+                  style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      fontSize: "0.82rem",
+                      color: "var(--primary, #2563eb)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <span>{formattedDate}</span>
+                    {post.section && (
+                      <span
+                        style={{
+                          textTransform: "uppercase",
+                          fontSize: "0.7rem",
+                          padding: "2px 8px",
+                          borderRadius: "6px",
+                          background: "var(--line, rgba(37,99,235,0.1))",
+                        }}
+                      >
+                        {post.section}
+                      </span>
+                    )}
+                  </div>
                   <h3 style={{ margin: 0, fontSize: "1.2rem", color: "var(--text)" }}>
                     {post.title || "Update"}
                   </h3>
-                  <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", flexShrink: 0 }}>
-                    {new Date(post.created_at).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "var(--text-muted)",
+                      lineHeight: 1.55,
+                      whiteSpace: "pre-wrap",
+                      fontSize: "0.95rem",
+                    }}
+                  >
+                    {post.message}
+                  </p>
                 </div>
-                <p
-                  style={{
-                    margin: 0,
-                    color: "var(--text-muted)",
-                    lineHeight: 1.5,
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
-                  {post.message}
-                </p>
-              </div>
-            </motion.div>
-          ))
+              </motion.div>
+            );
+          })
         )}
       </div>
 
@@ -212,48 +315,171 @@ export default function UpdatesFeed({
         </div>
       )}
 
-      {selectedImage && (
-        <div
-          className="image-modal"
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.9)",
-            zIndex: 9999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-          }}
-          onClick={() => setSelectedImage(null)}
-        >
-          <img
-            src={selectedImage}
-            alt="Full screen update"
+      {/* Google Photos Style Image Viewer Modal */}
+      <AnimatePresence>
+        {selectedIndex !== null && updates[selectedIndex] && (
+          <motion.div
+            className="google-photos-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
             style={{
-              maxWidth: "100%",
-              maxHeight: "90vh",
-              objectFit: "contain",
-              borderRadius: "8px",
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0, 0, 0, 0.88)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              zIndex: 99999,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "20px",
+              userSelect: "none",
             }}
-          />
-          <button
-            style={{
-              position: "absolute",
-              top: "20px",
-              right: "20px",
-              background: "transparent",
-              border: "none",
-              color: "white",
-              fontSize: "2rem",
-              cursor: "pointer",
-            }}
-            onClick={() => setSelectedImage(null)}
+            onClick={handleClose}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
-            &times;
-          </button>
-        </div>
-      )}
+            {/* Top Toolbar */}
+            <div
+              style={{
+                position: "absolute",
+                top: "20px",
+                left: "20px",
+                right: "20px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                color: "#fff",
+                zIndex: 10,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div>
+                <strong style={{ fontSize: "1rem" }}>
+                  {updates[selectedIndex].title || "Update Photo"}
+                </strong>
+                <p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.7)" }}>
+                  {new Date(updates[selectedIndex].created_at).toLocaleDateString(undefined, {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+              <button
+                style={{
+                  background: "rgba(255, 255, 255, 0.15)",
+                  border: "none",
+                  color: "#fff",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  fontSize: "1.5rem",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onClick={handleClose}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Main Image Stage */}
+            <motion.div
+              key={selectedIndex}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              style={{
+                maxWidth: "90vw",
+                maxHeight: "80vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={updates[selectedIndex].image || litamLogo}
+                alt={updates[selectedIndex].title || "Full size photo"}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "80vh",
+                  objectFit: "contain",
+                  borderRadius: "12px",
+                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+                }}
+              />
+            </motion.div>
+
+            {/* Previous & Next Navigation Buttons */}
+            {updates.length > 1 && (
+              <>
+                <button
+                  style={{
+                    position: "absolute",
+                    left: "20px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "rgba(255, 255, 255, 0.15)",
+                    border: "none",
+                    color: "#fff",
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "50%",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrev();
+                  }}
+                  aria-label="Previous image"
+                >
+                  &#8249;
+                </button>
+                <button
+                  style={{
+                    position: "absolute",
+                    right: "20px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "rgba(255, 255, 255, 0.15)",
+                    border: "none",
+                    color: "#fff",
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "50%",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNext();
+                  }}
+                  aria-label="Next image"
+                >
+                  &#8250;
+                </button>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
