@@ -20,6 +20,7 @@ export interface UpdateItem {
   title: string;
   message: string;
   image: string | null;
+  attachment?: string | null;
   created_at: string;
 }
 

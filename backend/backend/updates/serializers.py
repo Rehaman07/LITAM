@@ -4,7 +4,7 @@ from .models import ContactInquiry, Update, StudentPlacement
 class UpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Update
-        fields = ['id', 'section', 'title', 'message', 'image', 'created_at']
+        fields = ['id', 'section', 'title', 'message', 'image', 'attachment', 'created_at']
 
 
 class ContactInquirySerializer(serializers.ModelSerializer):

@@ -22,6 +22,7 @@ class Update(models.Model):
     title = models.CharField(max_length=200, help_text="Short headline for the update.")
     message = models.TextField(help_text="Message or content for the update.")
     image = models.ImageField(upload_to="updates/", blank=True, null=True, help_text="Optional image. Leave blank to use default college logo.")
+    attachment = models.FileField(upload_to="updates/attachments/", blank=True, null=True, help_text="Optional PDF or document attachment.")
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

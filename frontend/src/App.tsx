@@ -1149,28 +1149,71 @@ function Testimonials({ content }) {
   );
 }
 
-function GalleryPreview({ content }) {
-  const items = pickSection(content, "campus");
+function GalleryPreview({ content }: { content: any }) {
+  const campusItems = pickSection(content, "campus").filter((item: any) => item.image);
+  const galleryItems = pickSection(content, "gallery").filter((item: any) => item.image);
+  const items = campusItems.length > 0 ? campusItems : galleryItems;
+
   const cards = items.length > 0
-    ? items.map((item) => ({ title: item.title, image: item.image }))
+    ? items.map((item: any) => ({ title: item.title, image: item.image }))
     : gallery;
   return (
     <section className="section" id="gallery">
       <Reveal>
         <SectionHeading
-          eyebrow="Campus Preview"
-          title="A preview of our modern laboratory & research infrastructure."
+          eyebrow="Campus Gallery"
+          title="A preview of our modern laboratory & campus infrastructure."
           text="Step inside our high-tech digital computing labs, academic halls, and resource-filled libraries."
         />
       </Reveal>
       <div className="gallery-grid" style={{ marginTop: "16px" }}>
-        {cards.map((item, index) => (
-          <Reveal className="gallery-item" key={item.title} delay={index * 0.05}>
-            <img src={item.image} alt={item.title} loading="lazy" />
-            <div className="gallery-overlay">
-              <span>{item.title}</span>
-            </div>
-          </Reveal>
+        {cards.map((item: any, index: number) => (
+          item.image && (
+            <Reveal className="gallery-item" key={item.title || index} delay={index * 0.05}>
+              <img src={item.image} alt={item.title} loading="lazy" />
+              <div className="gallery-overlay">
+                <span>{item.title}</span>
+              </div>
+            </Reveal>
+          )
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function StudentGalleryPreview({ content }: { content: any }) {
+  const studentItems = pickSection(content, "student_life").filter((item: any) => item.image);
+  const galleryItems = pickSection(content, "gallery").filter((item: any) => item.image);
+  const items = studentItems.length > 0 ? studentItems : galleryItems;
+
+  const cards = items.length > 0
+    ? items.map((item: any) => ({ title: item.title, image: item.image }))
+    : [
+        { title: "Technical & Cultural Fests", image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80" },
+        { title: "Hands-on Workshops", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=80" },
+        { title: "Sports & Athletics", image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80" },
+      ];
+
+  return (
+    <section className="section" id="student-gallery-preview" style={{ marginTop: "40px" }}>
+      <Reveal>
+        <SectionHeading
+          eyebrow="Student Gallery"
+          title="Moments captured from student life at LITAM."
+          text="Vibrant campus celebrations, hackathons, sports tournaments, and student workshops."
+        />
+      </Reveal>
+      <div className="gallery-grid" style={{ marginTop: "16px" }}>
+        {cards.map((item: any, index: number) => (
+          item.image && (
+            <Reveal className="gallery-item" key={item.title || index} delay={index * 0.05}>
+              <img src={item.image} alt={item.title} loading="lazy" />
+              <div className="gallery-overlay">
+                <span>{item.title}</span>
+              </div>
+            </Reveal>
+          )
         ))}
       </div>
     </section>
@@ -1387,6 +1430,7 @@ function WebsiteContent({ theme, onToggleTheme, content, loadingContent }) {
       <Placements content={content} />
       <Testimonials content={content} />
       <GalleryPreview content={content} />
+      <StudentGalleryPreview content={content} />
       <ContactSection />
       <SiteFooter />
     </motion.main>

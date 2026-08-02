@@ -42,7 +42,7 @@ class SiteContentAPIView(views.APIView):
         payload = {choice: [] for choice, _ in ContentSection.choices}
         queryset = Update.objects.all()
         for item in queryset:
-            payload.setdefault(item.section, []).append(UpdateSerializer(item).data)
+            payload.setdefault(item.section, []).append(UpdateSerializer(item, context={'request': request}).data)
         
         # Populate events from litam.Event if empty or present
         events = LitamEvent.objects.all()[:10]
