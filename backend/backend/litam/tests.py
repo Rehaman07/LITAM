@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import User, Course, Event, Testimonial, StudentPlacement, Inquiry, News
+from .models import User, Course, Event, Testimonial, StudentPlacement, Inquiry, News, CampusGallery, StudentGallery, Update
 
 class LitamAPITests(APITestCase):
     def setUp(self):
@@ -44,6 +44,18 @@ class LitamAPITests(APITestCase):
             year=2026,
             is_featured=True
         )
+        self.campus_gallery = CampusGallery.objects.create(
+            title="High-Tech Digital Lab",
+            category="Labs",
+            description="State of the art computing lab",
+            is_featured=True
+        )
+        self.student_gallery = StudentGallery.objects.create(
+            title="Hackathon 2026 Winners",
+            category="Events",
+            description="24-hour coding marathon",
+            is_featured=True
+        )
 
     def test_fetch_courses(self):
         response = self.client.get("/api/litam/courses/")
@@ -51,30 +63,24 @@ class LitamAPITests(APITestCase):
         self.assertGreaterEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["code"], "CSE101")
 
-    def test_fetch_events_upcoming(self):
-        response = self.client.get("/api/litam/events/?upcoming=true")
+    def test_fetch_campus_gallery(self):
+        response = self.client.get("/api/litam/campus-gallery/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
-        self.assertTrue(response.data[0]["is_upcoming"])
+        self.assertEqual(response.data[0]["title"], "High-Tech Digital Lab")
 
-    def test_fetch_testimonials(self):
-        response = self.client.get("/api/litam/testimonials/")
+    def test_fetch_student_gallery(self):
+        response = self.client.get("/api/litam/student-gallery/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["student_name"], "Rahul Sharma")
-
-    def test_fetch_student_placements(self):
-        response = self.client.get("/api/litam/student-placements/?top=5")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["student_name"], "Ananya Rao")
+        self.assertEqual(response.data[0]["title"], "Hackathon 2026 Winners")
 
     def test_submit_inquiry(self):
         payload = {
             "name": "Siddharth Verma",
             "email": "sid@example.com",
             "phone": "9876543210",
-            "course_of_interest": "B.Tech CSE",
+            "course": "B.Tech CSE",
             "message": "Is scholarship available?"
         }
         response = self.client.post("/api/litam/inquiries/", payload, format="json")

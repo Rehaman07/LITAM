@@ -2,10 +2,11 @@ from rest_framework import viewsets, permissions, status, views, response
 from rest_framework.decorators import action
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
-from .models import User, Course, Placement, StudentPlacement, Inquiry, News, Event, Testimonial
+from .models import User, Course, Placement, StudentPlacement, Inquiry, News, Event, Testimonial, CampusGallery, StudentGallery, Update
 from .serializers import (
     UserSerializer, CourseSerializer, PlacementSerializer, StudentPlacementSerializer,
-    InquirySerializer, NewsSerializer, EventSerializer, TestimonialSerializer
+    InquirySerializer, NewsSerializer, EventSerializer, TestimonialSerializer,
+    CampusGallerySerializer, StudentGallerySerializer, UpdateSerializer
 )
 
 class IsAdminUserOrReadOnly(permissions.BasePermission):
@@ -23,6 +24,36 @@ class UserViewSet(viewsets.ModelViewSet):
     def me(self, request):
         serializer = self.get_serializer(request.user)
         return response.Response(serializer.data)
+
+class CampusGalleryViewSet(viewsets.ModelViewSet):
+    queryset = CampusGallery.objects.all()
+    serializer_class = CampusGallerySerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+    def get_queryset(self):
+        queryset = CampusGallery.objects.all()
+        featured = self.request.query_params.get('featured')
+        category = self.request.query_params.get('category')
+        if featured is not None:
+            queryset = queryset.filter(is_featured=featured.lower() == 'true')
+        if category:
+            queryset = queryset.filter(category__iexact=category)
+        return queryset.order_by('-created_at')
+
+class StudentGalleryViewSet(viewsets.ModelViewSet):
+    queryset = StudentGallery.objects.all()
+    serializer_class = StudentGallerySerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+    def get_queryset(self):
+        queryset = StudentGallery.objects.all()
+        featured = self.request.query_params.get('featured')
+        category = self.request.query_params.get('category')
+        if featured is not None:
+            queryset = queryset.filter(is_featured=featured.lower() == 'true')
+        if category:
+            queryset = queryset.filter(category__iexact=category)
+        return queryset.order_by('-created_at')
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -70,11 +101,37 @@ class StudentPlacementViewSet(viewsets.ModelViewSet):
 class InquiryViewSet(viewsets.ModelViewSet):
     queryset = Inquiry.objects.all()
     serializer_class = InquirySerializer
-    
+    authentication_classes = []
+
     def get_permissions(self):
         if self.action == 'create':
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
+
+class UpdateViewSet(viewsets.ModelViewSet):
+    queryset = Update.objects.all()
+    serializer_class = UpdateSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+    def get_queryset(self):
+        queryset = Update.objects.all()
+        section = self.request.query_params.get('section')
+        if section:
+            queryset = queryset.filter(section__iexact=section)
+        return queryset.order_by('-created_at')
+
+class SiteContentAPIView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        updates = Update.objects.all().order_by('-created_at')
+        grouped = {}
+        for update in updates:
+            sec = update.section
+            if sec not in grouped:
+                grouped[sec] = []
+            grouped[sec].append(UpdateSerializer(update, context={'request': request}).data)
+        return response.Response(grouped)
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-date', '-created_at')
@@ -147,3 +204,4 @@ class LogoutView(views.APIView):
     def post(self, request):
         logout(request)
         return response.Response({'message': 'Logged out successfully'})
+

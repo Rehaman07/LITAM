@@ -110,3 +110,17 @@ export interface User {
   is_staff: boolean;
   is_superuser: boolean;
 }
+
+export interface GalleryItem {
+  id: number;
+  title: string;
+  category: string;
+  description?: string;
+  image: string | null;
+  is_featured: boolean;
+  created_at: string;
+}
+
+export type CampusGalleryItem = GalleryItem;
+export type StudentGalleryItem = GalleryItem;
+

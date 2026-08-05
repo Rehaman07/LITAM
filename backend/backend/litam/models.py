@@ -80,7 +80,7 @@ class Inquiry(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField(blank=True, default="")
     phone = models.CharField(max_length=20)
-    course_of_interest = models.CharField(max_length=255)
+    course_of_interest = models.CharField(max_length=255, blank=True, default="General Inquiry")
     message = models.TextField(blank=True, default="")
     status = models.CharField(max_length=50, choices=Status.choices, default=Status.NEW)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -91,6 +91,72 @@ class Inquiry(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.course_of_interest}"
+
+
+class CampusGallery(models.Model):
+    title = models.CharField(max_length=255)
+    category = models.CharField(max_length=100, blank=True, default="Campus")
+    description = models.TextField(blank=True, default="")
+    image = models.ImageField(upload_to="gallery/campus/", blank=True, null=True)
+    is_featured = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "Campus Gallery"
+        verbose_name_plural = "Campus Gallery"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class StudentGallery(models.Model):
+    title = models.CharField(max_length=255)
+    category = models.CharField(max_length=100, blank=True, default="Student Life")
+    description = models.TextField(blank=True, default="")
+    image = models.ImageField(upload_to="gallery/students/", blank=True, null=True)
+    is_featured = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "Student Gallery"
+        verbose_name_plural = "Student Gallery"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class UpdateSection(models.TextChoices):
+    HERO = "hero", "Hero"
+    NOTICE = "notice", "Notice"
+    EVENT = "event", "Event"
+    PLACEMENT = "placement", "Placement"
+    RECRUITER = "recruiter", "Recruiter"
+    GALLERY = "gallery", "Gallery"
+    FACULTY = "faculty", "Faculty"
+    TESTIMONIAL = "testimonial", "Testimonial"
+    COURSE = "course", "Course"
+    STUDENT_LIFE = "student_life", "Student Life"
+    ABOUT = "about", "About"
+    STATS = "stats", "Stats"
+    UNIQUE_FEATURE = "unique_feature", "Unique Feature"
+    CAMPUS = "campus", "Campus"
+
+
+class Update(models.Model):
+    section = models.CharField(max_length=32, choices=UpdateSection.choices, default=UpdateSection.NOTICE)
+    title = models.CharField(max_length=200, help_text="Short headline for the update.")
+    message = models.TextField(help_text="Message or content for the update.")
+    image = models.ImageField(upload_to="updates/", blank=True, null=True, help_text="Optional image.")
+    attachment = models.FileField(upload_to="updates/attachments/", blank=True, null=True, help_text="Optional document attachment.")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title or (self.message[:50] if self.message else "Update")
 
 
 class News(models.Model):
@@ -141,4 +207,5 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f"Testimonial by {self.student_name}"
+
 

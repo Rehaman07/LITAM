@@ -133,7 +133,26 @@ export async function fetchCurrentUser(): Promise<User | null> {
   }
 }
 
+export async function fetchCampusGallery(): Promise<any[]> {
+  try {
+    const response = await api.get("/litam/campus-gallery/");
+    return asArray(response.data);
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchStudentGallery(): Promise<any[]> {
+  try {
+    const response = await api.get("/litam/student-gallery/");
+    return asArray(response.data);
+  } catch {
+    return [];
+  }
+}
+
 /** @deprecated Use fetchStudentPlacements instead */
 export const fetchPlacements = fetchStudentPlacements;
 
 export default api;
+
