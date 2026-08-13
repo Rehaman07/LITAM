@@ -103,6 +103,8 @@ const initialSemesters: SemesterRow[] = Array.from({ length: 4 }, (_, i) => ({
   credits: "20",
 }));
 
+const JNTUK_R23_TOTAL_CREDITS = 21;
+
 const zeroSgpaResult = {
   sgpa: "0.00",
   numSgpa: 0,
@@ -144,18 +146,23 @@ export function GradeCalculator() {
 
   // Live calculation of current course inputs
   const liveSgpaResult = useMemo(() => {
-    let totalCredits = 0;
+    let enteredCredits = 0;
     let totalCreditPoints = 0;
 
     courses.forEach((c) => {
       const cr = parseFloat(c.credits);
       const gp = currentGradeScale[c.grade] ?? 0;
       if (!isNaN(cr) && cr > 0 && c.grade !== "Select") {
-        totalCredits += cr;
+        enteredCredits += cr;
         totalCreditPoints += cr * gp;
       }
     });
 
+    // JNTUK R23 uses the fixed semester credit total. A course with 0 grade
+    // points still contributes its credits, so the denominator remains 21.
+    const totalCredits = selectedSystemKey === "jntuk_r23"
+      ? JNTUK_R23_TOTAL_CREDITS
+      : enteredCredits;
     const sgpa = totalCredits > 0 ? totalCreditPoints / totalCredits : 0;
     const percentage = currentFormula(sgpa);
 
@@ -166,7 +173,7 @@ export function GradeCalculator() {
       totalCreditPoints: totalCreditPoints.toFixed(2),
       percentage: percentage.toFixed(2),
     };
-  }, [courses, currentGradeScale, currentFormula]);
+  }, [courses, currentGradeScale, currentFormula, selectedSystemKey]);
 
   // Live calculation of current semester inputs
   const liveCgpaResult = useMemo(() => {

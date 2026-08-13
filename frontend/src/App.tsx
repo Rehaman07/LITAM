@@ -11,7 +11,7 @@ import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from
 import { useLocation } from "react-router-dom";
 import * as THREE from "three";
 import litamLogo from "../images/logo.png";
-import GradeCalculator from "./components/GradeCalculator/GradeCalculator";
+import GradeCalculatorPage from "./GradeCalculatorPage";
 import tcsLogo from "./assets/logos/tcs.png";
 import infosysLogo from "./assets/logos/infosys.png";
 import capgeminiLogo from "./assets/logos/capgemini.png";
@@ -109,6 +109,7 @@ const navItems = [
   "Academics",
   "Admissions",
   "Updates",
+  "Calculator",
   "Placements",
   "Campus",
   "Contact",
@@ -120,8 +121,10 @@ const navItems = [
       ? "/placements"
       : label === "About"
         ? "/about"
-      : label === "Campus"
+        : label === "Campus"
         ? "/campus"
+        : label === "Calculator"
+        ? "/calculator"
         : `/#${slugify(label)}`,
 }));
 const campusItems = [
@@ -947,10 +950,6 @@ function EligibilityEstimator() {
   );
 }
 
-function GradeCalculatorTabs() {
-  return <GradeCalculator />;
-}
-
 function Placements({ content }) {
   const placementItems = pickSection(content, "placement");
   const recruiterItems = pickSection(content, "recruiter");
@@ -1426,7 +1425,6 @@ function WebsiteContent({ theme, onToggleTheme, content, loadingContent }) {
       <PrincipalMessage />
       <AcademicsSection content={content} />
       <EligibilityEstimator />
-      <GradeCalculatorTabs />
       <Placements content={content} />
       <Testimonials content={content} />
       <GalleryPreview content={content} />
@@ -1489,6 +1487,15 @@ export default function App() {
           path="/placements"
           element={
             <PlacementsPage
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
+        <Route
+          path="/calculator"
+          element={
+            <GradeCalculatorPage
               theme={theme}
               onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
             />
