@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
@@ -149,7 +150,13 @@ class Update(models.Model):
     title = models.CharField(max_length=200, help_text="Short headline for the update.")
     message = models.TextField(help_text="Message or content for the update.")
     image = models.ImageField(upload_to="updates/", blank=True, null=True, help_text="Optional image.")
-    attachment = models.FileField(upload_to="updates/attachments/", blank=True, null=True, help_text="Optional document attachment.")
+    attachment = models.FileField(
+        upload_to="updates/attachments/",
+        storage=RawMediaCloudinaryStorage(),
+        blank=True,
+        null=True,
+        help_text="Optional document attachment.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -207,5 +214,4 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f"Testimonial by {self.student_name}"
-
 
