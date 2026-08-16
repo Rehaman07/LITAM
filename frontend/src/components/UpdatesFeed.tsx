@@ -137,8 +137,6 @@ export default function UpdatesFeed({
             <option value="all">All Categories</option>
             <option value="notice">Notices</option>
             <option value="event">Events</option>
-            <option value="placement">Placements</option>
-            <option value="course">Courses</option>
           </select>
         </div>
       )}

@@ -46,7 +46,17 @@ export async function fetchUpdates(params?: {
   limit?: number;
 }): Promise<UpdateItem[]> {
   try {
-    const response = await api.get<UpdateItem[]>("/updates/", { params });
+    const response = await api.get<UpdateItem[]>("/litam/updates/", { params });
+    const data = asArray<UpdateItem>(response.data);
+    if (data.length > 0 || !params || Object.keys(params).length === 0) {
+      return data;
+    }
+  } catch (error) {
+    console.warn("Falling back to updates endpoint", error);
+  }
+
+  try {
+    const response = await api.get<UpdateItem[]>("/updates/updates/", { params });
     return asArray<UpdateItem>(response.data);
   } catch (error) {
     console.warn("Falling back to litam news API", error);

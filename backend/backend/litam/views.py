@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status, views, response
 from rest_framework.decorators import action
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
+from django.db.models import Q
 from .models import User, Course, Placement, StudentPlacement, Inquiry, News, Event, Testimonial, CampusGallery, StudentGallery, Update
 from .serializers import (
     UserSerializer, CourseSerializer, PlacementSerializer, StudentPlacementSerializer,
@@ -115,10 +116,23 @@ class UpdateViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Update.objects.all()
-        section = self.request.query_params.get('section')
-        if section:
+        section = self.request.query_params.get('section') or self.request.query_params.get('category')
+        search = self.request.query_params.get('search')
+        limit = self.request.query_params.get('limit')
+
+        if section and section.lower() != 'all':
             queryset = queryset.filter(section__iexact=section)
-        return queryset.order_by('-created_at')
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) | Q(message__icontains=search)
+            )
+        queryset = queryset.order_by('-created_at')
+        if limit:
+            try:
+                queryset = queryset[:int(limit)]
+            except ValueError:
+                pass
+        return queryset
 
 class SiteContentAPIView(views.APIView):
     permission_classes = [permissions.AllowAny]

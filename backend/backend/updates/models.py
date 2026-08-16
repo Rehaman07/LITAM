@@ -3,20 +3,8 @@ from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
 
 class ContentSection(models.TextChoices):
-    HERO = "hero", "Hero"
     NOTICE = "notice", "Notice"
     EVENT = "event", "Event"
-    PLACEMENT = "placement", "Placement"
-    RECRUITER = "recruiter", "Recruiter"
-    GALLERY = "gallery", "Gallery"
-    FACULTY = "faculty", "Faculty"
-    TESTIMONIAL = "testimonial", "Testimonial"
-    COURSE = "course", "Course"
-    STUDENT_LIFE = "student_life", "Student Life"
-    ABOUT = "about", "About"
-    STATS = "stats", "Stats"
-    UNIQUE_FEATURE = "unique_feature", "Unique Feature"
-    CAMPUS = "campus", "Campus"
 
 class Update(models.Model):
     section = models.CharField(max_length=32, choices=ContentSection.choices, default=ContentSection.NOTICE)
