@@ -75,14 +75,14 @@ const studentLifeDefault = [
 ];
 
 const campusDefault = [
-  { title: "LITAM Main Building", image: "/assets/images/Main.jpg", message: "Main administrative & academic block" },
-  { title: "LITAM Campus Grounds", image: "/assets/images/Litam.jpg", message: "Sprawling green campus" }
+  { title: "LITAM Main Building", image: "images/Main.jpg", message: "Main administrative & academic block" },
+  { title: "LITAM Campus Grounds", image: "images/Litam.jpeg", message: "Sprawling green campus" }
 ];
 
 const studentGalleryDefault = [
-  { title: "Technical & Cultural Fests", image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80", message: "Annual campus festival celebrations" },
-  { title: "Hands-on Workshops", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=80", message: "Student technical hackathons and coding sprints" },
-  { title: "Sports & Athletics", image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80", message: "Inter-departmental sports tournament" }
+  { title: "Technical & Cultural Fests", image: "images/fest.jpeg", message: "Annual campus festival celebrations" },
+  { title: "Hands-on Workshops", image: "images/lab.jpeg", message: "Student technical hackathons and coding sprints" },
+  { title: "Sports & Athletics", image: "images/sports.jpeg", message: "Inter-departmental sports tournament" }
 ];
 
 const pickSection = (content: any, sectionName: string) => {
