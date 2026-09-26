@@ -6,10 +6,14 @@ import UpdatesFeed from "./components/UpdatesFeed";
 import PlacementsPage from "./PlacementsPage";
 import CampusPage from "./CampusPage";
 import AboutPage from "./AboutPage";
+import AttendencePage from "./AttendencePage";
+import LoginPage from "./LoginPage";
 import SiteFooter from "./SiteFooter";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import * as THREE from "three";
+import { auth } from "./firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import litamLogo from "../images/logo.png";
 import GradeCalculatorPage from "./GradeCalculatorPage";
 import tcsLogo from "./assets/logos/tcs.png";
@@ -104,6 +108,8 @@ const slugify = (label) =>
     .replace(/(^-|-$)/g, "");
 
 const navItems = [
+  "Attendence",
+  "Login",
   "Home",
   "About",
   "Academics",
@@ -125,6 +131,10 @@ const navItems = [
         ? "/campus"
         : label === "Calculator"
         ? "/calculator"
+        : label === "Attendence"
+        ? "/attendence"
+        : label === "Login"
+        ? "/login"
         : `/#${slugify(label)}`,
 }));
 const campusItems = [
@@ -505,6 +515,22 @@ function Intro({ onComplete }) {
 function SiteHeader({ theme, onToggleTheme }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [consoleOpen, setConsoleOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await signOut(auth);
+    setConsoleOpen(false);
+    setMenuOpen(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -523,11 +549,20 @@ function SiteHeader({ theme, onToggleTheme }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
 
+  const visibleNavItems = navItems.map(item => {
+    if (item.label === "Login" && user) {
+      return { ...item, label: "Logout", href: "#logout", isLogout: true };
+    }
+    return item;
+  });
+
   const links = (className) => (
     <ul className={className}>
-      {navItems.map((item) => (
+      {visibleNavItems.map((item) => (
         <li key={item.href}>
-          {item.href === "/updates" || item.href === "/placements" || item.href === "/campus" || item.href === "/about" ? (
+          {item.isLogout ? (
+            <a href="#" onClick={handleLogout}>{item.label}</a>
+          ) : item.href === "/updates" || item.href === "/placements" || item.href === "/campus" || item.href === "/about" || item.href === "/attendence" || item.href === "/login" ? (
             <Link to={item.href} onClick={() => setMenuOpen(false)}>
               {item.label}
             </Link>
@@ -553,10 +588,48 @@ function SiteHeader({ theme, onToggleTheme }) {
             <small>Loyola Institute of Technology & Management</small>
           </span>
         </a>
-        <nav className="desktop-nav flex items-center gap-6 whitespace-nowrap" aria-label="Primary navigation">
-          {links("nav-list")}
-        </nav>
         <div className="header-actions">
+          <nav className="desktop-nav flex items-center gap-6 whitespace-nowrap" aria-label="Primary navigation">
+            <div 
+              className="console-dropdown" 
+              onMouseEnter={() => setConsoleOpen(true)}
+              onMouseLeave={() => setConsoleOpen(false)}
+            >
+              <button className="console-dropdown-btn">
+                Console
+                <span style={{ transform: consoleOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', fontSize: '10px' }}>▼</span>
+              </button>
+              <AnimatePresence>
+                {consoleOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="console-dropdown-menu"
+                  >
+                    <ul className="console-nav-list">
+                      {visibleNavItems.map((item) => (
+                        <li key={item.href}>
+                          {item.isLogout ? (
+                            <a href="#" onClick={handleLogout}>{item.label}</a>
+                          ) : item.href === "/updates" || item.href === "/placements" || item.href === "/campus" || item.href === "/about" || item.href === "/attendence" || item.href === "/login" ? (
+                            <Link to={item.href} onClick={() => setConsoleOpen(false)}>
+                              {item.label}
+                            </Link>
+                          ) : (
+                            <a href={item.href} onClick={() => setConsoleOpen(false)}>
+                              {item.label}
+                            </a>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </nav>
           <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
             <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
           </button>
@@ -1465,6 +1538,24 @@ export default function App() {
         {showIntro && !introComplete && <Intro onComplete={() => setIntroComplete(true)} />}
       </AnimatePresence>
       <Routes>
+        <Route
+          path="/attendence"
+          element={
+            <AttendencePage
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <LoginPage
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
         <Route
           path="/about"
           element={
