@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/updates/', UpdateViewSet.as_view({'get': 'list', 'post': 'create'}), name='direct-updates'),
     path('api/updates/<int:pk>/', UpdateViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='direct-updates-detail'),
     path('api/litam/', include('litam.urls')),
+    path('api/attendance/', include('attendance.urls')),
 ]
