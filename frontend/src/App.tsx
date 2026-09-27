@@ -549,7 +549,7 @@ function SiteHeader({ theme, onToggleTheme }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
 
-  const visibleNavItems = navItems.map(item => {
+  const visibleNavItems: any[] = navItems.map(item => {
     if (item.label === "Login" && user) {
       return { ...item, label: "Logout", href: "#logout", isLogout: true };
     }
