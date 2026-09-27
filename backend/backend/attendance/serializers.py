@@ -12,9 +12,12 @@ class BranchSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'course']
 
 class SectionSerializer(serializers.ModelSerializer):
+    total_students = serializers.IntegerField(read_only=True)
+    absent_today = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Section
-        fields = ['id', 'name', 'branch']
+        fields = ['id', 'name', 'branch', 'total_students', 'absent_today']
 
 class StudentAttendanceStatsSerializer(serializers.ModelSerializer):
     present_count = serializers.IntegerField(read_only=True)

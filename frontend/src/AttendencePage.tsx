@@ -27,6 +27,8 @@ interface Branch {
 interface Section {
   id: number;
   name: string;
+  total_students?: number;
+  absent_today?: number;
 }
 
 interface Student {
@@ -51,6 +53,58 @@ export default function AttendencePage({ theme, onToggleTheme }: AttendencePageP
   const [selectedSection, setSelectedSection] = useState<string>("");
   
   const [loading, setLoading] = useState(false);
+  
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadDate, setUploadDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+
+  const [notifyLoading, setNotifyLoading] = useState<string>("");
+  const [notifyMessage, setNotifyMessage] = useState("");
+
+  const handleNotify = async (targetType: string, targetId: string | number, action: string) => {
+    setNotifyLoading(`${targetType}-${action}`);
+    setNotifyMessage("");
+    try {
+      const res = await axios.post(`${API_BASE_URL}/api/attendance/notify/`, {
+        target_type: targetType,
+        target_id: targetId,
+        date: new Date().toISOString().split('T')[0],
+        action: action
+      });
+      setNotifyMessage(res.data.message);
+      setTimeout(() => setNotifyMessage(""), 5000);
+    } catch (err: any) {
+      setNotifyMessage(`Error: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setNotifyLoading("");
+    }
+  };
+  
+  const handleFileUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!uploadFile || !selectedSection || !uploadDate) return;
+    
+    setUploading(true);
+    setUploadMessage("");
+    
+    const formData = new FormData();
+    formData.append("file", uploadFile);
+    formData.append("section_id", selectedSection);
+    formData.append("date", uploadDate);
+    
+    try {
+      const res = await axios.post(`${API_BASE_URL}/api/attendance/upload/`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      setUploadMessage(`Success! ${res.data.created} records created, ${res.data.updated} updated.`);
+      setUploadFile(null);
+    } catch (err: any) {
+      setUploadMessage(`Error: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -224,6 +278,102 @@ export default function AttendencePage({ theme, onToggleTheme }: AttendencePageP
                 </select>
               </div>
             </div>
+
+            {notifyMessage && (
+              <div style={{ marginBottom: "2rem", padding: "1rem", borderRadius: "8px", background: notifyMessage.startsWith("Error") ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.1)", color: notifyMessage.startsWith("Error") ? "#ef4444" : "#10b981", fontSize: "0.95rem", textAlign: "center", fontWeight: "bold" }}>
+                {notifyMessage}
+              </div>
+            )}
+
+            {selectedBranch && !selectedSection && (
+              <div style={{ marginBottom: "2rem" }}>
+                <div style={{ padding: "2rem", borderRadius: "12px", background: "linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(147,51,234,0.1) 100%)", border: "1px solid var(--line)", marginBottom: "2rem", textAlign: "center" }}>
+                  <h3 style={{ marginBottom: "1rem" }}>Branch Dashboard</h3>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "2rem", marginBottom: "1.5rem" }}>
+                    <div>
+                      <div style={{ fontSize: "2rem", fontWeight: "bold", color: "var(--text)" }}>
+                        {sections.reduce((acc, s) => acc + (s.total_students || 0), 0)}
+                      </div>
+                      <div style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Total Students</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#ef4444" }}>
+                        {sections.reduce((acc, s) => acc + (s.absent_today || 0), 0)}
+                      </div>
+                      <div style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Absent Today</div>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
+                    <button className="btn" onClick={() => handleNotify('branch', selectedBranch, 'push')} disabled={notifyLoading !== ""} style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
+                      {notifyLoading === `branch-push` ? "..." : "🔔 PUSH ABSENTEES"}
+                    </button>
+                    <button className="btn" onClick={() => handleNotify('branch', selectedBranch, 'sms')} disabled={notifyLoading !== ""} style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
+                      {notifyLoading === `branch-sms` ? "..." : "📱 SMS ABSENTEES"}
+                    </button>
+                    <button className="btn btn-primary" onClick={() => handleNotify('branch', selectedBranch, 'call')} disabled={notifyLoading !== ""}>
+                      {notifyLoading === `branch-call` ? "Calling..." : "📞 CALL ABSENTEES"}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>
+                  {sections.map(section => (
+                    <div key={section.id} style={{ padding: "1.5rem", borderRadius: "12px", background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--line)" }}>
+                      <h4 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>{section.name}</h4>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.5rem", color: "var(--text-muted)", fontSize: "0.9rem" }}>
+                        <span>Students: <strong>{section.total_students || 0}</strong></span>
+                        <span>Absent: <strong style={{ color: "#ef4444" }}>{section.absent_today || 0}</strong></span>
+                      </div>
+                      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                        <button className="btn" onClick={() => setSelectedSection(section.id.toString())} style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", background: "var(--surface)" }}>View & Upload</button>
+                        <button className="btn" onClick={() => handleNotify('section', section.id, 'push')} disabled={notifyLoading !== ""} style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", background: "var(--surface)" }}>Push</button>
+                        <button className="btn" onClick={() => handleNotify('section', section.id, 'sms')} disabled={notifyLoading !== ""} style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", background: "var(--surface)" }}>SMS</button>
+                        <button className="btn" onClick={() => handleNotify('section', section.id, 'call')} disabled={notifyLoading !== ""} style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", background: "var(--surface)", color: "var(--primary)", borderColor: "var(--primary)" }}>Call</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedSection && (
+              <div style={{ marginBottom: "2rem", padding: "1.5rem", borderRadius: "12px", background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--line)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                  <h4>Admin: Upload Attendance Spreadsheet</h4>
+                  <button className="btn" onClick={() => setSelectedSection("")} style={{ padding: "0.5rem 1rem", fontSize: "0.8rem" }}>&larr; Back to Branch</button>
+                </div>
+                <form onSubmit={handleFileUpload} style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "flex-end" }}>
+                  <div style={{ flex: "1 1 200px" }}>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>Date</label>
+                    <input 
+                      type="date" 
+                      value={uploadDate}
+                      onChange={(e) => setUploadDate(e.target.value)}
+                      required
+                      style={{ width: "100%", padding: "0.8rem", borderRadius: "8px", border: "1px solid var(--line)", background: "var(--surface)", color: "var(--text)" }}
+                    />
+                  </div>
+                  <div style={{ flex: "2 1 300px" }}>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>Excel File (.xlsx)</label>
+                    <input 
+                      type="file" 
+                      accept=".xlsx, .xls, .csv"
+                      onChange={(e) => setUploadFile(e.target.files ? e.target.files[0] : null)}
+                      required
+                      style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid var(--line)", background: "var(--surface)", color: "var(--text)" }}
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary" disabled={uploading || !uploadFile} style={{ padding: "0.85rem 1.5rem" }}>
+                    {uploading ? "Importing..." : "Import Attendance"}
+                  </button>
+                </form>
+                {uploadMessage && (
+                  <div style={{ marginTop: "1rem", padding: "1rem", borderRadius: "8px", background: uploadMessage.startsWith("Error") ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.1)", color: uploadMessage.startsWith("Error") ? "#ef4444" : "#10b981", fontSize: "0.9rem" }}>
+                    {uploadMessage}
+                  </div>
+                )}
+              </div>
+            )}
 
             {selectedSection && (
               <div style={{ overflowX: "auto" }}>
