@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+
 import { Link, Route, Routes } from "react-router-dom";
 import { fetchSiteContent, fetchStudentPlacements, submitContactInquiry } from "./api";
 import UpdatesPage from "./UpdatesPage";
@@ -633,8 +634,9 @@ function SiteHeader({ theme, onToggleTheme }) {
           <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label="Toggle theme">
             <div className={`theme-icon ${theme === "dark" ? "moon-icon" : "sun-icon"}`} aria-hidden="true" />
           </button>
-          <a className="admin-portal-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
+          <a className="admin-portal-btn futuristic-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
             <span>Admin Portal</span>
+            <div className="btn-glow"></div>
           </a>
           <a className="btn-apply-header" href="/#contact">
             Apply Now
@@ -665,11 +667,13 @@ function SiteHeader({ theme, onToggleTheme }) {
             <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
           </button>
           <div className="mobile-nav-divider" />
-          <a className="mobile-admin-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer">
+          <a className="mobile-admin-btn futuristic-btn" href={ADMIN_URL} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
             <span>Admin Portal</span>
+            <div className="btn-glow"></div>
           </a>
         </div>
       </nav>
+
     </header>
   );
 }

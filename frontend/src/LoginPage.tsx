@@ -54,7 +54,7 @@ export default function LoginPage({ theme, onToggleTheme }: LoginPageProps) {
     } catch (err: any) {
       console.error("Login failed:", err);
       if (err.code === "auth/invalid-api-key") {
-        setError("Firebase API Key is missing. Please check your firebase config.");
+        setError("Something Went Wrong");
       } else if (err.code === "auth/unauthorized-domain") {
         setError("I guess you need some will power , try logging in using your email.");
       } else {
