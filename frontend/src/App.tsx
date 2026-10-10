@@ -9,6 +9,7 @@ import CampusPage from "./CampusPage";
 import AboutPage from "./AboutPage";
 import AttendencePage from "./AttendencePage";
 import LoginPage from "./LoginPage";
+import AttendanceShooterPage from "./AttendanceShooterPage";
 import SiteFooter from "./SiteFooter";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useLocation } from "react-router-dom";
@@ -1555,6 +1556,15 @@ export default function App() {
           path="/login"
           element={
             <LoginPage
+              theme={theme}
+              onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            />
+          }
+        />
+        <Route
+          path="/shooter"
+          element={
+            <AttendanceShooterPage
               theme={theme}
               onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
             />
